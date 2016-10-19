@@ -5277,7 +5277,7 @@ compress_clut : -check "isint(${1=2048}) && $1>=1 && ${2=17.5}>=0 && ${3=1.75}>=
     -if {d==1} S={cbrt(w)} -r $S,$S,$S,3,-1 -r3dx 64 -endif # Input is a 2d haldclut image
     w={w} h={h} d={d} w_size=${-fitscreen" "$w,$h,$d,256,50%}
     -v + -e[] "  > Process clut '"$nm"' ("${w}"x"${h}"x"${d}")." -v -
-    ({'{b}'}) nm={t} -rm. -nm clut
+    -nm clut
     100%,100%,100% -nm. keypoints
     --laplacian[0] -norm. -^. 0.5 -nm. potential
 
@@ -27023,7 +27023,7 @@ gimp_emulate_film_negative_old_preview :
   -gimp_split_preview "-gimp_emulate_film_negative_old $*",$-1
 
 #@gimp PictureFX : gimp_emulate_film_picturefx, gimp_emulate_film_picturefx_preview(1)+
-#@gimp : Preset = choice{"None","AnalogFX - Anno 1870 Color","AnalogFX - Sepia Color","GoldFX - Bright spring breeze","GoldFX - Bright spring breeze",
+#@gimp : Preset = choice{"None","AnalogFX - Anno 1870 Color","AnalogFX - Sepia Color","GoldFX - Spring breeze","GoldFX - Bright spring breeze",
 #@gimp : "GoldFX - Summer heat","GoldFX - Bright summer heat","GoldFX - Hot summer heat",
 #@gimp : "ZilverFX - Infrared","ZilverFX - Vintage B&amp;W"}
 #@gimp : sep = separator()
