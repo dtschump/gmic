@@ -5273,7 +5273,7 @@ compress_clut : -check "isint(${1=2048}) && $1>=1 && ${2=17.5}>=0 && ${3=1.75}>=
   -e[^-1] "Compress color LUT$? as a set of colored keypoints, with $1 max points, maximum error $2 and average error $3."
   -v -
   -repeat $! -l[$>]
-    w={w} h={h} d={d} w_size=${-fitscreen" "$w,$h,$d,256,50%}
+    nm={n} w={w} h={h} d={d} w_size=${-fitscreen" "$w,$h,$d,256,50%}
     -v + -e[] "  > Process clut '"$nm"' ("${w}"x"${h}"x"${d}")." -v -
     ({'{b}'}) nm={t} -rm. -nm clut
     100%,100%,100% -nm. keypoints
