@@ -23062,8 +23062,8 @@ gimp_cutout_preview :
 #@gimp : Color mode = choice(2,"Monochrome","Grayscale","Color")
 #@gimp : Outline = int(1,0,16)
 #@gimp : sep = separator()
-#@gimp : Sharpness = float(0.15,0,1);
-#@gimp : Anisotropy = float(1,0,1);
+#@gimp : Sharpness = float(0.15,0,1)
+#@gimp : Anisotropy = float(1,0,1)
 #@gimp : Gradient smoothness = float(0,0,10)
 #@gimp : Tensor smoothness = float(3,0,10)
 #@gimp : sep = separator(), Preview type = choice("Full","Forward horizontal","Forward vertical","Backward horizontal","Backward vertical","Duplicate top","Duplicate left","Duplicate bottom","Duplicate right")
