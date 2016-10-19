@@ -23080,7 +23080,6 @@ gimp_diffusiontensors :
 gimp_diffusiontensors_preview :
   -gimp_split_preview "-gimp_diffusiontensors $*",$-1
 
-
 #@gimp Ellipsionism : gimp_ellipsionism, gimp_ellipsionism_preview(0)
 #@gimp : Primary radius = float(20,1,100)
 #@gimp : Secondary radius = float(10,1,100)
