@@ -23056,6 +23056,31 @@ gimp_cutout :
 gimp_cutout_preview :
   -gimp_split_preview "-gimp_cutout $*",$-1
 
+#@gimp Diffusion tensors : gimp_diffusiontensors, gimp_diffusiontensors_preview(0)
+#@gimp : Resolution (%) = float(10,0,20)
+#@gimp : Size = float(5,0,16)
+#@gimp : Color mode = choice(2,"Monochrome","Grayscale","Color")
+#@gimp : Outline = int(1,0,16)
+#@gimp : sep = separator()
+#@gimp : Sharpness = float(0.15,0,1);
+#@gimp : Anisotropy = float(1,0,1);
+#@gimp : Gradient smoothness = float(0,0,10)
+#@gimp : Tensor smoothness = float(3,0,10)
+#@gimp : sep = separator(), Preview type = choice("Full","Forward horizontal","Forward vertical","Backward horizontal","Backward vertical","Duplicate top","Duplicate left","Duplicate bottom","Duplicate right")
+#@gimp : sep = separator(), note = note("<small>Author: <i>David Tschumperl&#233;</i>.      Latest update: <i>10/19/2016</i>.</small>")
+gimp_diffusiontensors :
+  -repeat $! -l[$>]
+    wh={[w,h]}
+    -diffusiontensors ${5-8}
+    -r2dx $1%
+    -dt {round(125/$1)},$2,$3,$4
+    -r $wh,1,100%,2
+  -endl -done
+
+gimp_diffusiontensors_preview :
+  -gimp_split_preview "-gimp_diffusiontensors $*",$-1
+
+
 #@gimp Ellipsionism : gimp_ellipsionism, gimp_ellipsionism_preview(0)
 #@gimp : Primary radius = float(20,1,100)
 #@gimp : Secondary radius = float(10,1,100)
@@ -31579,6 +31604,7 @@ gmicol_brushify_preview :
 #@gmicol clone("Circle abstraction")
 #@gmicol clone("Cubism")
 #@gmicol clone("Cutout")
+#@gmicol clone("Diffusion tensors")
 #@gmicol clone("Ellipsionism")
 #@gmicol clone("Felt pen")
 #@gmicol clone("Fractalize")
