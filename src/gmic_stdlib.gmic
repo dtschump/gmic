@@ -5268,8 +5268,8 @@ complex2polar :
 
 #@gmic compress_clut : _max_nbpoints>=1,_max_error>=0,_avg_error>=0
 #@gmic : Compress selected color LUTs as sequences of colored keypoints.
-#@gmic : Default values: 'max_nb_points=2048', 'max_error=17.5' and 'avg_error=1.75'.
-compress_clut : -check "isint(${1=2048}) && $1>=1 && ${2=17.5}>=0 && ${3=1.75}>=0"
+#@gmic : Default values: 'max_nb_points=4096', 'max_error=17.5' and 'avg_error=1.75'.
+compress_clut : -check "isint(${1=4096}) && $1>=1 && ${2=17.5}>=0 && ${3=1.75}>=0"
   -e[^-1] "Compress color LUT$? as a set of colored keypoints, with $1 max points, maximum error $2 and average error $3."
   -v -
   -repeat $! -l[$>] nm=${"-strvar "{b}}
@@ -5294,6 +5294,7 @@ compress_clut : -check "isint(${1=2048}) && $1>=1 && ${2=17.5}>=0 && ${3=1.75}>=
 
     0 -nm. error
     max_error=inf avg_error=inf
+    target_max_error=$2 target_avg_error=$3
 
     # Step 1 : Add new keypoints iteratively until quality constraints are reached.
     #-------------------------------------------------------------------------------
@@ -5309,7 +5310,7 @@ compress_clut : -check "isint(${1=2048}) && $1>=1 && ${2=17.5}>=0 && ${3=1.75}>=
         --decompress_clut[keycoords] $w,$h,$d
         -if {*0} -w. $w_size,0,"Reconstructed CLUT (step 1)" -endif
         --. [clut] -abs. max_error={iM} avg_error={ia} X={xM} Y={yM} Z={zM} -rm.
-        -if {$max_error<=$2" && "$avg_error<=$3} -break -endif # Found a good-enough solution
+        -if {$max_error<=$target_max_error" && "$avg_error<=$target_avg_error} -break -endif # Found a good-enough solution
         ($max_error^{10*$avg_error}) -a[error,-1] x -_compress_clut_draw_error
         iter=0
       -endif
@@ -5324,25 +5325,24 @@ compress_clut : -check "isint(${1=2048}) && $1>=1 && ${2=17.5}>=0 && ${3=1.75}>=
     # Step 2 : Remove keypoints iteratively while preserving quality constraints.
     #-----------------------------------------------------------------------------
     -v + -e[] "" -v -
-    -if {$max_error<=$2" && "$avg_error<=$3}
-      nb_attempts=1
-      -do
-        nb_max_attempts={keycoords,round(h*75%)}
-        -v + -e[] "\r    - Remove attempt \#"$nb_attempts/$nb_max_attempts" : Keypoints "{keycoords,h}", Max error = "{_$max_error}" ( avg = "{_$avg_error}" )        " -v -
-        k={keycoords,round(u(h-1))} --l[keycoords] -s y -rm[$k] -a y -nm new_keycoords -endl  # Remove random keypoint
-        --decompress_clut[new_keycoords] $w,$h,$d
-        -if {*0} -w. 400,400,0,"Reconstructed CLUT (step 2)" -endif
-        --. [clut] -abs. new_max_error={iM} new_avg_error={ia} -rm.
-        -if {$new_max_error<=$2" && "$new_avg_error<=$3}
-          max_error=$new_max_error
-          avg_error=$new_avg_error
-          -rm[keycoords] -nm[new_keycoords] keycoords
-          ($max_error^{10*$avg_error}) -a[error,-1] x -_compress_clut_draw_error
-          nb_attempts=0
-        -else -rm[new_keycoords] nb_attempts+=1
-        -endif
-      -while {$nb_attempts<=$nb_max_attempts}
-    -endif
+    nb_attempts=1
+    target_max_error={max($2,round($max_error,0.1,1))} target_avg_error={max($3,round($avg_error,0.1,1))}
+    -do
+      nb_max_attempts={keycoords,round(h*75%)}
+      -v + -e[] "\r    - Remove attempt \#"$nb_attempts/$nb_max_attempts" : Keypoints "{keycoords,h}", Max error = "{_$max_error}" ( avg = "{_$avg_error}" )        " -v -
+      k={keycoords,round(u(h-1))} --l[keycoords] -s y -rm[$k] -a y -nm new_keycoords -endl  # Remove random keypoint
+      --decompress_clut[new_keycoords] $w,$h,$d
+      -if {*0} -w. 400,400,0,"Reconstructed CLUT (step 2)" -endif
+      --. [clut] -abs. new_max_error={iM} new_avg_error={ia} -rm.
+      -if {$new_max_error<=$target_max_error" && "$new_avg_error<=$target_avg_error}
+        max_error=$new_max_error
+        avg_error=$new_avg_error
+        -rm[keycoords] -nm[new_keycoords] keycoords
+        ($max_error^{10*$avg_error}) -a[error,-1] x -_compress_clut_draw_error
+        nb_attempts=0
+      -else -rm[new_keycoords] nb_attempts+=1
+      -endif
+    -while {$nb_attempts<=$nb_max_attempts}
 
     -k[keycoords] -nm $nm
     -o ${_path_rc}comp_$nm.gmz,uchar
