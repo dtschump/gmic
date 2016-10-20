@@ -4616,7 +4616,7 @@ _update_tutorial_html :
         -endif
        -else -l # External link.
          0 -nm. $link ext={x} -rm.
-         -if {narg($ext)} ext=${-struncase\ $ext} -endif
+         -if {narg($ext)} ext=${-strlowercase\ $ext} -endif
          -if {s=['$ext'];s=='png'||s=='jpg'||s=='jpeg'}  # Check for an image link.
            -basename $link relink=img/$5_${} 0 -nm. $relink relink={f}{b}.jpg -rm.
            -if $relink -v + -e[] "    > External image link '"$link"' relinked to '"$relink"'." -v -
@@ -5272,10 +5272,12 @@ complex2polar :
 compress_clut : -check "isint(${1=2048}) && $1>=1 && ${2=17.5}>=0 && ${3=1.75}>=0"
   -e[^-1] "Compress color LUT$? as a set of colored keypoints, with $1 max points, maximum error $2 and average error $3."
   -v -
-  -repeat $! -l[$>]
+  -repeat $! -l[$>] nm=${"-strvar "{b}}
+    -if {iM>255} -/ 257 -endif # Input is probably 16bits
+    -if {d==1} S={cbrt(w)} -r $S,$S,$S,3,-1 -r3dx 64 -endif # Input is a 2d haldclut image
     w={w} h={h} d={d} w_size=${-fitscreen" "$w,$h,$d,256,50%}
     -v + -e[] "  > Process clut '"$nm"' ("${w}"x"${h}"x"${d}")." -v -
-    ({'{b}'}) nm={t} -rm. -nm clut
+    -nm clut
     100%,100%,100% -nm. keypoints
     --laplacian[0] -norm. -^. 0.5 -nm. potential
 
@@ -16231,7 +16233,7 @@ bin2dec :
   -v - res=${-_$0\ $1} -repeat {$#-1} res=$res,${-_$0\ ${-arg\ $>+2,${^0}}} -done -u $res -v +
 
 _bin2dec :
-  ({'${-struncase\ $1}'})
+  ({'${-strlowercase\ $1}'})
   is_negative=0
   -if {i[0]==45} -z. 1,100% is_negative=1 -endif
   -f. "if(i>=48 && i<=49,(i-48)*2^(w-1-x),nan)"
@@ -16475,7 +16477,7 @@ hex2dec :
   -v - res=${-_$0\ $1} -repeat {$#-1} res=$res,${-_$0\ ${-arg\ $>+2,${^0}}} -done -u $res -v +
 
 _hex2dec :
-  ({'${-struncase\ $1}'})
+  ({'${-strlowercase\ $1}'})
   is_negative=0
   -if {i[0]==45} -z. 1,100% is_negative=1 -endif
   -f. "if(i>=48 && i<=57,i-48,if(i>=97 && i<=102,i-87,nan))*16^(w-1-x)"
@@ -17035,7 +17037,7 @@ oct2dec :
   -v - res=${-_$0\ $1} -repeat {$#-1} res=$res,${-_$0\ ${-arg\ $>+2,${^0}}} -done -u $res -v +
 
 _oct2dec :
-  ({'${-struncase\ $1}'})
+  ({'${-strlowercase\ $1}'})
   is_negative=0
   -if {i[0]==45} -z. 1,100% is_negative=1 -endif
   -f. "if(i>=48 && i<=55,(i-48)*8^(w-1-x),nan)"
@@ -17172,10 +17174,20 @@ strreplace : -skip "${3=}"
   -endif
   -v +
 
-#@gmic struncase : string
+#@gmic strlowercase : string
 #@gmic : Return a lower-case version of the specified string.
-struncase :
+strlowercase :
   -v - ({'"$*"'}) -+. 'if(i>=65&&i<=90,32,0)' -u {t} -rm. -v +
+
+#@gmic strvar : string
+#@gmic : Return a simplified version of the specified string, that can be used as a variable name.
+strvar :
+  -v - ({'"$*"'}) -f. "
+   (i>=_'0' && i<=_'9') || (i>=_'a' && i<=_'z') || i==_'_'?i:
+   (i>=_'A' && i<=_'Z')?i - _'A' + _'a':
+   _'_'"
+   -if {"i>=_'0' && i<=_'9'"} -r. {w+1},1,1,1,0,0,1 -=. {_'_'} -endif
+   -u {t} -rm. -v +
 
 #@gmic strver : _version
 #@gmic : Return the specified version number of the G'MIC interpreter, as a string.
@@ -27011,7 +27023,7 @@ gimp_emulate_film_negative_old_preview :
   -gimp_split_preview "-gimp_emulate_film_negative_old $*",$-1
 
 #@gimp PictureFX : gimp_emulate_film_picturefx, gimp_emulate_film_picturefx_preview(1)+
-#@gimp : Preset = choice{"None","AnalogFX - Anno 1870 Color","AnalogFX - Sepia Color","GoldFX - Bright spring breeze","GoldFX - Bright spring breeze",
+#@gimp : Preset = choice{"None","AnalogFX - Anno 1870 Color","AnalogFX - Sepia Color","GoldFX - Spring breeze","GoldFX - Bright spring breeze",
 #@gimp : "GoldFX - Summer heat","GoldFX - Bright summer heat","GoldFX - Hot summer heat",
 #@gimp : "ZilverFX - Infrared","ZilverFX - Vintage B&amp;W"}
 #@gimp : sep = separator()
