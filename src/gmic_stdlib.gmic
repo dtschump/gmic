@@ -5268,8 +5268,8 @@ complex2polar :
 
 #@gmic compress_clut : _max_nbpoints>=1,_max_error>=0,_avg_error>=0
 #@gmic : Compress selected color LUTs as sequences of colored keypoints.
-#@gmic : Default values: 'max_nb_points=4096', 'max_error=17.5' and 'avg_error=1.75'.
-compress_clut : -check "isint(${1=4096}) && $1>=1 && ${2=17.5}>=0 && ${3=1.75}>=0"
+#@gmic : Default values: 'max_nb_points=2048', 'max_error=17.5' and 'avg_error=1.75'.
+compress_clut : -check "isint(${1=2048}) && $1>=1 && ${2=17.5}>=0 && ${3=1.75}>=0"
   -e[^-1] "Compress color LUT$? as a set of colored keypoints, with $1 max points, maximum error $2 and average error $3."
   -v -
   -repeat $! -l[$>] nm=${"-strvar "{b}}
