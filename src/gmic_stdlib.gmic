@@ -5295,7 +5295,7 @@ compress_clut : -check "isint(${1=2048}) && $1>=1 && ${2=17.5}>=0 && ${3=1.75}>=
     0 -nm. error
     max_error=inf avg_error=inf
     target_max_error=$2 target_avg_error=$3
-    min_max_error=inf nbpts_min_max_error=0
+    best_max_error=inf best_avg_error=inf best_nbpts=0
 
     # Step 1 : Add new keypoints iteratively until quality constraints are reached.
     #-------------------------------------------------------------------------------
@@ -5313,19 +5313,24 @@ compress_clut : -check "isint(${1=2048}) && $1>=1 && ${2=17.5}>=0 && ${3=1.75}>=
         --. [clut] -abs. max_error={iM} avg_error={ia} X={xM} Y={yM} Z={zM} -rm.
         -if {$max_error<=$target_max_error" && "$avg_error<=$target_avg_error} -break -endif # Found a good-enough solution
         ($max_error^{10*$avg_error}) -a[error,-1] x -_compress_clut_draw_error
+        -if {$max_error<$best_max_error}
+          best_max_error=$max_error
+          best_avg_error=$avg_error
+          best_nbpts={keycoords,h}
+        -endif
         iter=0
       -endif
-      -if {$max_error<$min_max_error} min_max_error=$max_error nbpts_min_max_error={keycoords,h} -endif
       -v + -e[] "\r    - Insert keypoint "{keycoords,h}": Max error = "{_$max_error}" ( avg = "{_$avg_error}" )        " -v -
       -add_keypoint $X,$Y,$Z
-
       iter+=1
-      -done
+    -done
+
     -if {$max_error>$target_max_error" || "$avg_error>$target_avg_error} # Didn't fulfilled the quality constraints
-      -rows[keycoords] 0,{$nbpts_min_max_error-1} # -> Go back to the latest 'best' configuration
+      -rows[keycoords] 0,{$best_nbpts-1} # -> Go back to the latest 'best' configuration
+      max_error=$best_max_error
+      avg_error=$best_avg_error
     -endif
     -rows[keycoords] 0,{keycoords,min($1-1,h-1)}
-
 
     # Step 2 : Remove keypoints iteratively while preserving quality constraints.
     #-----------------------------------------------------------------------------
