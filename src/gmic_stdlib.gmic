@@ -5343,6 +5343,7 @@ compress_clut : -check "isint(${1=2048}) && $1>=1 && ${2=17.5}>=0 && ${3=1.75}>=
       -else -rm[new_keycoords] nb_attempts+=1
       -endif
     -while {$nb_attempts<=$nb_max_attempts}
+    -v + -e[] "" -v -
 
     -k[keycoords] -nm $nm
     -o ${_path_rc}comp_$nm.gmz,uchar
