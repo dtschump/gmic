@@ -5274,7 +5274,7 @@ compress_clut : -check "isint(${1=2048}) && $1>=1 && ${2=17.5}>=0 && ${3=1.75}>=
   -v -
   -repeat $! -l[$>] nm=${"-strvar "{b}}
     -if {iM>255} -/ 257 -endif # Input is probably 16bits
-    -if {d==1} S={cbrt(w)} -r $S,$S,$S,3,-1 -r3dx 64 -endif # Input is a 2d haldclut image
+    -if {d==1} S={cbrt(whd)} -r $S,$S,$S,3,-1 -r3dx 64 -endif # Input is a 2d haldclut image
     w={w} h={h} d={d} w_size=${-fitscreen" "$w,$h,$d,256,50%}
     -v + -e[] "  > Process clut '"$nm"' ("${w}"x"${h}"x"${d}")." -v -
     -nm clut
@@ -27023,9 +27023,15 @@ gimp_emulate_film_negative_old_preview :
   -gimp_split_preview "-gimp_emulate_film_negative_old $*",$-1
 
 #@gimp PictureFX : gimp_emulate_film_picturefx, gimp_emulate_film_picturefx_preview(1)+
-#@gimp : Preset = choice{"None","AnalogFX - Anno 1870 Color","AnalogFX - Sepia Color","GoldFX - Spring breeze","GoldFX - Bright spring breeze",
+#@gimp : Preset = choice{"None",
+#@gimp : "AnalogFX - Anno 1870 Color",
+#@gimp : "AnalogFX - Old Style I","AnalogFX - Old Style II","AnalogFX - Old Style III",
+#@gimp : "AnalogFX - Sepia Color","AnalogFX - Soft Sepia I","AnalogFX - Soft Sepia II",
+#@gimp : "GoldFX - Perfect Sunset 01min","GoldFX - Perfect Sunset 05min","GoldFX - Perfect Sunset 10min",
+#@gimp : "GoldFX - Spring breeze","GoldFX - Bright spring breeze",
 #@gimp : "GoldFX - Summer heat","GoldFX - Bright summer heat","GoldFX - Hot summer heat",
-#@gimp : "ZilverFX - Infrared","ZilverFX - Vintage B&amp;W"}
+#@gimp : "TechnicalFX - Backlight filter",
+#@gimp : "ZilverFX - B&amp;W Solarization","ZilverFX - Infrared","ZilverFX - Vintage B&amp;W"}
 #@gimp : sep = separator()
 #@gimp : Strength (%) = float(100,0,100)
 #@gimp : Brightness (%) = float(0,-100,100)
@@ -27042,10 +27048,13 @@ gimp_emulate_film_picturefx :
   -_gimp_emulate_film $1,${-arg\ {max(1,$1)},${-_$0}},${2--1}
 
 _gimp_emulate_film_picturefx :
-  -u analogfx_anno_1870_color,analogfx_sepia_color,\
-     goldfx_spring_breeze,goldfx_bright_spring_breeze,\
-     goldfx_summer_heat,goldfx_bright_summer_heat,goldfx_hot_summer_heat,\
-     zilverfx_infrared,zilverfx_vintage_b_w
+  -u analogfx_anno_1870_color,\
+     analogfx_old_style_i,analogfx_old_style_ii,analogfx_old_style_iii,\
+     analogfx_sepia_color,analogfx_soft_sepia_i,analogfx_soft_sepia_ii,\
+     goldfx_perfect_sunset_01min,goldfx_perfect_sunset_05min,goldfx_perfect_sunset_10min,\
+     goldfx_spring_breeze,goldfx_bright_spring_breeze,goldfx_summer_heat,goldfx_bright_summer_heat,goldfx_hot_summer_heat,\
+     technicalfx_backlight_filter,\
+     zilverfx_b_w_solarization,zilverfx_infrared,zilverfx_vintage_b_w
 
 gimp_emulate_film_picturefx_preview :
   -gimp_split_preview "-gimp_emulate_film_picturefx $*",$-1
