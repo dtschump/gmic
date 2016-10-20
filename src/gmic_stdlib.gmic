@@ -5418,7 +5418,9 @@ decompress_rle :
     -if $is_binary_data  # Decode for binary data.
       -->= 0 -abs[0] -a x
     -else # Decode for arbitrary data
-      --<. 0 (1;1;0) -erode.. .,0 -rm. --. 1 -a x -discard -1  # Get back compressed '0' (minimum) values.
+      --<. 0
+      -if {$_version<179} (1;1;0) -else (0;1;1) -endif
+      -erode.. .,0 -rm. --. 1 -a x -discard -1  # Get back compressed '0' (minimum) values.
       --< 0 (0;1;1) -dilate.. . -rm. -*. -2 -+. 1              # Get back singletons.
       -rv -abs. -a x -discard -1
       -r 2,{h/2},1,1,-1
