@@ -5274,7 +5274,7 @@ compress_clut : -check "isint(${1=2048}) && $1>=1 && ${2=17.5}>=0 && ${3=1.75}>=
   -v -
   -repeat $! -l[$>] nm=${"-strvar "{b}}
     -if {iM>255} -/ 257 -endif # Input is probably 16bits
-    -if {d==1} S={cbrt(whd)} -r $S,$S,$S,3,-1 -r3dx 64 -endif # Input is a 2d haldclut image
+    -if {d==1} S={cbrt(wh)} -r $S,$S,$S,3,-1 -r3dx 64 -endif # Input is a 2d haldclut image
     w={w} h={h} d={d} w_size=${-fitscreen" "$w,$h,$d,256,50%}
     -v + -e[] "  > Process clut '"$nm"' ("${w}"x"${h}"x"${d}")." -v -
     -nm clut
