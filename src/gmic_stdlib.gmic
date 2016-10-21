@@ -5268,13 +5268,13 @@ complex2polar :
 
 #@gmic compress_clut : _max_nbpoints>=1,_max_error>=0,_avg_error>=0
 #@gmic : Compress selected color LUTs as sequences of colored keypoints.
-#@gmic : Default values: 'max_nb_points=2048', 'max_error=17.5' and 'avg_error=1.75'.
-compress_clut : -check "isint(${1=2048}) && $1>=1 && ${2=17.5}>=0 && ${3=1.75}>=0"
+#@gmic : Default values: 'max_nb_points=2048', 'max_error=15' and 'avg_error=1.75'.
+compress_clut : -check "isint(${1=2048}) && $1>=1 && ${2=15}>=0 && ${3=1.75}>=0"
   -e[^-1] "Compress color LUT$? as a set of colored keypoints, with $1 max points, maximum error $2 and average error $3."
   -v -
   -repeat $! -l[$>] nm=${"-strvar "{b}}
     -if {iM>255} -/ 257 -endif # Input is probably 16bits
-    -if {d==1} S={cbrt(wh)} -r $S,$S,$S,3,-1 -r3dx 64 -endif # Input is a 2d haldclut image
+    -if {d==1} S={cbrt(wh)} -r $S,$S,$S,3,-1 -r3dx 32 -round -endif # Input is a 2d haldclut image
     w={w} h={h} d={d} w_size=${-fitscreen" "$w,$h,$d,256,50%}
     -v + -e[] "  > Process clut '"$nm"' ("${w}"x"${h}"x"${d}")." -v -
     -nm clut
@@ -5413,7 +5413,7 @@ decompress_clut : -check "isint(${1=64}) && $1>0 && isint(${2=$1}) && $2>0 && is
   -e[^-1] "Decompress color LUT$? into a $1x$2x$3 volumetric image."
   -v - -transpose -repeat $! -l[$>]
     -s y -*[0] {($1-1)/255} -*[1] {($2-1)/255} -*[2] {($3-1)/255} -round[0-2] -a y
-    100%,1,1,1,255 -a y -pointcloud 0,$1,$2,$3 -solidify 100%,1,15 -c 0,255
+    100%,1,1,1,255 -a y -pointcloud 0,$1,$2,$3 -solidify 100%,1,15 -round -c 0,255
   -endl -done -v +
 
 #@gmic decompress_rle

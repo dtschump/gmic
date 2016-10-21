@@ -561,6 +561,7 @@ CImg<T> get_draw_polygon(const CImg<t>& pts, const T *const col, const float opa
   return (+*this).draw_polygon(pts,col,opacity,pattern);
 }
 
+/*
 template<typename t1, typename t2>
 CImg<T> get_draw_quiver(const CImg<t1>& flow,
                         const t2 *const color, const float opacity=1,
@@ -568,6 +569,7 @@ CImg<T> get_draw_quiver(const CImg<t1>& flow,
                         const bool arrows=true, const unsigned int pattern=~0U) const {
   return (+*this).draw_quiver(flow,color,opacity,sampling,factor,arrows,pattern);
 }
+*/
 
 CImg<T>& gmic_autocrop(const CImg<T>& color=CImg<T>::empty()) {
   if (color.width()==1) autocrop(*color);
@@ -9749,6 +9751,7 @@ gmic& gmic::_run(const CImgList<char>& commands_line, unsigned int& position,
         //-----------------------------
       gmic_commands_q :
 
+/*
         // Draw quiver.
         if (!std::strcmp("-quiver",command)) {
           gmic_substitute_args(true);
@@ -9800,6 +9803,7 @@ gmic& gmic::_run(const CImgList<char>& commands_line, unsigned int& position,
           g_img.assign();
           is_released = false; ++position; continue;
         }
+*/
 
         // Quit.
         if (!std::strcmp("-quit",item)) {
