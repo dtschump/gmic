@@ -27545,7 +27545,7 @@ gimp_frame_blur :
 gimp_frame_fuzzy :
   -repeat $! -l[$>]
     sx={$1%*max(w,h)/2} sy={$2%*max(w,h)/2}
-    -frame_fuzzy $sx,$sy,${3-7}
+    -frame_fuzzy $sx,$sy,${3-8}
   -endl -done
 
 #@gimp Frame [painting] : gimp_frame_painting, gimp_frame_painting_preview(1)
