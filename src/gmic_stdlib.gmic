@@ -2798,7 +2798,7 @@ is : -skip "${1=?}",${2=0}
   -_input_sample[] "$1",${2--1}
   -if {!${}} -noarg -endif
 
-#@gmic input_sample : _name={ ? | apples | barbara | boats | bottles | butterfly | cameraman | cat | cliff | duck | eagle | earth | flower | fruits | greece | gummy | house | inside | landscape | leaf | lena | lion | mandrill | monkey | parrots | pencils | peppers | rooster | rose | square | teddy | wall | waterfall | zelda },_width={ >=0 | 0 (auto) },_height = { >=0 | 0 (auto) } : (no arg)
+#@gmic input_sample : _name={ ? | apples | barbara | boats | bottles | butterfly | cameraman | cat | cliff | duck | eagle | earth | flower | fruits | greece | gummy | house | inside | landscape | leaf | lena | lion | mandrill | monkey | parrots | pencils | peppers | rooster | rose | square | teddy | tiger | wall | waterfall | zelda },_width={ >=0 | 0 (auto) },_height = { >=0 | 0 (auto) } : (no arg)
 #@gmic : Input a new sample RGB image (opt. with specified size).
 #@gmic : (eq. to '-is').
 #@gmic : Argument 'name' can be replaced by an integer which serves as a sample index.
@@ -2813,7 +2813,7 @@ _input_sample : -skip "${1=?}" -check "isint(${2=0}) && $2>=0 && isint(${3=0}) &
       apples,barbara,boats,bottles,butterfly,cat,cameraman,cliff,\
       duck,eagle,earth,inside,flower,fruits,greece,gummy,\
       house,landscape,leaf,lena,lion,mandrill,monkey,parrots,pencils,\
-      peppers,rooster,rose,square,teddy,wall,waterfall,zelda}
+      peppers,rooster,rose,square,teddy,tiger,wall,waterfall,zelda}
 
   is_random=0 is_arg=1
   -if {['"$1"']=='?'} is_random=1
