@@ -29964,7 +29964,7 @@ gimp_ball_preview :
 #@gimp : Density (%) = float(100,0,300)
 #@gimp : Angle = float(30,-180,180)
 #@gimp : Opacity (%) = float(40,0,100)
-#@gimp : Color = color(255,255,255,255)
+#@gimp : Color = color(10,178,0,255)
 #@gimp : Add as a new layer = _bool(1)
 #@gimp : sep = separator()
 #@gimp : note = note("This filter renders the Barnsley fern fractal, described here:")
