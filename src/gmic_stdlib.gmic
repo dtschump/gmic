@@ -673,7 +673,7 @@ _help_usage :
 \n       isinf(), isint(), isbool(), isfile(), isdir(), isin(), kth(), log(), log2(), log10(),
 \n       max(), mean(), med(), min(), narg(), prod(), rol()"$n" (left bit rotation),
 \n       "${c}"ror()"$n" (right bit rotation)"${c}", round(), sign(), sin(), sinc(), sinh(), sqrt(), std(),
-\n       sum(), tan(), tanh(), variance()"$n".
+\n       sum(), tan(), tanh(), variance(), xor()"$n".
 \n
 \n       . '"${c}"atan2(x,y)"$n"' is the version of '"${c}"atan()"$n"' with two arguments '"${g}"y"$n"' and '"${g}"x"$n"' (as in C/C++).
 \n       . '"${c}"permut(k,n,with_order)"$n"' computes the number of permutations of k objects from a set of n objects.
