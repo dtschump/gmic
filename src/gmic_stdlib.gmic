@@ -7888,7 +7888,7 @@ upscale_smart : -skip ${2=100%},${3=100%} -check "${4=2}>=0 && ${5=0.4}>=0 && $5
 #@gmic : 'interpolation' can be { 0=nearest-neighbor | 1=linear | 2=cubic }.
 #@gmic : 'boundary' can be { 0=dirichlet | 1=neumann | 2=periodic }.
 #@gmic : Default values: 'mode=0', 'interpolation=1', 'boundary=1' and 'nb_frames=1'.
-#@gmic : $ image.jpg 100%,100%,1,2,'X=x/w-0.5;Y=y/h-0.5;R=(X*X+Y*Y)^0.5;A=atan2(Y,X);130*R*if(c==0,cos(4*A),sin(8*A))' -warp[-2] [-1],1,1,0 -quiver[-1] [-1],10,0.2,1,1,100
+#@gmic : $ image.jpg 100%,100%,1,2,'X=x/w-0.5;Y=y/h-0.5;R=(X*X+Y*Y)^0.5;A=atan2(Y,X);130*R*if(c==0,cos(4*A),sin(8*A))' -warp[-2] [-1],1,1,0 -quiver[-1] [-1],10,1,1,1,100
 #@gmic : $$
 
 #---------------------------------
@@ -8989,7 +8989,7 @@ laplacian :
 #@gmic lic : _amplitude>0,_channels>0
 #@gmic : Render LIC representation of selected vector fields.
 #@gmic : Default values: 'amplitude=30' and 'channels=1'.
-#@gmic : $ 400,400,1,2,'if(c==0,x-w/2,y-h/2)' --lic 200,3 -quiver[-2] [-2],10,-13,1,1,255
+#@gmic : $ 400,400,1,2,'if(c==0,x-w/2,y-h/2)' --lic 200,3 -quiver[-2] [-2],10,1,1,1,255
 lic : -skip ${1=30},${2=1}
   -e[^-1] "Render LIC representation of 2d vector field$?, with amplitude $1 and $2 channel(s)."
   -v - -repeat $! -l[$>] nm={0,n}
@@ -9713,7 +9713,7 @@ detect_skin : -check "${1=0.5}>=0 && $1<=1" -skip ${2=-1},${3=-1},${4=-1}
 #@gmic : If 'smoothness>=0', regularization type is set to isotropic, else to anisotropic.
 #@gmic : If 'nbscales==0', the number of scales used is estimated from the image size.
 #@gmic : Default values: 'smoothness=0.1', 'precision=5', 'nb_scales=0', 'iteration_max=10000', 'is_backward=1' and '[guide]=(unused)'.
-#@gmic : $ image.jpg --rotate 3,1,0,50%,50% --displacement[-1] [-2] -quiver[-1] [-1],15,-20,1,1,{1.5*iM}
+#@gmic : $ image.jpg --rotate 3,1,0,50%,50% --displacement[-1] [-2] -quiver[-1] [-1],15,1,1,1,{1.5*iM}
 
 #@gmic distance : isovalue[%],_metric : isovalue[%],[metric],_method : (+)
 #@gmic : Compute the unsigned distance function to specified isovalue, opt. according to a custom metric.
