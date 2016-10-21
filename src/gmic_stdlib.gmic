@@ -10743,14 +10743,34 @@ polka_dots : -check $1>=0 -skip ${2=20},${3=50},${4=50},${5=0},${6=10},${7=1},${
 #@gmic : $ image.jpg -polygon 4,20%,20%,80%,30%,80%,70%,20%,80%,0.3,0,255,0 -polygon 4,20%,20%,80%,30%,80%,70%,20%,80%,1,0xCCCCCCCC,255
 #@gmic : $ image.jpg 2,16,1,1,'u(if(x,{h},{w}))' -polygon[-2] {h},{^},0.6,255,0,255 -remove[-1]
 
-#@gmic quiver : [function_image],_sampling>0,_factor,_is_arrow={ 0 | 1 },_opacity,_pattern,_color1,... : (+)
+#@gmic quiver : [function_image],_sampling[%]>0,_factor[%],_is_arrow={ 0 | 1 },_opacity,_color1,...
 #@gmic : Draw specified 2d vector/orientation field on selected images.
-#@gmic : 'pattern' is an hexadecimal number starting with '0x' which can be omitted
-#@gmic : even if a color is specified.
-#@gmic : Default values: 'sampling=25', 'factor=-20', 'is_arrow=1', 'opacity=1', 'pattern=(undefined)'
+#@gmic : Default values: 'sampling=5%', 'factor=100%', 'is_arrow=1', 'opacity=1', 'pattern=(undefined)'
 #@gmic : and 'color1=0'.
 #@gmic : $ 100,100,1,2,'if(c==0,x-w/2,y-h/2)' 500,500,1,3,255 -quiver[-1] [-2],10
 #@gmic : $ image.jpg --resize2dy 600 -luminance[0] -gradient[0] -mul[1] -1 -reverse[0,1] -append[0,1] c -blur[0] 8 -orientation[0] -quiver[1] [0],10,10,1,0.8,255
+quiver : -check ${"-is_image_arg $1"}" && ${2=5%}>0 && isbool(${4=1})" -skip "${3=100%},${5=1},${6=0}"
+  -e[^-1] "Draw 2d vector field $1 on image$?, with sampling $2, factor $3, arrows "${"-arg 1+$4,disabled,enabled"}", opacity $5 and color (${6--1})."
+  -v - -pass$1 -repeat {$!-1} -l[$>,-1]
+    -skip {${-math_lib}"
+      s_sampling = ['$2'];
+      sampling = s_sampling[size(s_sampling) - 1 ]==_'%'?min(w#0,h#0)*$2:$2;
+      s_fact = ['$3'];
+      fact = $3;
+      if (s_fact[size(s_fact) - 1]==_'%', fact = -fact*100);
+      if (fact<=0, vmax = max(abs(im),abs(iM)); vmax = vmax?vmax:1; fact = abs(fact)*sampling/(100*vmax));
+      for (y = sampling/2, y<h#0, y+=sampling,
+        for (x = sampling/2, x<w#0, x+=sampling,
+          X = round(x*w/w#0); Y = round(y*h/h#0);
+          u = i(X,Y,0,0)*fact; v = i(X,Y,0,1)*fact;
+          if ($4,
+            draw_arrow(#0,[x,y],[x + u,y + v],45,sampling/5,$5,[${6--1}]);
+            draw_line(#0,[x - 0.5*u,y - 0.5*v],[x + 0.5*u,y + 0.5*v],$5,[${6--1}]);
+          );
+        );
+      );
+    "}
+  -endl -done -rm. -v +
 
 #@gmic rectangle : x0[%],y0[%],x1[%],y1[%],_opacity,_pattern,_color1,...
 #@gmic : Draw specified colored rectangle on selected images.
@@ -16628,6 +16648,21 @@ is_windows :
 math_lib :
   -v -
   -u "
+  draw_arrow(ind,P0,P1,angle,length,opacity,color) = ( # Draw an arrow from P0 to P1 on image #ind
+    unref(_da_color);
+    _opacity = opacity;
+    _da_color = color;
+    _P0 = P0;
+    _P1 = P1;
+    _P0P1 = _P1;
+    _P0P1-=_P0;
+    if (length<0, _P0P1*=-length/100, _P0P1*=length/norm2(_P0P1));
+    coords = [ _P0,_P1,_P1,_P1 - rot(angle)**_P0P1,_P1,_P1 - rot(-angle)**_P0P1 ];
+    for (_k = 0, _k<3, ++_k,
+      draw_line(#ind,coords[4*_k,2],coords[4*_k+2,2],_opacity,_da_color);
+   );
+  );
+
   draw_circle(ind,P0,radius,opacity,color) = ( # Draw a circle centered at P0 on image #ind
     unref(_dc_color);
     _wm1 = w#ind - 1;
@@ -27056,7 +27091,7 @@ gimp_emulate_film_negative_old_preview :
 #@gimp : sep = separator(), Preview type = choice("Full","Forward horizontal","Forward vertical","Backward horizontal","Backward vertical","Duplicate top","Duplicate left","Duplicate bottom","Duplicate right")
 #@gimp : sep = separator(), note = note("<small><b>Note:</b> The color LUTs used in this section have been provided by <b>Marc Roovers</b>, and are freely available at:</small>")
 #@gimp : link = link("PictureFX - a free HaldCLUT set","http://www.digicrea.be/haldclut-set-style-a-la-nik-software")
-#@gimp : sep = separator(), note = note("<small>Authors: <i>Marc Roovers</i> and <i>David Tschumperl&#233;</i>.      Latest update: <i>08/02/2016</i>.</small>")
+#@gimp : sep = separator(), note = note("<small>Authors: <i>Marc Roovers</i> and <i>David Tschumperl&#233;</i>.      Latest update: <i>10/21/2016</i>.</small>")
 gimp_emulate_film_picturefx :
   -_gimp_emulate_film $1,${-arg\ {max(1,$1)},${-_$0}},${2--1}
 

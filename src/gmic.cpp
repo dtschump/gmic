@@ -561,16 +561,6 @@ CImg<T> get_draw_polygon(const CImg<t>& pts, const T *const col, const float opa
   return (+*this).draw_polygon(pts,col,opacity,pattern);
 }
 
-/*
-template<typename t1, typename t2>
-CImg<T> get_draw_quiver(const CImg<t1>& flow,
-                        const t2 *const color, const float opacity=1,
-                        const unsigned int sampling=25, const float factor=-20,
-                        const bool arrows=true, const unsigned int pattern=~0U) const {
-  return (+*this).draw_quiver(flow,color,opacity,sampling,factor,arrows,pattern);
-}
-*/
-
 CImg<T>& gmic_autocrop(const CImg<T>& color=CImg<T>::empty()) {
   if (color.width()==1) autocrop(*color);
   else autocrop(color);
@@ -9751,60 +9741,6 @@ gmic& gmic::_run(const CImgList<char>& commands_line, unsigned int& position,
         //-----------------------------
       gmic_commands_q :
 
-/*
-        // Draw quiver.
-        if (!std::strcmp("-quiver",command)) {
-          gmic_substitute_args(true);
-          float sampling = 25, factor = -20;
-          unsigned int is_arrows = 1;
-          pattern = ~0U; opacity = 1;
-          sep = *color = 0;
-          if ((cimg_sscanf(argument,"[%255[a-zA-Z0-9_.%+-]]%c",
-                           indices,&end)==1 ||
-               cimg_sscanf(argument,"[%255[a-zA-Z0-9_.%+-]],%f%c",
-                           indices,&sampling,&end)==2 ||
-               cimg_sscanf(argument,"[%255[a-zA-Z0-9_.%+-]],%f,%f%c",
-                           indices,&sampling,&factor,&end)==3 ||
-               cimg_sscanf(argument,"[%255[a-zA-Z0-9_.%+-]],%f,%f,%u%c",
-                           indices,&sampling,&factor,&is_arrows,&end)==4 ||
-               cimg_sscanf(argument,"[%255[a-zA-Z0-9_.%+-]],%f,%f,%u,%f%c",
-                           indices,&sampling,&factor,&is_arrows,&opacity,&end)==5 ||
-               (cimg_sscanf(argument,"[%255[a-zA-Z0-9_.%+-]],%f,%f,%u,%f,0%c%x%c",
-                            indices,&sampling,&factor,&is_arrows,
-                            &opacity,&sep,&pattern,&end)==7 && sep=='x') ||
-               (cimg_sscanf(argument,"[%255[a-zA-Z0-9_.%+-]],%f,%f,%u,%f,%4095[0-9.eEinfa,+-]%c",
-                            indices,&sampling,&factor,&is_arrows,&opacity,color,&end)==6 &&
-                (bool)(pattern=~0U)) ||
-               (*color=0,cimg_sscanf(argument,"[%255[a-zA-Z0-9_.%+-]],%f,%f,%u,"
-                                     "%f,0%c%x,%4095[0-9.eEinfa,+-]%c",
-                                     indices,&sampling,&factor,&is_arrows,
-                                     &opacity,&sep,&pattern,color,&end)==8 &&
-                sep=='x')) &&
-              (ind=selection2cimg(indices,images.size(),images_names,"-quiver")).height()==1 &&
-              sampling>0 && is_arrows<=1) {
-            sampling = cimg::round(sampling);
-            print(images,0,"Draw 2d vector field [%u] on image%s, with sampling %g, factor %g, "
-                  "arrows %s, opacity %g, pattern 0x%x and color (%s).",
-                  *ind,
-                  gmic_selection.data(),
-                  sampling,
-                  factor,
-                  is_arrows?"enabled":"disabled",
-                  opacity,pattern,
-                  *color?color:"default");
-            const CImg<T> flow = gmic_image_arg(*ind);
-            cimg_forY(selection,l) {
-              CImg<T> &img = images[selection[l]];
-              g_img.assign(img.spectrum(),1,1,1,(T)0).fill(color,true,false);
-              gmic_apply(draw_quiver(flow,g_img.data(),opacity,(unsigned int)sampling,
-                                     factor,(bool)is_arrows,pattern));
-            }
-          } else arg_error("quiver");
-          g_img.assign();
-          is_released = false; ++position; continue;
-        }
-*/
-
         // Quit.
         if (!std::strcmp("-quit",item)) {
           print(images,0,"Quit G'MIC interpreter.");
@@ -13772,7 +13708,7 @@ gmic& gmic::_run(const CImgList<char>& commands_line, unsigned int& position,
                     "output","onfail","object3d","or","opacity3d",
                     "parallel","pass","patchmatch","permute","progress","print","pow","point","polygon",
                     "plasma","primitives3d","plot",
-                    "quiver","quit",
+                    "quit",
                     "remove","repeat","resize","reverse","return","rows","rotate",
                     "round","rand","rotate3d","rgb2hsi","rgb2hsl","rgb2hsv","rgb2lab",
                     "rgb2srgb","rol","ror","reverse3d",
