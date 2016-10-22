@@ -21769,6 +21769,7 @@ _gimp_download_all_data :
 #@gimp : note = note{"\n<span foreground="purple" underline="single">Supporters:</span>"}
 #@gimp : note = note{" <b>-</b> A big hug goes to these friends who supported the project:"}
 #@gimp : note = note{"<i>
+#@gimp : Korablev Georgiy,
 #@gimp : Djek Eykhout,
 #@gimp : Michael Calabrese,
 #@gimp : Joachim Steiert
