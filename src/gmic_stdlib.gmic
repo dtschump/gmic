@@ -765,8 +765,9 @@ _help_usage :
 \n         '"${c}"eig(A)"$n"' (eigenvalues/eigenvectors), '"${c}"eye(n)"$n"' (n x n identity matrix), '"${c}"inv(A)"$n"' (matrix inverse),
 \n         '"${c}"mul(A,B,_nb_colsB)"$n"' (matrix-matrix multiplication), '"${c}"pseudoinv(A,_nb_colsA)"$n"',
 \n         '"${c}"rot(x,y,z,angle)"$n"' (3d rotation matrix), '"${c}"rot(angle)"$n"' (2d rotation matrix),
-\n         '"${c}"solve(A,B,_nb_colsB)"$n"' (least-square solver of linear system A.X = B), '"${c}"svd(A,_nb_colsA)"$n"' (singular value decomposition),
-\n         '"${c}"trace(A)"$n"' (matrix trace) and '"${c}"transp(A,nb_colsA)"$n"' (matrix transpose).
+\n         '"${c}"solve(A,B,_nb_colsB)"$n"' (least-square solver of linear system A.X = B),
+\n         '"${c}"svd(A,_nb_colsA)"$n"' (singular value decomposition), '"${c}"trace(A)"$n"' (matrix trace) and
+\n         '"${c}"transp(A,nb_colsA)"$n"' (matrix transpose).
 \n         Argument '"${c}"nb_colsB"$n"' may be omitted if equal to "${g}"1"$n".
 \n       . Specifying a vector-valued math expression as an argument of a command that operates on image values
 \n          (e.g. '"$c"-fill"$n"') modifies the whole spectrum range of the processed image(s), for each spatial
@@ -23203,6 +23204,30 @@ gimp_poster_hope :
 gimp_poster_hope_preview :
   -gimp_split_preview "-gimp_poster_hope $*",$-1
 
+#@gimp Highlight bloom : gimp_highlight_bloom, gimp_highlight_bloom_preview(0)
+#@gimp : Details strength (%) = float(90,0,400)
+#@gimp : Details scale = float(60,0,255)
+#@gimp : Smoothness = float(60,0,255)
+#@gimp : Highlight (%) = int(30,0,100)
+#@gimp : Contrast (%) = float(20,0,100)
+#@gimp : sep = separator(), Preview type = choice("Full","Forward horizontal","Forward vertical","Backward horizontal","Backward vertical","Duplicate top","Duplicate left","Duplicate bottom","Duplicate right")
+#@gimp : sep = separator(), note = note("<small>Author: <i>David Tschumperl&#233;</i>.      Latest update: <i>10/24/2016</i>.</small>")
+#@gimp : sep = separator(), note = note("This effect has been inspired by:")
+#@gimp : link = link("This tutorial by Sebastien Guyader and Patrick David","https://pixls.us/articles/highlight-bloom-and-photoillustration-look/")
+gimp_highlight_bloom :
+  -repeat $! -l[$>] -split_opacity -l[0]
+    --smooth $2,0.3,0.8,1,2
+    --.. .
+    amp=$3 -do -smooth. {min(50,$amp)},0.1,1,1,2 amp-=50 -while {$amp>0}
+    --retinex. 16,lab,0,15 -j.. .,0,0,0,0,{$4%} -rm.
+    -ac. "-normalize_local {$5%},5",lab_l
+    -*.. {$1%}
+    -+ -c 0,255
+  -endl -a c -endl -done
+
+gimp_highlight_bloom_preview :
+  -gimp_split_preview "-gimp_highlight_bloom $*",$-1
+
 #@gimp Kuwahara : gimp_kuwahara, gimp_kuwahara_preview(0)
 #@gimp : Iterations = int(2,1,20)
 #@gimp : Radius = int(5,1,30)
@@ -31690,6 +31715,7 @@ gmicol_brushify_preview :
 #@gmicol clone("Felt pen")
 #@gmicol clone("Fractalize")
 #@gmicol clone("Hope poster")
+#@gmicol clone("Highlight bloom")
 #@gmicol clone("Kuwahara")
 #@gmicol clone("Lylejk's painting")
 #@gmicol clone("Painting")
