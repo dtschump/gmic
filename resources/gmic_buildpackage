@@ -270,7 +270,7 @@ cd ..
 echo " - Create HTML reference page."
 cd html
 rm -f img/gmic_stdlib*.jpg image.jpg
-\gmic -is tiger -o image.jpg
+\gmic -is tiger -r2dy 400 -o image.jpg
 \gmic -v - ../src/gmic_stdlib.gmic raw:../src/gmic_stdlib.gmic,uchar -document_gmic images,img/
 if [ "$1" == "final" ]; then
     \gmic -v - ../src/gmic_stdlib.gmic raw:../src/gmic_stdlib.gmic,uchar _prerelease= -__help html >& reference.shtml;
