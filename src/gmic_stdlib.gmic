@@ -16685,8 +16685,7 @@ math_lib :
           if (_xmax>=0 && _xmin<=_wm1,
             _xmin = max(_xmin,0);
             _xmax = min(_xmax,_wm1);
-            _dx = _xmax - _xmin + 1;
-            for (_c = 0, _c<s#ind, ++_c, copy(i(#ind,_xmin,_y,0,_c),_dc_color[_c],_dx,1,0,_opacity));
+            draw_scanline(#ind,_xmin,_xmax,_y,_opacity,_dc_color);
           );
         );
       );
@@ -16728,8 +16727,7 @@ math_lib :
         if (_xmax>=0 && _xmin<=_wm1,
           _xmin = max(_xmin,0);
           _xmax = min(_xmax,_wm1);
-          _dx = _xmax - _xmin + 1;
-          for (_c = 0, _c<s#ind, ++_c, copy(i(#ind,_xmin,_y,0,_c),_de_color[_c],_dx,1,0,_opacity));
+          draw_scanline(#ind,_xmin,_xmax,_y,_opacity,_de_color);
         );
       );
     );
@@ -16773,8 +16771,7 @@ math_lib :
         _go_on = 0;
         _xmin = max(_xmin,0);
         _xmax = min(_xmax,_wm1);
-        _dx = _xmax - _xmin + 1;
-        for (_c = 0, _c<s#ind, ++_c, copy(i(#ind,_xmin,_ymin,0,_c),_dp_color[_c],_dx,1,0,_opacity));
+        draw_scanline(#ind,_xmin,_xmax,_ymin,_opacity,_dp_color);
       );
       _none = _xmax + 1;
       (_dp_Xs = resize(_dp_pts,_dp_N*h#ind,0)) = _none;
@@ -16821,8 +16818,7 @@ math_lib :
             if (_x1!=_none && _x1>=0 && _x0<=_wm1,
               _x0 = max(_x0 + (_px==_x0),0);
               _x1 = min(_x1,_wm1);
-              _dx = _x1 - _x0 + 1;
-              for (_c = 0, _c<s#ind, ++_c, copy(i(#ind,_x0,_y0,0,_c),_dp_color[_c],_dx,1,0,_opacity));
+              draw_scanline(#ind,_x0,_x1,_y0,_opacity,_dp_color);
               _px = _x1;
             );
           );
@@ -16851,12 +16847,31 @@ math_lib :
       _xmax = min(_xmax,_wm1);
       _ymin = max(_ymin,0);
       _ymax = min(_ymax,_hm1);
-      _dx = _xmax - _xmin + 1;
       for (_y = _ymin, _y<=_ymax, ++_y,
-        for (_c = 0, _c<s#ind, ++_c, copy(i(#ind,_xmin,_y,0,_c),_dr_color[_c],_dx,1,0,_opacity));
+        draw_scanline(#ind,_xmin,_xmax,_y,_opacity,_dr_color);
       );
     );
     nan;
+  );
+
+  draw_scanline(ind,x0,x1,y,opacity,color) = ( # Draw a single scanline (x0,y)->(x1,y) on image #ind
+    ++(_dx = x1 - x0);
+    s#ind==1?
+      copy(i(#ind,x0,y,0,0),color[0],_dx,1,0,_opacity):
+    s#ind==2?
+      (copy(i(#ind,x0,y,0,0),color[0],_dx,1,0,_opacity);
+       copy(i(#ind,x0,y,0,1),color[1],_dx,1,0,_opacity)):
+    s#ind==3?
+      (copy(i(#ind,x0,y,0,0),color[0],_dx,1,0,_opacity);
+       copy(i(#ind,x0,y,0,1),color[1],_dx,1,0,_opacity);
+       copy(i(#ind,x0,y,0,2),color[2],_dx,1,0,_opacity)):
+    s#ind==4?
+      (copy(i(#ind,x0,y,0,0),color[0],_dx,1,0,_opacity);
+       copy(i(#ind,x0,y,0,1),color[1],_dx,1,0,_opacity);
+       copy(i(#ind,x0,y,0,2),color[2],_dx,1,0,_opacity);
+       copy(i(#ind,x0,y,0,3),color[3],_dx,1,0,_opacity)):
+    # Generic cases.
+      for (_c = 0, _c<s#ind, ++_c, copy(i(#ind,x0,y,0,c),color[c],_dx,1,0,_opacity));
   );
 
   draw_spline(ind,P0,T0,P1,T1,opacity,color) = ( # Draw spline P0-P1 with tangents T0,T1 on image #ind
@@ -16897,10 +16912,9 @@ math_lib :
       if (_ymin==_ymax,
 
         # Particular case of horizontal line.
-        _dx = _xmax - _xmin + 1;
-        for (_c = 0, _c<s#ind, ++_c, copy(i(#ind,_xmin,_ymin,0,_c),_dt_color[_c],_dx,1,0,_opacity)),
+        draw_scanline(#ind,_xmin,_xmax,_ymin,_opacity,_dt_color);
 
-        # General case.
+        , # General case.
         _AB = _B - _A;
         _AC = _C - _A;
         _BC = _C - _B;
@@ -16915,8 +16929,7 @@ math_lib :
           if (_x0>_x1,swap(_x0,_x1));
           _x0 = round(max(0,_x0 - 0.25));
           _x1 = round(min(_wm1,_x1 + 0.25));
-          (_x1-=_x0)+=1;
-          for (_c = 0, _c<s#ind, ++_c, copy(i(#ind,_x0,_y,0,_c),_dt_color[_c],_x1,1,0,_opacity));
+          draw_scanline(#ind,_x0,_x1,_y,_opacity,_dt_color);
         );
       );
     );
