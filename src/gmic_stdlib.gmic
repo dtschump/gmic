@@ -763,8 +763,9 @@ _help_usage :
 \n       . A "${g}"MN"$n"-dimensional vector may be seen as a "${g}"M"${n}" x "${g}"N"$n" matrix and used in those particular functions/operators:
 \n         '"${c}"**"$n"' (matrix-vector multiplication), '"${c}"det(A)"$n"' (determinant), '"${c}"diag(V)"$n"' (diagonal matrix from vector),
 \n         '"${c}"eig(A)"$n"' (eigenvalues/eigenvectors), '"${c}"eye(n)"$n"' (n x n identity matrix), '"${c}"inv(A)"$n"' (matrix inverse),
-\n         '"${c}"mul(A,B,_nb_colsB)"$n"' (matrix-matrix multiplication), '"${c}"pseudoinv(A,_nb_colsA)"$n"', '"${c}"rot(x,y,z,angle)"$n"' (3d rotation matrix),
-\n         '"${c}"rot(angle)"$n"' (2d rotation matrix), '"${c}"solve(A,B,_nb_colsB)"$n"' (least-square solver of linear system A.X = B),
+\n         '"${c}"mul(A,B,_nb_colsB)"$n"' (matrix-matrix multiplication), '"${c}"pseudoinv(A,_nb_colsA)"$n"',
+\n         '"${c}"rot(x,y,z,angle)"$n"' (3d rotation matrix), '"${c}"rot(angle)"$n"' (2d rotation matrix),
+\n         '"${c}"solve(A,B,_nb_colsB)"$n"' (least-square solver of linear system A.X = B), '"${c}"svd(A,_nb_colsA)"$n"' (singular value decomposition),
 \n         '"${c}"trace(A)"$n"' (matrix trace) and '"${c}"transp(A,nb_colsA)"$n"' (matrix transpose).
 \n         Argument '"${c}"nb_colsB"$n"' may be omitted if equal to "${g}"1"$n".
 \n       . Specifying a vector-valued math expression as an argument of a command that operates on image values
