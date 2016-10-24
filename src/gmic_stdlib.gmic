@@ -22000,7 +22000,7 @@ gimp_gmicky_preview :
 #@gimp : - <b>08/20/2014</b> : version <i>1.6.0</i>.\n
 #@gimp : - <b>03/25/2016</b> : version <i>1.7.0</i>.\n
 #@gimp : - <span foreground="purple"><b>10/18/2016</b> : version <i>1.7.8</i> (Current stable).</span>\n
-##@gimp : - <b>09/20/2016</b> : version <i>1.7.9</i> (Current pre-release).\n
+#@gimp : - <b>10/24/2016</b> : version <i>1.7.9</i> (Current pre-release).\n
 #@gimp : "}
 #@gimp : sep = separator()
 #@gimp : link = link("View latest changelog","https://discuss.pixls.us/t/release-of-gmic-1-7-8")
