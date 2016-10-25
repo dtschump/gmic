@@ -866,6 +866,7 @@ _help_usage :
 \n          elements starting from a source value '"${c}"src"$n"' to a specified destination '"${c}"dest"$n"', with increments
 \n          defined by '"${c}"inc_d"$n"' and '"${c}"inc_s"$n"' respectively for the destination and source pointers.
 \n       . '"${c}"unref(a,b,...)"$n" destroys references to the named variable given as arguments.
+\n       . '"${c}"breakpoint()"$n" inserts a computation breakpoint (not supported by the cli interface).
 \n
 \n    - "${g}"User-defined macros:"$n"
 \n
@@ -26290,6 +26291,27 @@ gimp_spread :
 gimp_spread_preview :
   -gimp_split_preview "-gimp_spread $*",$-1
 
+#@gimp Old camera : gimp_old_camera, gimp_old_camera_preview
+#@gimp : Iterations = int(20,1,64)
+#@gimp : Colors = int(6,2,32)
+#@gimp : Grain = float(40,1,100)
+#@gimp : sep = separator(), Preview type = choice("Full","Forward horizontal","Forward vertical","Backward horizontal","Backward vertical","Duplicate top","Duplicate left","Duplicate bottom","Duplicate right")
+#@gimp : sep = separator(), note = note("<small>Author: <i>David Tschumperl&#233;</i>.      Latest update: <i>10/25/2016</i>.</small>")
+gimp_old_camera :
+  -repeat $! -l[$>] -split_opacity -l[0]
+    --f 0
+    -repeat $1
+      --noise[0] $3 -c. 0,255 -autoindex. $2,0,0
+      -+[-2,-1]
+      -progress {$>*100/$1}
+    -done
+    -k. -n 0,255
+    -progress 100
+  -endl -a c -endl -done
+
+gimp_old_camera_preview :
+  -gimp_split_preview "-gimp_old_camera $*",$-1
+
 #@gimp Old-movie stripes : gimp_stripes_y, gimp_stripes_y_preview(1)
 #@gimp : Frequency = float(10,0,100)
 #@gimp : sep = separator(), Channel(s) = choice("All","RGBA [all]","RGB [all]","RGB [red]","RGB [green]","RGB [blue]","RGBA [alpha]","Linear RGB [all]","Linear RGB [red]","Linear RGB [green]","Linear RGB [blue]","YCbCr [luminance]","YCbCr [blue-red chrominances]","YCbCr [blue chrominance]","YCbCr [red chrominance]","YCbCr [green chrominance]","Lab [lightness]","Lab [ab-chrominances]","Lab [a-chrominance]","Lab [b-chrominance]","Lch [ch-chrominances]","Lch [c-chrominance]","Lch [h-chrominance]","HSV [hue]","HSV [saturation]","HSV [value]","HSI [intensity]","HSL [lightness]","CMYK [cyan]","CMYK [magenta]","CMYK [yellow]","CMYK [key]","YIQ [luma]","YIQ [chromas]")
@@ -31993,6 +32015,7 @@ gmicol_rotate :
 #@gmicol clone("Lomo")
 #@gmicol clone("Noise [additive]")
 #@gmicol clone("Noise [spread]")
+#@gmicol clone("Old camera")
 #@gmicol clone("Old-movie stripes")
 #@gmicol clone("Oldschool 8bits")
 #@gmicol clone("Pixel sort")
