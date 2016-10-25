@@ -23388,10 +23388,11 @@ gimp_posterize :
     -if $5 --area.. 0,0 -lt. $5 -inpaint... .,0,3 -rm. -endif
     -map.. . -rm.
     -if $6 --norm (0,1,0;1,1,1;0,1,0) --dilate.. . -rm.. --[-2,-1] -!=. 0 100%,100%,1,{0,s} -j... .,0,0,0,0,{$6%},.. -rm[-2,-1] -endif
+    -n 0,255
   -endl -a c -endl -done
 
 gimp_posterize_preview :
-  -gimp_split_preview "-gimp_posterize $*",$-1
+  -gimp_split_preview "-gimp_posterize $*",$-1,0,1
 
 #@gimp Rodilius : gimp_rodilius, gimp_rodilius_preview(1)
 #@gimp : Amplitude = float(10,0,30)
@@ -24993,6 +24994,27 @@ gimp_retinex :
 gimp_retinex_preview :
   -gimp_split_preview "-gimp_retinex $*",$-1
 
+#@gimp Retro fade : gimp_retrofade, gimp_retrofade_preview
+#@gimp : Iterations = int(20,1,64)
+#@gimp : Colors = int(6,2,32)
+#@gimp : Grain = float(40,1,100)
+#@gimp : sep = separator(), Preview type = choice("Full","Forward horizontal","Forward vertical","Backward horizontal","Backward vertical","Duplicate top","Duplicate left","Duplicate bottom","Duplicate right")
+#@gimp : sep = separator(), note = note("<small>Author: <i>David Tschumperl&#233;</i>.      Latest update: <i>10/25/2016</i>.</small>")
+gimp_retrofade :
+  -repeat $! -l[$>] -split_opacity -l[0]
+    --f 0
+    -repeat $1
+      --noise[0] $3 -c. 0,255 -autoindex. $2,0,0
+      -+[-2,-1]
+      -progress {$>*100/$1}
+    -done
+    -k. -n 0,255
+    -progress 100
+  -endl -a c -endl -done
+
+gimp_retrofade_preview :
+  -gimp_split_preview "-gimp_retrofade $*",$-1,0,1
+
 #@gimp Select-replace color : gimp_select_color, gimp_select_color_preview(0)
 #@gimp : Similarity space = choice(0,"RGB[A]","RGB","YCbCr","Red","Green","Blue","Opacity","Luminance","Blue &amp; Red chrominances","Hue","Saturation")
 #@gimp : Tolerance = float(20,0,100)
@@ -26313,27 +26335,6 @@ gimp_spread :
 
 gimp_spread_preview :
   -gimp_split_preview "-gimp_spread $*",$-1
-
-#@gimp Old camera : gimp_old_camera, gimp_old_camera_preview
-#@gimp : Iterations = int(20,1,64)
-#@gimp : Colors = int(6,2,32)
-#@gimp : Grain = float(40,1,100)
-#@gimp : sep = separator(), Preview type = choice("Full","Forward horizontal","Forward vertical","Backward horizontal","Backward vertical","Duplicate top","Duplicate left","Duplicate bottom","Duplicate right")
-#@gimp : sep = separator(), note = note("<small>Author: <i>David Tschumperl&#233;</i>.      Latest update: <i>10/25/2016</i>.</small>")
-gimp_old_camera :
-  -repeat $! -l[$>] -split_opacity -l[0]
-    --f 0
-    -repeat $1
-      --noise[0] $3 -c. 0,255 -autoindex. $2,0,0
-      -+[-2,-1]
-      -progress {$>*100/$1}
-    -done
-    -k. -n 0,255
-    -progress 100
-  -endl -a c -endl -done
-
-gimp_old_camera_preview :
-  -gimp_split_preview "-gimp_old_camera $*",$-1
 
 #@gimp Old-movie stripes : gimp_stripes_y, gimp_stripes_y_preview(1)
 #@gimp : Frequency = float(10,0,100)
@@ -31946,6 +31947,7 @@ gmicol_rotate :
 #@gmicol clone("Mixer [Lab]")
 #@gmicol clone("Mixer [CMYK]")
 #@gmicol clone("Retinex")
+#@gmicol clone("Retro fade")
 #@gmicol clone("RGB tone")
 #@gmicol clone("Select-replace color")
 #@gmicol clone("Specific saturation")
@@ -32039,7 +32041,6 @@ gmicol_rotate :
 #@gmicol clone("Lomo")
 #@gmicol clone("Noise [additive]")
 #@gmicol clone("Noise [spread]")
-#@gmicol clone("Old camera")
 #@gmicol clone("Old-movie stripes")
 #@gmicol clone("Oldschool 8bits")
 #@gmicol clone("Pixel sort")
