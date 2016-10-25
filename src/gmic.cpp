@@ -706,10 +706,10 @@ CImg<T> get_gmic_patchmatch(const CImg<T>& patch_image,
                             const bool is_score=false,
                             const CImg<T> *const initialization=0) const {
   CImg<floatT> score, res;
-  res = _get_patchmatch(patch_image,patch_width,patch_height,patch_depth,
-                        nb_iterations,nb_randoms,
-                        initialization?*initialization:CImg<T>::const_empty(),
-                        is_score,is_score?score:CImg<floatT>::empty());
+  res = _patchmatch(patch_image,patch_width,patch_height,patch_depth,
+                    nb_iterations,nb_randoms,
+                    initialization?*initialization:CImg<T>::const_empty(),
+                    is_score,is_score?score:CImg<floatT>::empty());
   if (score) res.resize(-100,-100,-100,3,0).draw_image(0,0,0,2,score);
   return res;
 }
@@ -785,7 +785,7 @@ CImg<T>& gmic_shift(const float delta_x, const float delta_y=0, const float delt
     return shift(idelta_x,idelta_y,idelta_z,idelta_c,boundary_conditions);
   }
   // Non-integer displacement.
-  return _get_gmic_shift(delta_x,delta_y,delta_z,delta_c,boundary_conditions).move_to(*this);
+  return _gmic_shift(delta_x,delta_y,delta_z,delta_c,boundary_conditions).move_to(*this);
 }
 
 // [note] get_gmic_shift() as it is avoids an additional buffer when non-integer displacement is used.
@@ -795,11 +795,11 @@ CImg<T> get_gmic_shift(const float delta_x, const float delta_y=0, const float d
   if (delta_x==(float)idelta_x && delta_y==(float)idelta_y && delta_z==(float)idelta_z && delta_c==(float)idelta_c) {
     return (+*this).shift(idelta_x,idelta_y,idelta_z,idelta_c,boundary_conditions); // Integer displacement.
   }
-  return _get_gmic_shift(delta_x,delta_y,delta_z,delta_c,boundary_conditions); // Non-integer displacement.
+  return _gmic_shift(delta_x,delta_y,delta_z,delta_c,boundary_conditions); // Non-integer displacement.
 }
 
-CImg<T> _get_gmic_shift(const float delta_x, const float delta_y=0, const float delta_z=0, const float delta_c=0,
-                        const int boundary_conditions=0) const {
+CImg<T> _gmic_shift(const float delta_x, const float delta_y=0, const float delta_z=0, const float delta_c=0,
+                    const int boundary_conditions=0) const {
   CImg<T> res(_width,_height,_depth,_spectrum);
   if (delta_c!=0) // 4D shift.
     switch (boundary_conditions) {
