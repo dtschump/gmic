@@ -23370,6 +23370,29 @@ gimp_poster_edges :
 gimp_poster_edges_preview :
   -gimp_split_preview "-gimp_poster_edges $*",$-1
 
+#@gimp Posterize : gimp_posterize, gimp_posterize_preview(0)
+#@gimp : Smoothness = float(150,0,800)
+#@gimp : Edges (%) = float(30,0,100)
+#@gimp : Paint = float(1,0,10)
+#@gimp : Colors = int(12,2,32)
+#@gimp : Minimal area = int(0,0,64)
+#@gimp : Outline (%) = float(0,0,100)
+#@gimp : sep = separator(), Preview type = choice("Full","Forward horizontal","Forward vertical","Backward horizontal","Backward vertical","Duplicate top","Duplicate left","Duplicate bottom","Duplicate right")
+#@gimp : sep = separator(), note = note("<small>Author: <i>David Tschumperl&#233;</i>.      Latest update: <i>10/25/2016</i>.</small>")
+gimp_posterize :
+  -repeat $! -l[$>] -split_opacity -l[0]
+    . amp=$1 -do -smooth. {min(50,$amp)},{$2%},1,$3,{2*$3} amp-=50 -while {$amp>0}
+    -bilateral.. .,5,10 -rm.
+    -srgb2rgb --colormap $4 -rgb2srgb
+    -index.. .,0,0
+    -if $5 --area.. 0,0 -lt. $5 -inpaint... .,0,3 -rm. -endif
+    -map.. . -rm.
+    -if $6 --norm (0,1,0;1,1,1;0,1,0) --dilate.. . -rm.. --[-2,-1] -!=. 0 100%,100%,1,{0,s} -j... .,0,0,0,0,{$6%},.. -rm[-2,-1] -endif
+  -endl -a c -endl -done
+
+gimp_posterize_preview :
+  -gimp_split_preview "-gimp_posterize $*",$-1
+
 #@gimp Rodilius : gimp_rodilius, gimp_rodilius_preview(1)
 #@gimp : Amplitude = float(10,0,30)
 #@gimp : Thickness = float(10,0,100)
@@ -31745,6 +31768,7 @@ gmicol_brushify_preview :
 #@gmicol clone("Polygonize [delaunay]")
 #@gmicol clone("Polygonize [energy]")
 #@gmicol clone("Poster edges")
+#@gmicol clone("Posterize")
 #@gmicol clone("Rodilius")
 #@gmicol clone("Sharp abstract")
 #@gmicol clone("Smooth abstract")
