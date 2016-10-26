@@ -28544,7 +28544,7 @@ gimp_boxfitting_preview :
 #@gimp : Coherence = float(100,0,1000)
 #@gimp : Color 1 = color(30,46,33)
 #@gimp : Color 2 = color(75,90,65)
-#@gimp : Color 3 = color(179,189,1117)
+#@gimp : Color 3 = color(179,189,117)
 #@gimp : Color 4 = color(255,246,158)
 #@gimp : sep = separator(), note = note("<small>Author: <i>David Tschumperl&#233;</i>.      Latest update: <i>10/26/2016</i>.</small>")
 gimp_camouflage :
