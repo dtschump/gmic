@@ -19916,7 +19916,7 @@ x_quantize_rgb : -check "isint(${1=16}) && $1>1"
 
   # Start k-means iterations.
   dithering=0 clustering=0 pause=1 s0=off s1=on
-  -repeat 1e10
+  -do
 
     # Create and display visualization.
     -if {!narg($visu_3d)} # Update 3d vizualization.
@@ -20013,8 +20013,7 @@ x_quantize_rgb : -check "isint(${1=16}) && $1>1"
     -else -if $visu_img -wait -endif
     -endif
 
-  -if {!{*}" || "{*,Q}" || "{*,ESC}} -break -endif
-  -done
+  -while {{*}" && "!{*,Q}" && "!{*,ESC}}
   -rm -w 0 -v +
 
  _x_quantize_rgb_3d :
