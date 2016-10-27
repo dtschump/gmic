@@ -7650,33 +7650,33 @@ scale_dcci2x : -check "${1=1.15}>=0 && ${2=5}>=0" -skip ${3=0}
   -v - -repeat $! -l[$>]
     a={-1/16} b={9/16} whd={w},{h},{d} s={s}
     # d1, d2 (sum of diagonal absolute gradients)
-    (0,-1;1,0) --convolve[0] [1] -mirror[1] x --convolve[0] [1] -rm[1] -abs[^0]
+    (0,-1,0;1,0,0;0,0,0) --convolve[0] [1] -mirror[1] x --convolve[0] [1] -rm[1] -abs[^0]
     3,3,1,1,1 -convolve[-3,-2] . -rm. -r[-2,-1] $whd,1,2 -r[-2,-1] $whd,$s
 
     # calc all possible interpolated output [diagonal]
-    ($a,$b,$b,$a) -diagonal. --convolve[0] . -mirror.. x --convolve[0] .. -rm...
+    ($a,$b,$b,$a,0) -diagonal. --convolve[0] . -mirror.. x -shift.. -1,0 --convolve[0] .. -rm...
     --+[1,2] 1 -/[-2,-1] # edge comparison mask (1 + d1) / (1 + d2)
     -_scale_dcci2x_smooth[-5,-4] ...,..,$2 -_scale_dcci2x_mask[-4--1] $1
 
     # d1, d2 (sum of h/v absolute gradients)
     --g[0] x,-1 --g[0] y,1 --g[1] xy,-1 -abs[-4--1]
-    (1,1;1,1) -convolve[-5] . -rm. (1,1,1) -convolve[-4] . -rm.
-    (1;1;1) -convolve... . -rm. (0,1,1;0,1,1) -convolve.. . -rm.
+    (1,1,0;1,1,0;0,0,0) -convolve[-5] . -rm. (1,1,1) -convolve[-4] . -rm.
+    (1;1;1) -convolve... . -rm. (0,1,1;0,1,1;0,0,0) -convolve.. . -rm.
     -+[-3,-1] -+[-3,-1] -r[-2,-1] $whd,1,2 -r[-2,-1] $whd,$s
 
     # calc all possible interpolated output [h/v]
-    ($a;$b;$b;$a) --convolve[0] . -rm.. (0,$a,$b,$b,$a) --convolve[1] . -rm..
+    ($a;$b;$b;$a;0) --convolve[0] . -rm.. (0,$a,$b,$b,$a) --convolve[1] . -rm..
     --+[2,3] 1 -/[-2,-1] # edge comparison mask (1 + d1) / (1 + d2)
     -_scale_dcci2x_smooth[-5,-4] ...,..,$2 -_scale_dcci2x_mask[-4--1] $1
 
     # d1, d2 (sum of h/v absolute gradients)
     --g[0] x,1 --g[0] y,-1 --g[1] xy,-1 -abs[-4--1]
-    (1;1;1) -convolve[-5] . -rm. (1,1;1,1) -convolve[-4] . -rm.
-    (0,0;1,1;1,1) -convolve... . -rm. (1,1,1) -convolve.. . -rm.
+    (1;1;1) -convolve[-5] . -rm. (1,1,0;1,1,0;0,0,0) -convolve[-4] . -rm.
+    (0,0,0;1,1,0;1,1,0) -convolve... . -rm. (1,1,1) -convolve.. . -rm.
     -+[-3,-1] -+[-3,-1] -r[-2,-1] $whd,1,2 -r[-2,-1] $whd,$s
 
     # calc all possible interpolated output [h/v]
-    (0;$a;$b;$b;$a) --convolve[1] . -rm.. ($a,$b,$b,$a) --convolve[0] . -rm..
+    (0;$a;$b;$b;$a) --convolve[1] . -rm.. ($a,$b,$b,$a,0) --convolve[0] . -rm..
     --+[3,4] 1 -/[-2,-1] # edge comparison mask (1 + d1) / (1 + d2)
     -_scale_dcci2x_smooth[-5,-4] ...,..,$2 -_scale_dcci2x_mask[-4--1] $1
 
