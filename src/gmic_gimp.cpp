@@ -3091,9 +3091,11 @@ void process_image(const char *const command_line, const bool is_apply) {
         }
     }
   }
+
   if (run_mode!=GIMP_RUN_NONINTERACTIVE) {
     gimp_progress_end();
     gimp_displays_flush();
+    if (is_apply) _gimp_preview_invalidate();
     if (update_parameters && is_apply) {
       const bool pstate = gimp_preview_get_update(GIMP_PREVIEW(gui_preview));
       gimp_preview_set_update(GIMP_PREVIEW(gui_preview),false);
