@@ -2735,7 +2735,7 @@ inline const char * gmic::set_variable(const char *const name, const char *const
         error("Operation '%s=' requested on variable '%s', with non-numerical argument '%s'.",
               s_operation,name,value);
       s_value.assign(24); *s_value = 0;
-      cimg_snprintf(s_value,s_value.width(),"%.16g",
+      cimg_snprintf(s_value,s_value.width(),"%.17g",
                     operation=='+'?lvalue + rvalue:
                     operation=='-'?lvalue - rvalue:
                     operation=='*'?lvalue*rvalue:
@@ -4095,7 +4095,7 @@ CImg<char> gmic::substitute_item(const char *const source,
                 _status.move_to(status);
                 verbosity = _verbosity; is_debug = _is_debug;
                 cimg_foroff(values,p) {
-                  cimg_snprintf(substr,substr.width(),"%.16g",(double)values[p]);
+                  cimg_snprintf(substr,substr.width(),"%.17g",(double)values[p]);
                   CImg<char>::string(substr,true,true).
                     append_string_to(substituted_items,ptr_sub);
                   *(ptr_sub - 1) = ',';
@@ -4125,11 +4125,11 @@ CImg<char> gmic::substitute_item(const char *const source,
                   append_string_to(substituted_items,ptr_sub);
               } else {
                 if (output.height()>1) { // Vector-valued result
-                  output.value_string(',',0,is_rounded?"%g":"%.16g").move_to(vs);
+                  output.value_string(',',0,is_rounded?"%g":"%.17g").move_to(vs);
                   if (vs && *vs) { --vs._width; vs.append_string_to(substituted_items,ptr_sub); }
                 } else { // Scalar result
                   if (is_rounded) cimg_snprintf(substr,substr.width(),"%g",*output);
-                  else cimg_snprintf(substr,substr.width(),"%.16g",*output);
+                  else cimg_snprintf(substr,substr.width(),"%.17g",*output);
                   is_substituted = true;
                 }
               }
