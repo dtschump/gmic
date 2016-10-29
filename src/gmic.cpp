@@ -740,7 +740,7 @@ const CImg<T>& gmic_print(const char *const title, const bool is_debug,
                                  pixel_type());
     else {
       cimg_foroff(*this,off) {
-        std::fprintf(cimg::output(),cimg::type<T>::format(),cimg::type<T>::format(_data[off]));
+        std::fprintf(cimg::output(),"%g",(double)_data[off]);
         if (off!=siz1) std::fprintf(cimg::output(),"%s",
                                     off%whd==whd1?"^":
                                     off%wh==wh1?"\\":
