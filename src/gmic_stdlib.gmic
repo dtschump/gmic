@@ -6130,11 +6130,11 @@ colormap : -check "isint($1) && $1>=0" -skip ${2=1},${3=1}
 _colormap : # Implementation of the median-cut algorithm.
   -repeat {$1-1}
     $!,{s} -repeat {$!-1},n # Compute box variances along all axes and find highest one (without a single element).
-      -repeat {$n,s} -sh[$n] $> -=.. {if(w>1,iv,-1)},$n,$> -rm. -done
+      -repeat {$n,s} -sh[$n] $> -=.. {w>1?iv:-1},$n,$> -rm. -done
     -done
     c={[xM,yM]}
-    b=${-arg\ 1,$c}  # Indice of the box with highest variance.
-    a=${-arg\ 2,$c}  # Indice of the axis with highest variance inside box 'b'.
+    b={x=[$c];x[0]} # Indice of the box with highest variance.
+    a={x=[$c];x[1]} # Indice of the axis with highest variance inside box 'b'.
     -rm. -shift[$b] 0,0,0,{-$a},2 -sort[$b] +,x -shift[$b] 0,0,0,$a,2 -s[$b] x,2 # Split selected box along its median axis.
   -done
   -r 1,1,1,100%,2 -a x # Average value in each box and append as final colormap.
