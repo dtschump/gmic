@@ -17020,6 +17020,11 @@ math_lib :
   swap(x,y) = ( # Swap content of variables x and y
     unref(_tmp); _tmp = x#; x# = y#; y# = _tmp;
   );
+
+  # Functions to manage stacks.
+  stack(S,size) = ( S# = vector#size();  _stackpos#S=0; S; );
+  push(S,elt) = ( S#[_stackpos#S++] = elt );
+  pop(S) = ( S#[--_stackpos#S] );
   "
   -v +
 
