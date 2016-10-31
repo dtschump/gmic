@@ -3,9 +3,11 @@ cmake_minimum_required(VERSION 2.8.9)
 project(gmic CXX C)
 
 find_package(PkgConfig)
+include(GNUInstallDirs)
 
 # options controlling the build process
 option(BUILD_LIB "Build the GMIC shared library" ON)
+option(BUILD_LIB_STATIC "Build the GMIC static library" ON)
 option(BUILD_CLI "Build the CLI interface" ON)
 option(BUILD_PLUGIN "Build the GIMP plug-in" ON)
 option(ENABLE_X "Add support for X11" ON)
@@ -220,7 +222,7 @@ ENDIF(MINGW)
 if(BUILD_LIB)
   add_library(libgmic SHARED ${CLI_Includes} ${CLI_Sources})
   add_dependencies(libgmic gmic_extra_headers)
-  set_target_properties(libgmic PROPERTIES OUTPUT_NAME "gmic")
+  set_target_properties(libgmic PROPERTIES SOVERSION "1" OUTPUT_NAME "gmic")
   IF(NOT APPLE)
     set_target_properties(libgmic PROPERTIES LINK_FLAGS "-Wl,-soname,libgmic.so.1")
   ENDIF(NOT APPLE)
@@ -236,7 +238,13 @@ if(BUILD_LIB)
     ${FFTW3_LIBRARIES}
     ${EXTRA_LIBRARIES}
     )
-  
+
+  INSTALL(TARGETS libgmic LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}")
+  INSTALL(FILES src/gmic.h DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
+endif(BUILD_LIB)
+
+
+if(BUILD_LIB_STATIC)
   add_library(libgmicstatic STATIC ${CLI_Includes} ${CLI_Sources})
   add_dependencies(libgmicstatic gmic_extra_headers)
   set_target_properties(libgmicstatic PROPERTIES OUTPUT_NAME "gmic")
@@ -252,11 +260,10 @@ if(BUILD_LIB)
     ${FFTW3_LIBRARIES}
     ${EXTRA_LIBRARIES}
     )
-  
-  INSTALL(TARGETS libgmic LIBRARY DESTINATION lib)
-  INSTALL(TARGETS libgmicstatic ARCHIVE DESTINATION lib)
-  INSTALL(FILES src/gmic.h DESTINATION include)
-endif(BUILD_LIB)
+
+  INSTALL(TARGETS libgmicstatic ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}")
+  INSTALL(FILES src/gmic.h DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
+endif(BUILD_LIB_STATIC)
 
 
 if(BUILD_CLI)
