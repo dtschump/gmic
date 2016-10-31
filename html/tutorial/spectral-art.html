@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="tutorial.css">
+<script type="text/javascript" src="highslide/highslide.js"></script>
+<link rel="stylesheet" type="text/css" href="highslide/highslide.css" />
+<script type="text/javascript">
+hs.graphicsDir = 'highslide/graphics/';
+hs.wrapperClassName = 'wide-border';
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<body>
+
+
+      
+
+
+
+<h1>Spectral Art</h1>
+<div id="FigureOne" style="float: left; width: 425px; height: 450px; border: none; padding: 0in;"><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/spectral/spa-00.png" title="A Bit of a Shock" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="400" width="400" />
+<p><i>Figure 1:</i><span style="font-size: small;" size="3"><i> Having read the documentation, Floyd became spectrally deranged.</i></span></p>
+</div>
+<p>For people new to G'MIC, probably having the Gimp-G'MIC plug-in somewhere within their ken, the command line tool is indeed a mysterious oracle. For while some commands are quite tractable, in that <a target="_parent" href="http://gmic.eu/reference.shtml#cupid"><tt>-cupid</tt></a> makes a pretty little cupid silhouette, others are thoroughly opaque in their intent, like <a target="_parent" href="http://tools-and-toys/gmic/command-guide/feature-extraction/-hough/"><tt>-hough</tt></a>, which seems to make cob webs, and <a target="_parent" href="_fft.shtml"><tt>-fft</tt></a> which is guaranteed to take everything you give it and turn it into one black picture and one gray picture. Oh. The black picture seems to have a white dot in the upper left hand corner and the gray picture seems to have cockroach droppings around the edges and in the corners. Well, that's where the little buggers skitter off to, but I digress.</p>
+<p>To this, the G'MIC help facility furnishes this illumination.</p>
+<p><tt>Compute the direct fourier transform (real and imaginary parts) of selected images, optionnally</tt><i> [sic] </i><tt>along the specified axes only.</tt></p>
+<p>There. You're glad you asked, aren't you? Ah! There goes the Google+ chime; perhaps Cousin Floyd wants to go bowling. Time to pick up a six pack before he drives up. So much for <tt>-fft</tt>.</p>
+<p>For those who love images, not only as containers to store interesting art or photographs, but also as mathematical objects, '<tt>fft</tt>' is just the barest hint at a wholly complete, but incredibly strange image representation. While the common use of this representation involves some process of 'spectral editing', a set of noise-reduction (or enhancement) techniques, we here in the G'MIC Department of Documenting Redundancy Department are always on the lookout for new (mis)uses of commands that Ronounours &amp; Co. work so hard to make professionally useful, even if they are a tad obscure on what those uses might be.</p>
+<p>Well that's just fine with us. We don't want to be told anyway, because factuality merely gets in the way of our making stuff up. And what we're making up today in this Cookbook Recipe is the use of <a target="_parent" href="_fft.shtml"><tt>-fft</tt></a> and friends, indeed, the entire Spectral Domain, as a kind of quirky canvas in which to render what could be beautiful patterns. The Fast Fourier Transform and its allied algorithm, the Inverse Fast Fourier Transform, are not, first and foremost, painting tools. But that is how we're going to be using them. So there.</p>
+<p>O.K., For those who want to cut to the chase, there is a <a target="_parent" href="spectral-art_cheat-sheet.shtml">Cheat Sheet</a> at the end of this Recipe that bypasses most of the theory and makes a Reader' Digest condensation of what little remains. For those of you who want the deep skinny, follow the bouncing ball&hellip;</p>
+<ol>
+<li><a target="_parent" title="The Spatial Course" href="spectral-art_the-spatial-and-the-spectral.shtml">The Spatial Course</a></li>
+<li><a target="_parent" title="The Spectral Course" href="spectral-art_the-spectral-course.shtml">The Spectral Course</a></li>
+<li><a target="_parent" title="The Spectral Domain" href="spectral-art_the-spectral-domain.shtml">The Spectral Domain</a></li>
+<li><a target="_parent" title="The Complex Number Field" href="spectral-art_the-complex-number-field.shtml">The Complex Number Field</a></li>
+<li><a target="_parent" title="Painting With Waves: Part One" href="spectral-art_painting-with-waves-part-one.shtml">Painting With Waves: Part One</a></li>
+<li><a target="_parent" title="Painting With Waves: Part Two" href="spectral-art_painting-with-waves-part-two.shtml">Painting With Waves: Part Two</a></li>
+<li><a target="_parent" title="A Revised Map" href="spectral-art_a-revised-map.shtml">A Revised Map</a></li>
+<li><a target="_parent" title="Intermezzo: Spectral Editing" href="spectral-art_intermezzo-spectral-editing.shtml">Intermezzo: Spectral Editing</a></li>
+<li><a target="_parent" title="A Wave Painting Workflow" href="spectral-art_a-wave-painting-workflow.shtml">A Wave Painting Workflow</a></li>
+<li><a target="_parent" title="-tiletex" href="spectral-art_tiletex.shtml">-tiletex</a></li>
+<li><a target="_parent" title="Coefficient Values: Part One" href="spectral-art_coefficient-values.shtml">Coefficient Values: Part One</a></li>
+<li><a target="_parent" title="Coefficient Values: Part Two" href="spectral-art_coefficient-values-part-two.shtml">Coefficient Values: Part Two</a></li>
+<li><a target="_parent" href="spectral-art_coefficient-values-part-three.shtml">Coefficient Values: Part Three</a></li>
+<li><a target="_parent" title="Cheat Sheet" href="spectral-art_cheat-sheet.shtml">Cheat Sheet</a></li>
+<li><a target="_parent" href="spectral-art_appendix.shtml">Appendix</a></li>
+</ol>
+<table rules="all" style="border-color: #7f7f7f; border-width: 1px; background-color: #ffffff;" align="center" border="1" cellpadding="2">
+<tbody>
+<tr>
+<td>Nothing Previous</td>
+<td><a target="_parent" href="spectral-art_the-spatial-and-the-spectral.shtml">The Spatial and The Spectral</a></td>
+</tr>
+</tbody>
+</table>
+
+
+
+   
+</body></html>

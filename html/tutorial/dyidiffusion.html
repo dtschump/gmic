@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="tutorial.css">
+<script type="text/javascript" src="highslide/highslide.js"></script>
+<link rel="stylesheet" type="text/css" href="highslide/highslide.css" />
+<script type="text/javascript">
+hs.graphicsDir = 'highslide/graphics/';
+hs.wrapperClassName = 'wide-border';
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<body>
+
+
+      
+
+
+
+<h1>Do Your Own Diffusion Tensor Fields</h1>
+<p><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/dyidiffusion/init-02.png" title="init-02.png: More than the usual bucket of noise." class="img_block" style="margin: 3px; border: 0px solid #808080; float: left;" height="300" width="300" />In the usual course of events, an image comes in from the wild with a baggage of noise, and one would like to make as much of it go away as possible without losing what's &ldquo;really in&rdquo; the image<a target="_parent" href="dyidiffusion_eigen-thingys.shtml#sdfootnote1sym"><sup>1</sup></a>. In G'MIC, the command of choice for such work is <a target="_parent" href="_smooth.shtml">-smooth</a>. It is a nice black box that does something called &ldquo;anisotropic smoothing&rdquo; and hundreds use it daily without knowing much about what goes on inside, and since it doesn't cause people to break out in hives who's to worry?</p>
+<p>We who write tutorials, of course, are constantly interested in what goes on inside, if, for no other reason, than to see if the mechanisms therein can be <span style="text-decoration: line-through;">debauched</span> used for other purposes. Of course, if one ever does look inside of -smooth,<a target="_parent" href="dyidiffusion_eigen-thingys.shtml#sdfootnote2sym"><sup>2</sup></a> all the anisotropic smoothing bits, <a target="_parent" href="_structuretensors.shtml">-structuretensors</a>, <a target="_parent" href="_eigen2tensor.shtml">-eigen2tensor</a>, <a target="_parent" href="_eigen.shtml">-eigen</a> and -<a target="_parent" href="_diffusiontensors.shtml">diffusiontensors</a>, are there along with other shiny bits, and while every one of them is designed to work with -smooth, each can be used for other purposes.</p>
+<p>In this Cookbook Recipe, we'll harness -eigen2tensor to package up tensor fields for various shenanigans. In the usual course of events, -smooth acquires diffusion tensor fields from the anisotropic smoothing bits, but we can override that by providing our own tensor field on the command line. So long as our tensor field is well formed, -smooth will use it even though it may bear no relation to the image at hand. That could be an awful lot of fun.</p>
+<p>Here's what's on tap:</p>
+<ol>
+<li>
+<p><b><a target="_parent" href="dyidiffusion_graduated-blurs.shtml"><span class="internal">Graduated Blur</span></a>: </b>Apply a strong directional blur at the top of the image, leaving the bottom alone.</p>
+</li>
+<li>
+<p><a target="_parent" href="dyidiffusion_variations-on-a-theme.shtml"><span class="internal"><b>Variations On A Theme</b></span></a>: Generalizations on graduated blurs, plus some background.</p>
+</li>
+<li>
+<p><a target="_parent" href="dyidiffusion_eigenvalues-and-eigenvectors.shtml"><span class="internal"><b>EigenValues and EigenVectors</b></span></a>: Various theoretical bits about setting up home-brew tensor fields.</p>
+</li>
+<li>
+<p><a target="_parent" href="dyidiffusion_directional-blurring.shtml"><span class="internal"><b>Directional Blurring</b></span></a>: Swirls and curls</p>
+</li>
+<li>
+<p><a target="_parent" href="dyidiffusion_tensors-for-the-tonsorially-challenged.shtml"><span class="internal"><b>Tensors for the Tonsorially Challenged</b></span></a>: Grow your hair back. At least in some Digital Dream World.</p>
+</li>
+<li><strong><a target="_parent" href="dyidiffusion_fake-depth-of-field.shtml">Fake Depth of Field:</a></strong> Narrowing it in post production</li>
+<li>
+<p><a target="_parent" href="dyidiffusion_eigen-thingys.shtml"><span class="internal"><b>Eigen Thingys</b></span></a>: What G'MIC uses for eyeballs when it looks for edges, and what it does when it finds them. You may care to skip this section on the first or second read, or maybe forever. It does not go directly into the subject of home brew diffusion tensor fields. But, if you want to cook with insight and possess a basic understanding of linear algebra then budget some time for this. It goes into the <i>proper</i> use of diffusion tensors which we proceed to use improperly. But that's OK. David said we could. <i>Honest</i>.</p>
+</li>
+</ol>
+<table rules="all" style="border-color: #7f7f7f; border-width: 1px; background-color: #ffffff;" align="center" border="1" cellpadding="2">
+<tbody>
+<tr>
+<td style="color: #808080;">Nothing preceding</td>
+<td><a target="_parent" href="dyidiffusion_graduated-blurs.shtml"><span class="internal">Graduated Blur</span></a></td>
+</tr>
+</tbody>
+</table>
+
+
+
+   
+</body></html>

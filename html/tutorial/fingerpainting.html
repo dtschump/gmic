@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="tutorial.css">
+<script type="text/javascript" src="highslide/highslide.js"></script>
+<link rel="stylesheet" type="text/css" href="highslide/highslide.css" />
+<script type="text/javascript">
+hs.graphicsDir = 'highslide/graphics/';
+hs.wrapperClassName = 'wide-border';
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<body>
+
+
+      
+
+
+
+<h1 id="Fingerpainting">Fingerpainting</h1>
+<p><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/fingerpaint/init.png" title="Fingerpainting Rendering Team" class="img_block" style="margin: 3px; border: 0px solid #808080; float: left;" height="400" width="400" />At the head end of my life I took a painting class but remember very little of it, including the instructor's name, which saddens me. One quirk of his that has always stuck with me is the phrase: &ldquo;...the physicality of <i><span style="text-decoration: underline;">paint!</span></i>&rdquo;, which he would frequently urge upon us, because &ndash; at the bottom of it all &ndash; our still lives with apples or landscapes with pasturing sheep were not ultimately these, these &ndash; <i>representations</i> &ndash; but bits of oil paint on canvas, which cast shadows and had form and was &ndash; well, <i>physical</i>.</p>
+<p>At the time I thought it was an indisputable point but one of small moment, unaware of the passionate discussions that the &ldquo;physicality of <i><span style="text-decoration: underline;">paint!</span></i>&rdquo; had engendered in prior decades, a founding notion of <a target="_parent" href="http://en.wikipedia.org/wiki/Action_painting">Action Painting</a> and one that resonated deeply among the <a target="_parent" href="http://en.wikipedia.org/wiki/New_York_School_(art)">New York School</a>, a crowd I think that this worthy ran with in his younger days.</p>
+<p>For my part, I was content with the idea of representation. I was cognizant of bits of paper here and there, flecked with green and black pigments, which, to bank tellers, sufficiently represented monetary value to put cash into my checking account, so long as I could get my hands on some of the stuff. So I was not inclined to denigrate what various physicalities might represent. When I saw such bits of paper, the first thought electrifying my mind was &ldquo;<i><span style="text-decoration: underline;">Money!</span></i>&rdquo; and not an appreciation of printer's ink.</p>
+<p>And yet, small though the point may be, paint <i>is</i> there, sticking to canvas or some other ground, lumpy, with specular highlights and bumps that cast shadows. So this is a G'MIC tutorial celebrating that. It more-or-less re-renders an image as if it was more or less finger-painted, or painted with a broad brush. It's my tribute to this unremembered instructor and his physicality of <i><span style="text-decoration: underline;">paint!</span></i></p>
+<p>All that aside, we have three tasks:</p>
+<ol>
+<li>conjure out of an arbitrary image a pattern that might produce reasonable looking brush strokes.</li>
+<li>render the illusion of paint having been pushed by fingers or brushes along paths defined by these strokes, with concomitant tracings of bristles or fingerprints and ridging of paint pushed to either side.</li>
+<li>conjure up a decent enough lighting model so that our output image looks like it could be a photograph of a painting of our input image.</li>
+</ol>
+<p>That's the game. Here's our play:</p>
+<h1 id="PhysicalPaint">Physical Paint</h1>
+<p>The image of a finger or a brush pushing along paint immediately brings to mind <a target="_parent" href="_eigen2tensor.shtml#TensorFields">tensor fields</a>, produced by <a target="_parent" href="_diffusiontensors.shtml">-diffusiontensors</a>, which directs asymmetrical smoothing kernels in the <a target="_parent" href="_smooth.shtml">-smooth</a> command to diffuse noise parallel to detected edges &ndash; a quite serviceable brush stroke model. So, if you've blown onto this page from somewhere else, your first order of business is to spend some time with &ldquo;<a target="_parent" href="dyidiffusion.shtml"><i>Do Your Own </i></a><a target="_parent" href="dyidiffusion.shtml"><i>Diffusion Tensor Field</i></a>&rdquo; and introduce yourself to the anisotropic smoothing bits in G'MIC.</p>
+<p>The gist of it is this: if we can conjure up out of an image the edges around likely brush strokes, we can harness -diffusiontensors to estimate apt diffusion tensor fields, nominally designed to preserve those edges. If we compose the field with highly elliptic kernels, these can push noise into elongated paths, aping brush or finger strokes.</p>
+<p>The following script section sets out to simplify an image with a Gaussian blur, then quantizes the result into a small number of bins. These look like broad areas of constant color, which mark areas over which brush strokes or fingers might traverse. Or might not. We do some morphological simplification of the quantized bins to consolidate tight gradients.</p>
+<p>The contour lines delineating brush strokes are also useful in that they locate where ridges form as broad brushes or fingers plow through paint. That, in so many words, is our model of &ldquo;the physicality of <i><span style="text-decoration: underline;">paint!</span></i>&rdquo;. Here are the particulars.</p>
+<table rules="all" class="table table-striped" cols="2" border="0">
+<tbody>
+<tr>
+<td colspan="2"><tt>gmic -input \<br /> http://upload.wikimedia.org/wikipedia/commons/4/43/Ambersweet_oranges.jpg \<br /> -resize2dx[-1] 1024 \</tt></td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/fingerpaint/fpnt-000.png" title="fpnt-000.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="451" width="400" /></td>
+<td>
+<h3 id="ImageFetch">Image Fetch</h3>
+Some <a target="_parent" href="http://www.ars.usda.gov/is/graphics/photos/k3644-12.html">ambersweet oranges</a>, courtesy of the <a target="_parent" href="http://www.ars.usda.gov/main/main.htm">Agricultural Research Service,</a> US Department of Agriculture.<br /> We reduce the image to 1024x1155. Such rescaling has a bearing on the outcome, since anisotropic smoothing is scale-dependent. Roughly, apparent finger size increases inversely to image area. Conversely, apparent dexterity improves in direct proportion to image area.<br /> In brief, 'small pictures' == 'fat, clumsy fingers' and that's OK if that's what you want. If you want the appearance of smaller fingers/brushes, however, then start with large images.</td>
+</tr>
+<tr>
+<td colspan="2"><tt>lh='{h}' \<br /> --blur[-1] 0.35% \<br /> -quantize[-1] 10 \</tt></td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/fingerpaint/fpnt-001.png" title="fpnt-001.png" class="img_block" style="margin: 3px; border: 0px solid #808080; float: left;" height="451" width="400" /></td>
+<td>
+<h3 id="FingerStrokes">Find Finger Strokes</h3>
+We add a quantized version of the image to the stack.<br /> As the amount of blurring increases, strokes become broader and its resolving power declines. We model fatter fingers or broader brushes. Conversely, less blurring gives rise to more strokes produced by smaller fingers or brushes.<br /> We equate a quantized band of uniform color to a 'brush stroke'. With this particular image, we envision a good many circular strokes building up to the highlights of the oranges.</td>
+</tr>
+<tr>
+<td colspan="2"><tt>-gradient_norm[-1] \<br /> -threshold[-1] 40% \<br /> -dilate_circ[-1] 8 \<br /> -thinning[-1] \<br /> -dilate_circ[-1] 3 \</tt></td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/fingerpaint/fpnt-002.png" title="fpnt-002.png" class="img_block" style="margin: 3px; border: 0px solid #808080; float: left;" height="451" width="400" /></td>
+<td>
+<h3 id="GenerateAFingerStrokeMap">Generate a 'Finger Stroke Map'</h3>
+Gradient_norm and threshold elucidate the borders between quantized regions, making topographic contours, marking off regions of similar hue and luminance.<br /> Roughly, these correspond to finger paint strokes, but the analogy breaks down with tight gradients; fingers are impossibly small. To counter this, a 'threshold/dilation/thinning' cycle merges tightly spaced gradients, with thinning finding the center of these aggregates.<br /> A second dilation finalizes the stroked regions and their boundaries. However, the final geometry awaits anisotropic smoothing. To that end, we derive a diffusion tensor field. We invoke -diffusiontensors directly so that we may use the resulting diffusion tensor field again and again as well as modify it from time to time.</td>
+</tr>
+<tr>
+<td colspan="2"><tt>--diffusiontensors[-1] 0.1,0.85,0.3,8 \<br /> [-2,-1] \<br /> -resize2dy[-2,-1] '{$lh/2}',5 \<br /> -repeat 3 \<br /> -smooth[-2] [-1],400 \<br /> -done \<br /> -rm[-1] \<br /> -resize[-1] [-3],[-3],[-1],[-1],5,0 \<br /> -reverse[-2,-1] \</tt></td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/fingerpaint/fpnt-003.png" title="fpnt-003.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="451" width="400" /><br /> <img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/fingerpaint/fpnt-004.png" title="fpnt-004.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="451" width="400" /></td>
+<td>
+<h3 id="SmoothingFingerStrokes">Smoothing finger strokes</h3>
+We generate a diffusion tensor field and harness it to smooth the finger stroke map. The results establish where paint ridging occurs (light areas), with dark/black areas representing the strokes themselves. The intent of this smoothing step is to reduce many of the sharp turns which arise from the thinned contour map. Fingers or brushes rarely make sharp corners, particularly given the viscosity of real paint.<br /> Some areas do not break neatly down into strokes; these are murky gray areas. These turn into smear regions not unlike those made by fingers too fat to capture fine detail (but the attempt is made anyway).<br />We achieve quite violent smoothing through two means.<ol>
+<li>The parameters passed to -diffusiontensors are quite extreme, the high anisotropy value and low sharpness value favor highly directional smoothing.</li>
+<li>We also make reduced-size copies of the tensor field and finger stroke map before invoking the -smooth command. The action of the -smooth command is scale dependent and is much more pronounced at smaller scales, an effect we deliberately exploit.</li>
+</ol>The diffusion tensor field produced in this step directly or indirectly influences the character of brush strokes throughout the remainder of this script. Used to finally shape the finger stroke map, the same tensor field, modified, largely emulates the bristle brush pattern; in this manner, the orientation of the brush stroke and bristle patterns match because they are both developed from the same underlying tensor field.</td>
+</tr>
+<tr>
+<td colspan="2"><tt>-eigen[-1] \<br /> -split[-2] c \<br /> -fill_color[-3] 1 \<br /> -fill_color[-2] 0 \<br /> -append[-3,-2] c \<br /> -eigen2tensor[-2,-1] \</tt></td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/fingerpaint/fpnt-005.png" title="fpnt-005.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="451" width="400" /></td>
+<td>
+<h3 id="ModifyTheDiffusionTensorField">Modify the diffusion tensor field</h3>
+Readers of &ldquo;<a target="_parent" href="dyidiffusion.shtml"><i>Do Your Own Diffusion Tensor Field</i></a>&rdquo; will recall the breakdown of tensor fields into four gray scale images named <b>EigenOne</b>, <b>EigenTwo</b>, <b>Cosine</b> and <b>Sine.</b> Here, we break out <b>EigenOne</b> and <b>EigenTwo</b> and set them to one and zero across the entire field.<br /> These two modifications gives rise to extremely eccentric blurring kernels across the field which are, in turn, steered by the angles encoded in <b>Cosine</b> and <b>Sine.</b> It is through this diffusion tensor field, so modified, that we achive the effects of brush bristles or finger prints.<br /> Generally, <b>EigenOne</b> and<b> EigenTwo</b> together control the eccentricity of the diffusion kernels; by setting them to one and zero we'll garner extremely elliptic smoothing kernels and the effect is that of fine bristles. We could make these bristles bigger and coarser by reducing <b>EigenOne</b> somewhat and increasing <b>EigenTwo</b> by a like amount; the two values should still sum to one. Such modifications give rise to less eccentric (i. e. &ldquo;rounder&rdquo;) smoothing kernels and the effect will be akin to that of a brush with fewer, fatter bristles. Values of 0.7 for <b>EigenOne</b> and 0.3 for <b>EigenTwo</b> are about as far as one can go in this vein; bristles disappear at these settings and do not reappear until <b>EigenOne</b> is less than 0.3 and <b>EigenTwo </b>greater than 0.7. In this range, however the brush strokes are effectively rotated by 90&deg;, an interesting, if not entirely useful effect. This apparent rotation arises from the nominally &ldquo;long&rdquo; axis of the blurring kernel becoming the shorter of the two, while the &ldquo;short&rdquo; axis becomes longer.</td>
+</tr>
+<tr>
+<td colspan="2"><tt>98%,98%,1,1 -noise[-1] 16,2 \<br /> -resize[-1] [-2],[-2],[-1],[-1],0,0,0.5,0.5,0.5,0.5 \<br /> -to_rgb[-1] \-mul[-1] [-5] \<br /> -apply_channels[-1] \"-apply_curve 1,0,48,127,220,255,255\",12 \</tt></td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/fingerpaint/fpnt-006.png" title="fpnt-006.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="451" width="400" /></td>
+<td>
+<h3 id="EmulatingPaint">Emulating Paint</h3>
+We emulate paint using a dull under-color and over saturated, noise-derived over-color, which gives the appearance of brush bristles. The bristles stem from salt-and-pepper impulse noise multiplied by the original image. We could think of the results as brush bristles frozen in time.<br /> To unfreeze time, we smooth these bristles with the modified diffusion tensor field from the previous step. Since that field is composed entirely of highly eccentric blurring kernels, these &ldquo;bristles&rdquo; will diffuse along lines in accordance to the angles encoded in the <b>Cosine</b> and <b>Sine</b> fields. Since these derive from the &ldquo;Finger Stoke Map,&rdquo; the bristles will extrude along paths nicely parallel to the edges in the stroke map.</td>
+</tr>
+<tr>
+<td colspan="2"><tt>--apply_channels[-5] \"-mul 0.6,12\"\<br /> -apply_channels[-1] \"-mul 0.85\",7 \</tt></td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/fingerpaint/fpnt-007.png" title="fpnt-007.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="451" width="400" /></td>
+<td>
+<p class="western">For the under-color, we desaturate and darken the original image and smooth it with the same diffusion tensor field we applied to the &ldquo;bristles&rdquo; image in the previous frame.</p>
+</td>
+</tr>
+<tr>
+<td colspan="2"><tt>-repeat 3 \<br /> &nbsp;&nbsp;-smooth[-2,-1] [-3],300 \<br /> -done \</tt></td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/fingerpaint/fpnt-008.png" title="fpnt-008.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="451" width="400" /><br /> <img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/fingerpaint/fpnt-009.png" title="fpnt-009.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="451" width="400" /></td>
+<td>
+<h3 id="OverAndUnderColors">Over and Under Colors</h3>
+Smoothed, the over and under color images constitute the color component of the finger painting, endowed now with images of bristles (over color) and ground (under-color).<br /> We have yet to introduce bumpiness, a sense that this color field is a surface with an irregular height that is lit in some fashion. To that end, we proceed to the lighting model.</td>
+</tr>
+</tbody>
+</table>
+<h1 id="Lighting">Lighting</h1>
+<p>Gradients &ndash; images which register intensity changes of other images &ndash; naturally lend themselves to lighting approximations. We use a pretty unsophisticated model here; its virtue is that it is quick to compute. We light our surfaces by choosing a direction from which we imagine light to be streaming from &ndash; the <i>azimuth</i> &ndash; and then take the <a target="_parent" href="_orientation.shtml#DotProductsKeyColor">dot product</a> between this unit vector and the elements of a <i>direction field,</i> which we construct from the results of the <a target="_parent" href="_gradient.shtml">-gradient</a> command.</p>
+<p>This model is too simple to accommodate the elevation of the light ray, but still it is sufficiently robust to ape incident light rays streaming in at the desired angle and an elevation which could be 45&deg; (we don't press this notion too much). Dotting the azimuth and the direction field results in a gray scale image that ranges from negative to positive one, so long as every vector is normalized first.</p>
+<p>Direction fields follow directly from the <a target="_parent" href="_gradient.shtml">-gradient</a> command, which calculates changes in intensities along width, height and depth axes and produces single channel datasets for each. With <a target="_parent" href="http://gmic.eu/reference.shtml#append">-append</a>, one may fold such datasets into the channels of a combined object which becomes the direction field; it is a set of vectors which indicates the local magnitude and direction of <i>changing</i> intensity. Technically, the command estimates the first partial derivative of the change of intensity along each principle image axis.</p>
+<p><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/fingerpaint/init_002.png" title="init_002.png" class="img_block" style="float: left; margin: 3px; border: 0px solid #808080;" height="250" width="500" /></p>
+<p>For surface lighting, we are just interested in the intensity changes along the width and height axes. To emulate light streaming in from a particular azimuth, we take the dot product of that direction with each element of the direction field. This produces a single channel scalar field where the most positive values (white) suggest surfaces traverse to the incoming &ldquo;light rays&rdquo; and sloping into them. The most negative values (black) are traverse but slope away. Intermediary shades of gray suggest surface orientations in between these extremes.</p>
+<p>Though this scheme, we &ldquo;light&rdquo; our painted surface. The diagram illustrates the case for light streaming in from an azimuth of 225&deg;. Here, the local coordinate system is left-handed: the positive <i>y</i> axis points down, positive <i>x</i> axis points right, the <i>z</i> axis points toward the reader and positive angular rotations are clockwise. This arrangement lights southeast facing surfaces most strongly, with northwest faces in the greatest darkness.</p>
+<p>In the following, we first construct an elevation map &ndash; our guesstimates of how high paint rests off the surface. For us, this is mostly the Finger Stroke Map we constructed in the first steps. To this we add a slight bump from the bristles, the over-color image that we generated later. This reflects our presumptions that the paint pushed to one side by fingers or brushes rises the highest, but that bristles perturb the surface as well. This may not be the most comprehensive reasoning, but it serves us enough and is easy to compute.</p>
+<p>With an elevation map, we can now harness our primitive lighting model. Observe that it is so primitive that the concepts of light and shadow are more or less identical; reversing a sign gets us from one to the other. With this in mind, the following script computes both light and shadow from the same azimuth of 45&deg;, hard-coded here, but subject to control by a slider widget, should ever we lift ourselves to the heights of actually writing a <a target="_parent" href="#GimpGMICExperimentalFingerpaintFilter">gimp-g'mic filter</a>. Anything is possible, we suppose.</p>
+<p>We generally proceed by dotting the direction field and the azimuth to get a lighting/shadow product, which we <a target="_parent" href="http://gmic.eu/reference.shtml#cut">boundary-limit</a> from the image average to the maximum. This shifts the display of the image average from gray to black, the surviving positive intensities representing &ldquo;light&rdquo; (or &ldquo;shadow&rdquo;) that reflects from surfaces sloping into the ray. For highlights and shadows, we colorize the lighting/shadow product against the original image, taking the negative of this result for shadows, which also complements the colors. We keep the specular white, which is an exponentially scaled version of the highlight.</p>
+<p>We harness the <a target="_parent" href="http://gmic.eu/reference.shtml#blend">-blend</a> command to merge these separate layers into a common whole, a credibly faked finger painting, or so we suppose. We multiply the shadows, screen the highlights and add the specular, normalizing the whole to the range of 0 to 255 so that the downstream eight-bit paint programs don't choke too badly over our peculiar confections.</p>
+<p>Particulars follow.</p>
+<table rules="all" class="table table-striped" cols="2" border="0">
+<tbody>
+<tr>
+<td colspan="2"><tt>--luminance[-2] \<br /> -normalize[-1] 0,0.7 \<br /> --normalize[-5] 0,1 \<br /> -add[-2,-1] \<br /> -normalize[-1] 0,1 \</tt></td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/fingerpaint/fpnt-010.png" title="fpnt-010.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="451" width="400" /></td>
+<td>
+<h3 id="GenerateElevattionMap">Generate Elevation Map</h3>
+The first bit of information our lighting model needs is an elevation map, literally an image that indicates how high a point is from some &ldquo;ground zero.&rdquo; Not only does this give our model high and low points, but slopes from one to another elevation.<br /> Here, lighter values indicate higher elevations with zero intensity representing the minimum, &ldquo;ground zero&rdquo; baseline elevation.<br /> We construct our height map from two sources, the image of stroke edges from which we generated our diffusion tensor field, at position 5 from the end of the image list, and the smoothed &ldquo;bristles&rdquo; over-color image we generated in the previous step, at position 2 from the end of the image list. We make a luminance only version of the bristles and also scale it down by 70% with respect to the stroke edges. The final elevation map is the sum of these two sources, normalized to the range of zero to one.<br />
+<p>This image represents the height of our paint from the surface of the ground. Ridges made by fingers or brushes plowing through paint are generally higher (lighter) than the bristles.</p>
+</td>
+</tr>
+<tr>
+<td colspan="2"><tt>-gradient[-1] \<br /> -append[-2,-1] c \</tt></td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/fingerpaint/fpnt-011.png" title="fprnt-011.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="451" width="400" /></td>
+<td>
+<h3 id="GenerateDirectionField">Generate Direction Field</h3>
+The <a target="_parent" href="_gradient.shtml">-gradient</a> command measures the <i>change</i> of intensity along principle axes, width (<i>x</i>), height (<i>y</i>) and depth (<i>z</i>); these approximate the partial derivatives of the surface height along each of the principle directions. For our purposes, we only need the width and height axes, the command's default output. It delivers two single channel datasets to the image list, the penultimate measuring rates of change along the width axis, the last measuring rates of change along th height axis.<br /> We append these single channel datasets along the spectral access to make a single object, the <i>direction field.</i> Each pixel in this field represents a vector expressing the steepness and direction of slope or gradient &ldquo;observed&rdquo; at the corresponding pixel in the elevation map. For our purposes, these are the slopes which incident light rays reflect from.</td>
+</tr>
+<tr>
+<td colspan="2"><tt>\('{cos(-135*pi/180)}'^'{sin(-135*pi/180)}'\) \ -resize[-1] [-2],[-2],[-1],[-1],1 \<br /> --mul[-2,-1] \<br /> -compose_channels[-1] add \<br /> -cut[-1] '{ia}','{iM}' \<br /> -normalize[-1] 0,1 \</tt></td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/fingerpaint/fpnt-012.png" title="fprnt-012.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="451" width="400" /></td>
+<td>
+<h3 id="DotProduct">Shadow Dot Product</h3>
+Up to now, we have been making remarks on surface lighting, which also includes shadowing as well.<br /> It should not come as too big a surprise to readers that shadows arise from very much the same mechanism: dot products on direction fields. In this sense, it might help to think of shadows as &ldquo;negative light.&rdquo;<br />In the left hand coordinate system common for computer graphics, the origin coincides with the upper left hand corner. The positive x axis points to the right, the positive y axis points down and positive angular rotations are clockwise. In this example, we have chosen that incoming light streams in at 45&deg; at -135&deg;(225&deg;) Our first dot product, then is with a unit vector oriented at -135&deg; dotted with each vector in the direction field. We form this dot product in three phases:<br /><ol>
+<li>forming a single pixel image containing the vector components of the &ldquo;shadow ray.&rdquo;</li>
+<li>Resizing this image to match the dimensions of the direction field, forming a constant &ldquo;unit vector field.&rdquo;</li>
+<li>Multiplying the direction and unit vector fields, then adding the channel elements together, forming pixel-wise dot products. The lightest values coincides with slopes at right angles to the &ldquo;shadow ray&rdquo;</li>
+</ol>The shadow dot product, depicted on the left, is initially a negative image of the shadows. We perform a <a target="_parent" href="http://gmic.eu/reference.shtml#cut">-cut</a> to isolate the range of shadow values and normalize this range to the interval [0, &hellip; 1].</td>
+</tr>
+<tr>
+<td colspan="2"><tt>-to_rgb[-1] \<br /> -mul[-1] [-9] \<br /> -negative[-1] \<br /> -normalize[-1] 0,255 \</tt></td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/fingerpaint/fpnt-014.png" title="fprnt-014.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="451" width="400" /></td>
+<td>
+<h3 id="ShadowMultiplier">Shadow Multiplier</h3>
+It is an old painterly trick to make shadows with complementary color; and that is the case here. Our ultimate aim is to make an image we can multiply with the emulated paint image. This entails multiplying our shadow dot product with the original image to pick up the color of the shadow regions, but in the direct sense. The multiplication complete, we then make a negative of the product, coloring the shadows in the complementary sense and setting the values so that shadows are dark instead of light.</td>
+</tr>
+<tr>
+<td colspan="2"><tt>-blend[-5,-4] add \<br /> -blend[-4,-1] multiply,0.6 \</tt></td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/fingerpaint/fpnt-015.png" title="fprnt-015.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="451" width="400" /></td>
+<td>
+<h3 id="CompositeShadows">Composite Shadows</h3>
+In these last three steps, we repeatedly form dot products for highlights and specular glints, then blend them with the color image.<br /> The image on the right is the initial set of blends: the over- and -under colors, then the shadow dot product. This gives an credible, but incomplete sense of a finger painting. In the next step, we composite in highlights and specular components.</td>
+</tr>
+<tr>
+<td colspan="2"><tt>-fill_color[-1] '{cos(45*pi/180)}','{sin(45*pi/180)}' \<br /> --mul[-2,-1] \<br /> -compose_channels[-1] add \<br /> -cut[-1] '{ia}','{iM}' \<br /> -normalize[-1] 0,1 \<br /> -to_rgb[-1] --mul[-8,-1] \<br /> -normalize[-1] 0,255 \<br /> -blend[-5,-1] screen,0.6 \</tt></td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/fingerpaint/fpnt-016.png" title="fpnt-016.png" style="margin: 3px; border: 0px solid #808080;" height="451" width="400" /></td>
+<td>
+<h3 id="CompositeHighlighrs">Composite Highlights</h3>
+The process of generating highlights is procedurally the same as shadows; we choose a &ldquo;light ray&rdquo; direction of 45&deg;, the exact opposite direction of the shadow ray, and we do not make a negative of the product.</td>
+</tr>
+<tr>
+<td colspan="2"><tt>-normalize[-1] -4,0 \<br /> -exp[-1] \<br /> -normalize[-1] 0,255 \<br /> -blend[-4,-1] screen,0.5 \</tt></td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/fingerpaint/fpnt-017.png" title="fpnt-017.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="451" width="400" /></td>
+<td>
+<h3 id="CompositeSpecular">Composite Specular</h3>
+The specular glints are just the uncolored highlight dot product reused, distorted exponentially. We normalize the highlight dot product from a large negative value to zero, then raise Euler's Number, <i>e</i>, by elements of this field, obtaining scalars that cluster more closely to zero as we drive the lower normalization boundary more negative. In a rougher parlance, &ldquo;more negative&rdquo; means &ldquo;wetter, shinier&rdquo; speculars.</td>
+</tr>
+</tbody>
+</table>
+<p><em>Code in this tutorial has been implemented as a Gimp-GMIC Filter. See <a target="_parent" href="the-fingerpainting-filter.shtml">The Fingerpaint Filter</a>.<br /></em></p>
+<p><em>Garry Osgood</em></p>
+
+
+
+   
+</body></html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="tutorial.css">
+<script type="text/javascript" src="highslide/highslide.js"></script>
+<link rel="stylesheet" type="text/css" href="highslide/highslide.css" />
+<script type="text/javascript">
+hs.graphicsDir = 'highslide/graphics/';
+hs.wrapperClassName = 'wide-border';
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<body>
+
+
+      
+
+
+
+<h1>Resizing</h1>
+<p>Resizing tiny images can give rise to any number of non-linear ramps. The general idea is to <a target="_parent" href="_input.shtml">-input</a> a tiny image specification and then scale it using a high quality interpolation method. See -input for the notational details of specifying tiny images and also <a target="_parent" href="http://gmic.eu/reference.shtml#resize2dx">-resize2dx</a> for getting high quality interpolation methods.</p>
+<table rules="all" class="table table-striped" border="1" cellpadding="2" align="center">
+<tbody>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/ramps/ramprr.png" title="Nine Blurry Pixels" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="256" width="256" /></td>
+<td><code>#Set a 3x3 matrix of colored squares; \<br />#resize to 256 with cubic interpolation \<br />gmic '(136,239,246;'\<br />'34,198,239;'\<br />'34,34,136^'\<br />'234,225,242;'\<br />'154,20,225;'\<br />'154,154,234^'\<br />'8,0,173;'\<br />'59,57,0;'\<br />'148,59,8'\<br />')' -resize2dx 256,5</code></td>
+</tr>
+</tbody>
+</table>
+<p></p>
+<table rules="all" style="border-color: #7f7f7f; border-width: 1px; background-color: #ffffff;" border="1" cellpadding="2" align="center">
+<tbody>
+<tr>
+<td><a target="_parent" href="ramps_blurring.shtml">Blurring</a></td>
+<td><a target="_parent" href="ramps_general-ramps.shtml">General Ramps</a></td>
+</tr>
+</tbody>
+</table>
+
+
+
+   
+</body></html>

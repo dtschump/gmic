@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="tutorial.css">
+<script type="text/javascript" src="highslide/highslide.js"></script>
+<link rel="stylesheet" type="text/css" href="highslide/highslide.css" />
+<script type="text/javascript">
+hs.graphicsDir = 'highslide/graphics/';
+hs.wrapperClassName = 'wide-border';
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<body>
+
+
+      
+
+
+
+<h1 id="TheSpectralDomain">The Spectral Domain</h1>
+<p>All of this would be nothing more than a curio if it was not for the providential organization of the spectral domain. As it goes with points in the spatial counterpart, the placement of coefficients matter and a great many signal processing techniques which emerged in the late nineteenth and twentieth centuries owe their operations to the felicitous placement of coefficients.</p>
+<p>For us, for now, the spectral domain is just another drawing surface. How we draw on it will differ from our accustomed wonts &ndash; instead of marking the spatial domain, we set coefficients, which, in the synthesis transform, mutate into waveforms. These waveforms have no locality, but extend out to the limits of space and any local qualities of color or luminosity arise primarily from how waves might build upon each other here, but destroy each other there, which &ndash; if we aptly &ldquo;tune&rdquo; each and every wave &ndash; will converge upon something like cheese and antipasto.</p>
+<p>Made with care, these images can be enchantingly beautiful. But the manner of drawing them will run counter to our common sense, that practical-minded veil which oft-times stops us just one step shy of beauty. We will need to proceed with care. Wear a good pair of shoes, have a trusty dog, a true compass, and &ndash; above all &ndash; a map.</p>
+<h2 id="AMapOfTheSpectralDomain">A Map of the Spectral Domain</h2>
+<p>The G'MIC pipeline:</p>
+<p><tt>gmic whatever_picture_you_like.png -fft</tt></p>
+<p>runs a Discrete Fourier Analysis on <tt>&gt;whatever_picture_you_like.png</tt>. FFT is an acronym for the <a target="_parent" href="http://en.wikipedia.org/wiki/Fast_Fourier_transform">Fast Fourier Transform</a>. It and its sibling, the Inverse Fast Fourier Transform (<tt>-ifft</tt>) implement the Discrete Fourier Analysis and Synthesis processes.</p>
+<p>Here's what we get when we run the <tt>-fft</tt> analyzer over our cheese and antipasto:</p>
+<table rules="all" class="table table-stripped" style="border-color: #808080; border-width: 0px;" border="0">
+<tbody>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/spectral/spa-11.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="400" width="400" /></td>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/spectral/spa-12.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="400" width="400" /></td>
+</tr>
+<tr>
+<td>
+<p><i>Cheese and antipasto in the spectral domain, coefficient real components</i></p>
+</td>
+<td><i>Cheese and antipasto in the spectral domain, coefficient imaginary components</i></td>
+</tr>
+</tbody>
+</table>
+<p>Well, <i>ehm</i>. That's exciting, perhaps, isn't it?</p>
+<p>Ah, it is good that a nice lot of you has gone glassy-eyed and cleared the hall. Space to breathe again, and I don't have to shout up to God's Country, because the galleries &ndash; yes, indeed, all of them &ndash; are empty and the dress circle has gone off to dress, I suppose. Just you and me, pal &ndash; you in the cheap seats too near the orchestra. Don't nod off on me, now.</p>
+<p>Truth be told, I did more than run <tt>-fft</tt> by itself &ndash; which would have been even more of a crashing bore &ndash; in all I did:</p>
+<p><tt>$ gmic -input cheese_antipasto.png -fft <b style="color: #800000;">-abs -add 1 -log -normalize 0,255</b> -output[-2] spec-real.png -output[-1] spec-imag.png</tt></p>
+<p>This because the dynamic range of spectral coefficients for this particular morsel of cheese is on the order of 1 &times; 10<sup>12</sup>. So, to see anything at all, the data were forced positive (<tt>-abs</tt>), logarithmically compressed and normalized (<tt>-add 1 -log -normalize 0,255</tt>)<a target="_parent" class="sdendnoteanc" name="sdendnote1anc" href="#sdendnote1sym"></a><sup>i</sup>.</p>
+<table style="border-color: #7f7f7f; border-width: 1px; background-color: #ffffff;" rules="all" align="center" border="1" cellpadding="2">
+<tbody>
+<tr>
+<td><a target="_parent" href="spectral-art_the-spectral-course.shtml">The Spectral Course</a></td>
+<td><a target="_parent" href="spectral-art_the-complex-number-field.shtml">Complex Number Fields</a></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<div id="sdendnote1">
+<p><sup>i</sup>G'MIC's <tt>-display_fft</tt> does all of this in one fell swoop and centers the most interesting part of the spectral domain. However, this is how <tt>-fft</tt> actually organizes the spectral domain, with the origin in the top left, and some aspects of the organization of that domain are clearer in this native setting, as we will see presently.</p>
+</div>
+
+
+
+   
+</body></html>

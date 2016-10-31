@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="tutorial.css">
+<script type="text/javascript" src="highslide/highslide.js"></script>
+<link rel="stylesheet" type="text/css" href="highslide/highslide.css" />
+<script type="text/javascript">
+hs.graphicsDir = 'highslide/graphics/';
+hs.wrapperClassName = 'wide-border';
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<body>
+
+
+      
+
+
+
+<h2><a target="_parent" name="1.1.Graduated Blurs|outline"></a> Graduated Blurs</h2>
+<p><img title="gmic squiggle.png 100%,100%,1,1,'h-y' -normalize[-1] 0,1 [-1] '(0^1)' -resize[-1] [-4],[-4],[-1],[-1],1 -split[-1] c -append[-4,-3] c -append[-2,-1] c -eigen2tensor[-2,-1] -repeat 3 -smooth[-2] [-1],300 -done -rm[-1] -normalize[-1] 0,255 -d -o[-1] squiggle_goodblur.png" src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/dyidiffusion/init-00.png" class="img_block" style="float: left; margin: 3px; border: 0px solid #808080;" height="300" width="300" />We want to blur an image gradually from bottom to top.</p>
+<p>The quick and cheesy way entails a pristine image, its blurred counterpart and a mask that splices the two together in a compositing operation. This is the kind of &ldquo;graduated blur&rdquo; that new Gimp or Photoshop users get when they use a heavily feathered (i.e., blurred) selection mask, with the hope that the mask will gradually &ldquo;strengthen&rdquo; the blur from the unselected to selected regions.</p>
+<p>Nothing of the sort happens. Instead, the paint program takes the fully blurred "A" and the pristine "B" and does the classic Porter and Duff A over B compositing operation through the selection. Examine the results and&nbsp; find the sharp edges of the original somewhat masked by its fully blurred counterpart. There is no &ldquo;graduated blur&rdquo;, just A over B. Cheesy.</p>
+<p><a target="_parent" href="http://www.imagemagick.org/">ImageMagick</a> has a far better transitional blur in its compositing engine (-<code>compose blur ... -composite</code>). The channels of an RGB control mask dynamically shape a convolution kernel<a target="_parent" href="dyidiffusion_eigen-thingys.shtml#sdfootnote3sym"><sup>3</sup></a>. Ramp-like masks can &ldquo;grow&rdquo; the kernel dynamically, pixel-by-pixel, for very high quality transitions. It can make enchantingly beautiful effects but is slow, as is anything that reshapes convolution kernels on the fly.</p>
+<p>For G'MIC, <a target="_parent" href="_smooth.shtml">-smooth</a> furnishes a similar service. Here, a tensor field takes the role of ImageMagick's control mask. This facet of the -smooth command is often overlooked, given its strong association with anisotropic smoothing. One might be inclined to think that anisotropic smoothing is &ldquo;all&rdquo; that -smooth does. In fact it is a general purpose blurring engine which can shape a kernel on the fly, given the pixel-by-pixel instructions furnished by a tensor field. The key to this very general and very accommodating engine entails giving -smooth a separately prepared tensor field, which it accepts by way of a command line image selector.</p>
+<p>Our game, then, is to prepare a tensor field. That task boils down to using <a target="_parent" href="_eigen2tensor.shtml">-eigen2tensor</a>, which converts pairs of two channel images into tensor fields. These associate a pair of vectors with each operand pixel; these vectors then direct the size, eccentricity and orientation of a blurring kernel in the locale of the operating pixel.</p>
+<p>The care and feeding of -eigen2tensor entails preparing four gray scale control images by various and sundry means. We call them <b>EigenOne</b>, <b>EigenTwo</b>, <b>Cosine</b> and <b>Sine</b>. Don't worry too much about these names. They're labels for now, nothing more. We pairwise <a target="_parent" href="http://gmic.eu/reference.shtml#append">-append</a> these grayscale images together to make the input -eigen2tensor requires.</p>
+<p>Here's the nuts-and-bolts of a graduated blur using -smooth and tensor fields.</p>
+<table style="border-color: #808080; border-width: 1px; border-style: solid;" rules="all" class="table table-striped" border="1">
+<tbody>
+<tr>
+<td colspan="2">
+<p><tt>gmic <a target="_parent" href="_input.shtml">-input</a> <br /> http://upload.wikimedia.org/wikipedia/commons/thumb/ <br /> 4/42/011_Haarlem%2C_Netherlands_-_Kleine_Houtstraat.jpg/ <br /> 800px-011_Haarlem%2C_Netherlands_-_Kleine_Houtstraat.jpg \ <br /> <a target="_parent" href="http://gmic.eu/reference.shtml#resize2dx">-resize2dx</a>[-1] 50% \</tt></p>
+</td>
+</tr>
+<tr>
+<td width="256"><p><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/dyidiffusion/dyid-00.png" title="Kleine Houtstraat, Haarlem, Netherlands" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="283" width="400" /></p>
+</td>
+<td><a target="_parent" href="http://www.openstreetmap.org/way/7402230">Kleine Houtstraat</a> in Haarlem, Netherlands by <a target="_parent" href="http://commons.wikimedia.org/wiki/User:Tupungato">Marek Ślusarczyk,</a> <a target="_parent" href="http://commons.wikimedia.org/wiki/Main_Page">Wikimedia Commons.</a> Nothing much in the opening bit. We used <a target="_parent" href="_input.shtml">-input</a> to grab a nice image out of Wikimedia Commons and we reduce it by fifty percent. This is our operand image.</td>
+</tr>
+<tr>
+<td colspan="2"><tt> 100%,100%,1,1,'h-y' \<br /> -normalize[-1] 0,1 \<br /> '(0^0^1)' \<br /> -resize[-1] [-3],[-3],[-1],[-1],1 \<br /> -split[-1] c \</tt></td>
+</tr>
+<tr>
+<td width="256"><p><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/dyidiffusion/dyid-01.png" title="dyid-01.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="142" width="400" /></p>
+<p><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/dyidiffusion/dyid-02.png" title="dyid-02.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="142" width="400" /></p>
+<p><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/dyidiffusion/dyid-03.png" title="dyid-03.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="142" width="200" /></p>
+</td>
+<td>
+<p>We <a target="_parent" href="conjuring-images.shtml">conjure from the aether</a>:</p>
+<ol>
+<li><b>EigenOne</b>, a ramp normalized to run from 1 to zero</li>
+<li><b>EigenTwo</b>, a constant value image, set to zero</li>
+<li><b>Cosine</b>, a constant value image, set to zero</li>
+<li><b>Sine</b>, a constant value image, set to one</li>
+</ol>
+<p><code>'(0^0^1)'</code> may look mysterious to some of you. It conjures out of the aether a one pixel by one pixel image with three channels. We resize these to match the input image dimensions and then split them apart to make items 2.&ndash; 4. See <a target="_parent" href="_input.shtml"></a>"<a target="_parent" href="_input.shtml">Image Streams</a>", a part of the -input command.</p>
+</td>
+</tr>
+<tr>
+<td colspan="2">
+<p><tt>-append[-4,-3] c \ <br /> -append[-2,-1] c \</tt></p>
+</td>
+</tr>
+<tr>
+<td width="256"><p><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/dyidiffusion/dyid-04.png" title="dyid-04.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="142" width="400" /></p>
+<p><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/dyidiffusion/dyid-05.png" title="dyid-05.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="142" width="200" /></p>
+</td>
+<td>We append together <b>EigenOne</b> and <b>EigenTwo</b> along the channel dimension; ditto <b>Cosine</b> and <b>Sine</b>. This gives us two datasets, each with a pair of channels. The first dataset, which -display renders in red, contains vector lengths. The lengths are zero or nearly so at the bottom, but grow toward one at the top. The second dataset, which -display renders in green, contains normalized directions. The second data set associates a constant direction, pointing straight up, to each pixel, hence the uniform color.</td>
+</tr>
+<tr>
+<td colspan="2">
+<p><tt>-eigen2tensor[-2,-1] \</tt></p>
+</td>
+</tr>
+<tr>
+<td width="256"><p><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/dyidiffusion/dyid-06.png" title="dyid-06.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="142" width="400" /></p>
+</td>
+<td>With <a target="_parent" href="_eigen2tensor.shtml">-eigen2tensor.</a> we make a tensor field from the magnitude and direction datasets. These tell -smooth how to blur pixel-by-pixel. Don't let the name 'tensor field' alarm you; it's just a name, same as any other. Nor 'eigen.' It's German. <a target="_parent" href="https://www.google.com/search?q=eigen&amp;ie=utf-8&amp;oe=utf-8&amp;aq=t">Google it</a>.</td>
+</tr>
+<tr>
+<td colspan="2">
+<p><tt>-repeat 3 -smooth[-2] [-1],50 -done \<br /> -rm[-1]</tt></p>
+</td>
+</tr>
+<tr>
+<td width="256"><p><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/dyidiffusion/dyid-07.png" title="dyid-07.png" height="283" width="400" /></p>
+</td>
+<td>We kick off three passes of -smooth and delete the tensor field. We're done.<br /> Here's a bit what -smooth did. The tensor field instructs -smooth how to blur the input pixels on a pixel-by-pixel basis. For each pixel in the street image, there's a corresponding tensor telling -smooth how much to blur the pixel and in what direction. In this case, you can probably intuit the overall nature of these instructions. The ramp we started out with set up a tensor field so that pixels near the bottom got blurred vertically, but by only a little bit, while pixels on top got blurred a lot.</td>
+</tr>
+</tbody>
+</table>
+<p>OK. Graduated blur. Nothing special. But the important takeaway is this: We Decoupled Smooth From Anisotropic Smoothing. If you remember nothing else about this Recipe, let it be this:</p>
+<p style="font-size: x-large; text-align: center;"><em>-smooth is a general purpose, pixel-by-pixel smoothing tool.</em></p>
+<p>Sleep on that. Meditate. It's aim is similar to ImageMagick's blur compositor. Both custom smooth each and every pixel and <i>you</i> can vary that across the lot. That is very, very powerful. It is a <em>graduated</em> blur arising from a dynamically shaped convolution kernel. You can <a target="_parent" href="dyidiffusion_fake-depth-of-field.shtml">fake depth-of-field</a>, <a target="_parent" href="dyidiffusion_tensors-for-the-tonsorially-challenged.shtml">Grow hair</a> &mdash; go for weeks experimenting with it. Maybe even months. Or years. Lifetimes, even.</p>
+<p>The key to mastering G'MIC's version is learning how to set up four gray scale images: <b>EigenOne</b>, <b>EigenTwo</b>, <b>Cosine</b>, <b>Sine</b>. -eigen2tensor does the grunt work of making them into tensor fields. You can put almost anything you want in those gray scale images. Really. David says it's OK. Just keep <b>EigenOne</b>, <b>EigenTwo</b> and <strong>Sine</strong> normalized between zero and one, and <b>Cosine</b> between negative and positive one&nbsp;&mdash; the trig functions' ranges between [0,&hellip;&pi;]. Otherwise -smooth runs all night and the better part of the next day. You don't want that.</p>
+<table rules="all" style="border-color: #7f7f7f; border-width: 1px; background-color: #ffffff;" align="center" border="1" cellpadding="2">
+<tbody>
+<tr>
+<td><a target="_parent" href="dyidiffusion.shtml"><span class="internal"><span class="internal">Do Your Own D.T.F. </span></span></a></td>
+<td><a target="_parent" href="dyidiffusion_variations-on-a-theme.shtml"><span class="internal"><span class="internal">Variations on a Theme</span></span></a></td>
+</tr>
+</tbody>
+</table>
+
+
+
+   
+</body></html>

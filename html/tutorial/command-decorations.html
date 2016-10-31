@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="tutorial.css">
+<script type="text/javascript" src="highslide/highslide.js"></script>
+<link rel="stylesheet" type="text/css" href="highslide/highslide.css" />
+<script type="text/javascript">
+hs.graphicsDir = 'highslide/graphics/';
+hs.wrapperClassName = 'wide-border';
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<body>
+
+
+      
+
+
+
+<h1><img class="img_left" src="http://www.particularart.com/static/media/uploads/select.png" style="margin: 3px; float: left;" title="Command Selections" width="400" height="300" />Command Decorations</h1>
+<p>By default, commands operate on <em>all </em>images in the stack. Often that is not what we want.</p>
+<p>The image list can, and often will, contain many items. As we <a target="_parent" href="_input.shtml">-input</a> or otherwise <a target="_parent" href="conjuring-images.shtml" title="Conjuring Images and Other Generators">conjure images</a>, the interpreter places them in sequence, assigning indices to them starting from zero as it goes along.</p>
+<p>Non-negative indices designate images with respect to the beginning of the stack. That is, 0, 1, 3 designate the first, second and fourth image.</p>
+<p>Negative indices designate images with respect to the end of the stack, i. e., -1, -2, -3 designate the last, penultimate and third from the last image. In a stack of four images, both -1 and 3 designate the same image, the last one in the stack. -4 and 0 designate the first image.</p>
+<h2 id="image_selection">Image Selection</h2>
+<p>G'MIC allows us to decorate commands on their right hand sides with <em>selections</em> that restrict the scope of a command to a subset of items in the image list. Square brackets immediately to the right of the command, with no separating white space, may contain collections of image selecting indices. Thus, the pipeline:</p>
+<p><code>-noise[0] 0.5,2 -blur[2] 10 -diffusiontensors[-1] 0,1,0.7,2.3</code></p>
+<p>applies noise only to just the first image on the stack, then blurs just the third and generates <a target="_parent" href="_diffusiontensors.shtml">diffusion tensors</a> from the last.</p>
+<p>This illustration notwithstanding, selection notation is extensive. Selection syntax has expressions for selecting single or multiple images, ranges of images, every other, every third, or, generally, every <em>n</em>-th image, relative to the beginning or end of the stack, relative to the size of the overall stack, through named collections, and all images <em>except</em> the ones designated by a selection. It is easy (and probably inevitable) to select images which are not on the stack, an error.</p>
+<p>Here are the ways to restrict to selected images the action of some fictive command called '-foo':</p>
+<table class="table-striped" id="selection-decorators" align="center" border="0" cellpadding="2" cellspacing="0">
+<tbody>
+<tr><th>Type</th><th>Template</th><th>Description</th></tr>
+<tr>
+<td><strong>Everything</strong></td>
+<td>-foo</td>
+<td>Operates on every image on the stack.</td>
+</tr>
+<tr>
+<td><strong>Left Single</strong></td>
+<td>-foo[n]</td>
+<td>Operates on image n+1, counting from the beginning of the stack. [0] is a common idiom demarking the first image on the stack. Example: -foo[3] operates on the fourth image on the stack.</td>
+</tr>
+<tr>
+<td><strong>Right Single</strong></td>
+<td>-foo[-n]</td>
+<td>Operates on image -n, counting from the end of the stack. [-1] is a common idiom demarking the last image on the stack. Example: -foo[-2] operates on the penultimate image in the stack.</td>
+</tr>
+<tr>
+<td><strong>Enumerated</strong></td>
+<td>-foo[a,-b,...z]</td>
+<td>Comma separated indices. Operates on specific images. Indices may have negative signs; these are counted from the end of the stack. Example: -foo[0,2,-1] operates on the first, third and last image on the stack.</td>
+</tr>
+<tr>
+<td><strong>Range</strong></td>
+<td>-foo[a-b]</td>
+<td>Hyphenated indices. Operates on images in the range from a to b inclusive. Example: -foo[3-5] operates on the fourth, fifth and sixth images. -foo[-3- -1] operates on the third from the last, next to the last and last images.</td>
+</tr>
+<tr>
+<td><strong>Relative Range</strong></td>
+<td>-foo[a%-b%]</td>
+<td>Hyphenated percentages. Operates on image ranges specified through relative positions, with 100% designating the last position on the stack, however large it may be. Example: -foo[50%-100%] operates on images on the upper half of the stack.</td>
+</tr>
+<tr>
+<td><strong>Modulo n</strong></td>
+<td>-foo[&lt;<em>Range</em>&gt;:n]</td>
+<td>Given a range of images, operates on every<em> n</em>-th image in the range. -foo[:n] is an error. Example: -foo[0- -1:3] operates on every third image on the stack. -foo[50%-100%:2] operates on every even-indexed image on the upper half of the stack.</td>
+</tr>
+<tr>
+<td><strong>Except</strong></td>
+<td>-foo[^&lt;selection&gt;]</td>
+<td>Caret preceding a selection. Operates on all images <em>except</em> those in the selection. Example: -foo[^0] operates on all images except the first one. -foo[^0 - -1:2] operates on every odd-indexed image on the stack.</td>
+</tr>
+<tr>
+<td><strong>Names</strong></td>
+<td>-foo[<em>&lt;label&gt;</em>]</td>
+<td>Operates on images selected by the name<em> &lt;label&gt;</em>, an alphanumeric string which begins with a letter. Raises an error if <em>&lt;label&gt;</em> has not been defined. Use <a target="_parent" href="http://gmic.eu/reference.shtml#name">-name</a>[<em>&lt;selection&gt;</em>] <em>&lt;label&gt;</em> to establish an equivalence between <em>&lt;label&gt;</em> and some specific<em> &lt;selection&gt;</em>. Example: -name[0, -1] firstlast equates 'firstlast' with a selection that picks the first and last images on a stack; -foo[firstlast] will then operate on the first and last items on the image stack.</td>
+</tr>
+<tr>
+<td><strong>Enumerated Names</strong></td>
+<td>-foo[<em>&lt;label-1&gt;,...</em>]</td>
+<td>Operate on images selected through a series of labels, which must already be defined. The overall selection is the union of the individual selections.</td>
+</tr>
+</tbody>
+</table>
+<p>It is possible to mix types in selections, thus -foo[1,3,5--1], mixing an enumeration and range, selects the second, fourth, and sixth through the last image.</p>
+<p>It is also possible that images may be designated more than once, as in -foo[0 - -1:2, 2, 4, 6], which selects all the images with even indices on the stack, then explicity selects the images corresponding to indices 2, 4 and 6.&nbsp; G'MIC regards the collection of indices in selections as sets of distinct, unordered elements, so images are not selected twice, nor is there any relevance to the order of indices. -foo[0,1,2], -foo[2,1,0], -foo[2-0], -foo[0,1,0,2,1,2] all select the first three images on the stack.&nbsp;</p>
+<p>Here are some common examples:</p>
+<ol>
+<li><strong>-blur 20</strong> blur all images on the stack with a standard deviation of 20</li>
+<li><strong>-blur[0] 10</strong> blur the first image on&nbsp; the stack with a standard deviation of 10</li>
+<li><strong>-blur[-1] 5</strong> blur the last image on the stack with a standard deviation of 5</li>
+<li><strong>-blur[0,2,5] 7</strong> blur the first, third, and sixth image on the stack with a standard deviation of 7</li>
+<li><strong>-blur[^3] 6</strong> blur all images on the stack <em>except</em> the fourth one with a standard deviation of 6</li>
+</ol>
+<h2 id="IsolatedSelectionsImpliedCopyCommand">Isolated Selections: Implied Copy Command</h2>
+<p>Selections in isolation, apparently not modifying any command, imply '-copy'. The images designated by the selector are duplicated and the interpreter places the copies at the end of the pipeline, in the same relative order as their antecedents. Thus [0,3,5] by itself copies the first, fourth and sixth images; the copy of the first image becomes -3, the copy of the fourth becomes -2 and the copy of the sixth becomes -1. The implicit presence of the <a target="_parent" href="_input.shtml">-input</a> command</p>
+<h2 id="LefthandDecorations">Lefthand Decorations: Replace or Append</h2>
+<p>Items may be decorated on the lefthand side, which we have already seen: hyphens distinguish commands from other items. Apart from identifying commands, hyphens also have a copy/replace meaning.This matters with transformation commands, those that take selected images as inputs and then produce output images. Commands may be decorated on the left hand side with one or two hyphens, expressing <em>replace</em> or <em>preserve</em> semantics.</p>
+<ol>
+<li>single hyphen commands will <em>replace</em> the selected images with the output images.</li>
+<li>double hyphen commands will <em>preserve</em> the selected images, placing the output at the end of the pipeline.</li>
+</ol>
+<p>Non-transformative commands are those which implement aspects of G'MIC program flow or management of the environment. We have seen one example already. '-name' labels a selection but does not otherwise operate on the images in the selection's collection. Thus:</p>
+<p><code>$ gmic 256,256,1,3 -<a target="_parent" href="http://gmic.eu/reference.shtml#noise">noise</a>[-1] 0.05,2 <a target="_parent" href="_bandpass.shtml">--bandpass</a>[-1] 0.0005,0.001 <a target="_parent" href="_threshold.shtml">--threshold</a>[-1] 30% <a target="_parent" href="http://gmic.eu/reference.shtml#thinning">--thinning</a>[-1] -<a target="_parent" href="_normalize.shtml">normalize</a>[^0] 0,255</code></p>
+<ol>
+<li>256,256,1,3 <a target="_parent" href="conjuring-images.shtml">conjures up</a> a 256x256x1 pixel image with three channels, initially solid black establishing a stack with one image.</li>
+<li>The '<a target="_parent" href="http://gmic.eu/reference.shtml#noise">-noise</a>[-1]' command, single hyphen, <em>replaces</em> this black image with a sparse, random scattering of red green and blue pixels, so the stack remains with one image.</li>
+<li>The '<a target="_parent" href="_bandpass.shtml">- -bandpass</a>[-1]' command, double hyphen, <em>appends a new image</em> at the end of the stack, the low-frequency components of the previous last image, leaving two images on the stack.</li>
+<li>Similarly, '- <a target="_parent" href="_threshold.shtml">-threshold</a>[-1]' appends a new image at the end of the pipeline, with each channel a bilevel reduction of the channels of the previous last image on the stack. This leaves three images on the stack.</li>
+<li>'- <a target="_parent" href="http://gmic.eu/reference.shtml#thinning">-thinning</a>[-1] creates a morphologically thinned version of the last image, the 'spines' of contiguous, non-black regions residing in the various channels of the last image, appending the thinned version to the end of the stack. Four images are on the stack.</li>
+<li>'-<a target="_parent" href="_normalize.shtml">normalize</a>[^0], single hyphen, replaces all images in the stack <em>except the first</em> with corresponding versions where the intensity range of each channel is remapped to the range 0 &ndash; 255. The stack still has four images. Had we decorated this command with two hyphens, the stack would have had seven images, the second, third and fourth images followed by their normalized versions in positions five, six and seven.</li>
+</ol>
+<p>The four images on the stack look like this:</p>
+<p><img alt="Four images resulting from a series of commands on an initially empty pipeline." src="http://www.particularart.com/static/media/uploads/pipeline.png" title="Four Image Pipeline" width="683" height="171" /></p>
+<p><a target="_parent" align="center" border="0" name="idiomata"></a></p>
+<h2 id="ShorthandSelectionNotation">Shorthand Selection Notation</h2>
+<p>It is very common to operate on the last, penultimate, and third-from-last images on the stack. Righthand command decorations such as [-1], [-2] and [-3] are so prevalent that they have an alternate shorthand form: one, two and three 'pips':</p>
+<table border="0">
+<tbody>
+<tr>
+<td><tt>-foo[-1]</tt></td>
+<td><tt>-foo.</tt></td>
+<td><tt>-foo</tt> operates on the last image on the list.</td>
+</tr>
+<tr>
+<td><tt>-foo[-2]</tt></td>
+<td><tt>-foo..</tt></td>
+<td><tt>-foo</tt> operates on the penultimate image on the list.</td>
+</tr>
+<tr>
+<td><tt>-foo[-3]</tt></td>
+<td><tt>-foo...</tt></td>
+<td><tt>-foo</tt> operates on the third-from-last image on the list.</td>
+</tr>
+</tbody>
+</table>
+<p>G'MIC supports this shorthand notation <em>only</em> as a command decoration, not in any other place where a selection might be used, as an implied copy or as an argument to another command. Nor do pips work in selection expressions. The fictive command <tt>-foo[0,...]</tt> will not operate on the first and third-from-last image.</p>
+<h2 id="CommandIdiomata">Common Idiomata</h2>
+<p><a target="_parent" align="center" border="0" name="idiomata"></a></p>
+<p>It is not uncommon to see these repeating idiomata:</p>
+<table class="table-striped"><colgroup> <col width="30%" /> <col width="70%" /> </colgroup>
+<tbody>
+<tr>
+<td>...- -foo[-1] <em>&lt;parameter list&gt;</em> - -bar[-1] <em>&lt;parameter list&gt;...</em></td>
+<td>Constructs a progression of the effects of a series of commands; the images accumulates effects from left to right....</td>
+</tr>
+<tr>
+<td>- -foo[0] <em>&lt;parameter list&gt;</em> - -bar[0] <em>&lt;parameter list&gt;</em>...</td>
+<td>Illustrates the effect of different commands on one image.</td>
+</tr>
+<tr>
+<td>- -foo[<em>&lt;range&gt;</em>] <em>&lt;parameter list&gt;</em></td>
+<td>Illustrates the effect of one command on a range of images.</td>
+</tr>
+<tr>
+<td>- -foo <em>&lt;parameter list&gt;</em></td>
+<td>Illustrates the effect of one command on all images</td>
+</tr>
+</tbody>
+</table>
+
+
+
+   
+</body></html>

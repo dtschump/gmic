@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="tutorial.css">
+<script type="text/javascript" src="highslide/highslide.js"></script>
+<link rel="stylesheet" type="text/css" href="highslide/highslide.css" />
+<script type="text/javascript">
+hs.graphicsDir = 'highslide/graphics/';
+hs.wrapperClassName = 'wide-border';
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<body>
+
+
+      
+
+
+
+<h1>Wavelet Analysis and Synthesis in G'MIC</h1>
+<div id="InitFigure" style="width: 700px; height: 800px; border: none; padding: 5px; line-height: 100%;"><img src="http://www.particularart.com/static/media/uploads/technotes/haar/hr-005-large.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="680" width="680" />
+<p style="font-size: 10pt;"><i>Figure 1: One cycle of the DWT, each 2˟2 quadruple of pixels, <b>P</b><sub>jk</sub>, in the input maps to four pixels, one in each quadrant of the analysis, each placed in the same relative location as the quadruple in the original image. These image pixels report on conditions around the neighborhood of the quadruple. Northwest: average intensity, northeast, gradients along the width, southwest, gradients along the height, southeast: gradients along the diagonal. The formulas are for image pixels from the quadrupal of pixels clustered around pixel <b>P</b><sub>jk</sub>.</i></p>
+</div>
+<p>Similar to Fourier analysis and synthesis (<a target="_parent" href="_fft.shtml">-fft</a>, <a target="_parent" href="http://gmic.eu/reference.shtml#ifft">ifft</a>), a wavelet analysis transforms an image into another representation that reflects its frequency, or spectral, content. Unlike Fourier analysis, the wavelet analysis retains spatial relationships. One may view a DWT analysis and recognize scaled versions of the original image, locate versions at a particular scale, and alter them, When reconstituted by the synthesizer, -ihaar, these will reflect the changes applied only to the selected levels of detail. Thus, as in Fourier analysis, one can undertake frequency-based editing, but &ndash; unlike the Fourier transform &ndash; may readily locate particular places in the image to work an effect.</p>
+<p>Unlike Fourier synthesis, there are myriad basis functions which can perform wavelet analysis and synthesis, these tailored to meet particular requirements. G'MIC uses Haar wavelets, the most compact and simplest to implement, and the oldest, first described by <a target="_parent" href="http://en.wikipedia.org/wiki/Alfr&eacute;d_Haar">Alfr</a><a target="_parent" href="http://en.wikipedia.org/wiki/Alfr&eacute;d_Haar">&eacute;d Haar</a> in 1909.</p>
+<p>The <a target="_parent" href="_haar.shtml">-haar</a> command progressively reduces an original image into sets of three <i>axially oriented</i> <i>differences</i> and one <i>base</i> image at each scale, in aggregate forming an image pyramid. At each cycle, or scaling, the command operates on an intermediary from the previous cycle, or, when at the start, the original. Each cycle produces an <i>analysis</i> pertinent to image detail at that scale. The image pyramid contains all possible analyses stacked one on top of the other.</p>
+<h3 id="TransformationCycles">Transformation Cycles</h3>
+<p>For clarity, the following narrative describes the Discrete Wavelet Transform in two dimensions, though the extension to the third is straightforward. One reads &ldquo;octant&rdquo; for &ldquo;quadrant&rdquo; which has one base cube and seven difference regions, instead of three for the two dimensional quadrant. G'MIC's implementation will analyze along width, height and depth dimensions when presented with a multi-slice original.</p>
+<p>During one cycle, or scaling of the Discrete Wavelet Transform, the analysis for that scale takes the form of four reduced and modified versions of the input image. Scaled at 50% of the input by length, these modified versions occupy the same buffer as the original, with each situated in one of four quadrants, and, following a scaling, each conveying information about average intensities (the base image) or axially oriented gradients (the three difference images) that might be present at the particular scale.</p>
+<ol>
+<li>The northwest quadrant is the base image and conveys information about average intensities observed in the input image. However, as the DWT progresses, the northwest quadrant becomes the input for the next cycle, so that at every scale except the last, the northwest quadrant is replaced by images of higher scalings. This gives the impression of objects receding off to infinity, the signature aspect of a set of DWT analyses. The transform progresses until the northwest quadrant acquires an odd dimension, has been reduced to one pixel, or has reached a preset limit. The base image at this highest scale then becomes the starting point for re-synthesis of the original by the inverse Haar command (<a target="_parent" href="http://gmic.eu/reference.shtml#ihaar">-ihaar</a>)</li>
+<li>The northeast quadrant conveys rates of intensity change observed across columns in the input image.</li>
+<li>The southwest quadrant conveys rates of intensity change observed across rows in the input image.</li>
+<li>The southeast quadrant conveys rates of intensity change observed across diagonals in the input image.</li>
+</ol>
+<p>Formally, one cannot further scale an image if, at some intermediary scaling, one or two dimensions becomes indivisible by two, but in practice, one may pad the width and height of originals with zero-valued pixels as necessary to obtain images with power of two dimensions. See <a target="_parent" href="http://gmic.eu/reference.shtml#resize_pow2">-resize_pow2</a>.</p>
+<h3 id="Computations">Computations</h3>
+<p>Each quadrant conveys a class of information about the input, its constituent pixels reporting the same class of information from 2 ? 2 pixel neighborhoods situated in the same relative position in the input image. During an analysis, these neighborhoods are "dissected" into four single pixels, each migrating to each of the quadrants.</p>
+<ol>
+<li>The first pixel, destined for the northwest quadrant, conveys the sum of the four pixels composing the neighborhood, divided by two. This quantity indicates the average intensity of the neighborhood.</li>
+<li>The second pixel, destined for the northeast quadrant, conveys the sum of differences of the left pixel column, minus the right pixel column, divided by two. This difference indicates the rate of change of intensity or gradient across image columns within the neighborhood.</li>
+<li>The third pixel, destined for the southwest quadrant, conveys the difference between the sums of the bottom row or pixels, minus the sums of the top row of pixels, divided by two. This difference indicates the rate of change of intensity or gradient across the image rows within the neighborhood.</li>
+<li>The fourth pixel, destined for the southeast quadrant, conveys the difference of the bottom right pixel, minus the bottom left, and the top right pixel, minus the top left, divided by two. This "difference of differences" indicates the diagonal gradient across the image rows and columns within the neighborhood.</li>
+</ol>
+<h3 id="WalkingThroughTheGMICImplementation">Walking Through The G'MIC Implementation</h3>
+<p>G'MIC implements wavelet analysis through a compact and efficient procedure which mainly entails differencing shifted images, image addition, subtraction and multiplication. As before, we will mainly concentrate on the two dimensional narrative; the three dimensional case is a straightforward extension of concepts present in the two dimensional case.</p>
+<p>The accompanying G'MIC code has been adapted from the implementation of the -haar command:</p>
+<table id="TabOne" rules="all" class="table table-striped" style="border-color: #808080; border-width: 1px;" cols="2" border="1">
+<tbody>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/technotes/haar/hr-001.png" title="hr-001.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="256" width="256" /></td>
+<td>
+<h3 id="TROne">1</h3>
+The command first separates the input image along its width into even and odd column images. The 'even' image possesses columns 0, 2, 4,...; the 'odd' image possesses columns 1, 3, 5,...</td>
+</tr>
+<tr>
+<td colspan="2"><tt>&nbsp;gmic hface.cimg \<br />--shift -1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \<br />-resize 50%&nbsp;&nbsp; # Other dimensions default to 100%; NB: Nearest neighbor&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; # interpolation (default) decimates every other row&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; # at precisely 50% reductions, leaving even rows on the&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; # left and odd rows on the right. We are guaranteed this&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; # separation by the one pixel leftward shift of the image on the \<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; # right. With the every-other-row deletion arising from the&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; # nearest neighbor interpolation, the columns retained in the&nbsp;&nbsp;&nbsp; \<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; # shifted version are just those deleted in the unshifted&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; # version, and vice-versa.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \</tt></td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/technotes/haar/hr-002.png" title="hr-002.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="256" width="384" /></td>
+<td>
+<h3 id="TRowTwo">2</h3>
+Makes a second image, <i>diff_</i><i>col</i>, by subtracting the even columns from the odd (<i>odd</i><i> &ndash; </i><i>even</i>)</td>
+</tr>
+<tr>
+<td colspan="2"><tt>-sub[1] [0] \</tt></td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/technotes/haar/hr-003.png" title="hr-003.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="256" width="256" /></td>
+<td>
+<h3 id="TRowThree">3</h3>
+Makes a third image, <i>sum_</i><i>col</i>, by adding the odd and even columns (<i>odd</i><i> </i><i>+</i><i> </i><i>even</i>). <br /> Appends together <i>sum_</i><i>col</i> and<i> diff_</i><i>col</i> along the x axis and scales the pair by <!--?xml version="1.0" encoding="UTF-8"?--> <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"> <semantics> <mfrac> <mn>1</mn> <msqrt> <mn>2</mn> </msqrt> </mfrac> <annotation encoding="StarMath 5.0">1 over sqrt 2</annotation> </semantics> </math>.</td>
+</tr>
+<tr>
+<td colspan="2"><tt>-add[0,1] &nbsp; &nbsp; &nbsp;&nbsp; \<br /> -div '{sqrt(2)}'&nbsp;\<br /> -append x&nbsp;&nbsp;&nbsp; &nbsp; &nbsp; \</tt></td>
+</tr>
+</tbody>
+</table>
+<p>The left half of the image (<i>sum_</i><i>col</i>) consists of pairwise column sums, the right half (<i>diff_</i><i>col</i>) pairwise differences, the whole scaled by the square root of two.</p>
+<p>Though not obvious in the math or script, this stage reflects a decimation and two <a target="_parent" href="_convolve.shtml">convolutions</a> of the initial data set. In effect, the left hand side of the image evolves from a two pixel wide box filter &ndash; the Haar scaling function &ndash; convolving a decimated version of the input data. Correspondingly, the right hand side of the image evolves from the Haar wavelet convolving over the same data set. The Haar wavelet is zero everywhere except for a one unit positive impulse followed by a one unit negative impulse &ndash; a "square wave".</p>
+<table id="TabTwo" rules="all" class="table table-striped" style="border-color: #808080; border-width: 1px;" cols="2" border="1">
+<tbody>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/technotes/haar/hr-004.png" title="hr-004.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="256" width="256" /></td>
+<td>
+<h3 id="TRowFour">4</h3>
+The command repeats steps 1 through 3, but by separating <em>sum_col diff_col</em> into even and odd rows and finding sums and differences of these rows along the height axis, again scaling the results by <!--?xml version="1.0" encoding="UTF-8"?--> <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"> <semantics> <mfrac> <mn>1</mn> <msqrt> <mn>2</mn> </msqrt> </mfrac> <annotation encoding="StarMath 5.0">1 over sqrt 2</annotation> </semantics> </math>.<br /> Twice scaled by this quantity, the overall dataset has now been divided by 2, and represent pairwise averages of sums and/or differences characteristic of each quadrant.</td>
+</tr>
+<tr>
+<td colspan="2"><tt> # Computations along the height axis \<br /> # mirror those along the width.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \<br /> --shift 0,-1&nbsp;&nbsp;&nbsp;&nbsp; \<br /> -resize 100%,50% \ <br /> --sub[1] [0]&nbsp;&nbsp;&nbsp;&nbsp; \<br /> -add[0,1]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \<br /> -div '{sqrt(2)}' \ <br /> -append y&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \</tt></td>
+</tr>
+<tr>
+<td width="256"><img style="margin: 3px; border: 0px solid #808080;" class="img_block" src="http://www.particularart.com/static/media/uploads/technotes/haar/hr-005.png" title="hr-005.png" height="256" width="256" /></td>
+<td>
+<h3 id="TRowFive">5</h3>
+<p>At the conclusion of one scaling step, every 2&nbsp;&times; 2 quadruple of pixels from the input image recurs as a single pixel in each quadrant of the analysis, four single pixel &ldquo;images&rdquo; of the quadruple in all. See the beginning of this article for a larger version of this diagram.</p>
+</td>
+</tr>
+<tr>
+<td colspan="2">&nbsp;&mdash;&nbsp;</td>
+</tr>
+</tbody>
+</table>
+<p>A pixel, <b>P</b><sub>j,k</sub> in row j and column k, and its immediate neighbors, <b>P</b><sub>j,k+1</sub> ,<b>P</b><sub>j+1,k</sub>, and <b>P</b><sub>j+1,k+1</sub> &ldquo;merge together&rdquo; in four different ways after one DWT scaling, producing four new pixels. These &ldquo;migrate&rdquo; to each of the quadrants of the analysis.</p>
+<p>Each arise from a particular combination of pairwise sums and differences that characterize the quadrant. These combinations are:</p>
+<ol>
+<li><!--?xml version="1.0" encoding="UTF-8"?--> <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"> <semantics> <mfrac> <mrow> <mrow> <mo fence="true" stretchy="false">(</mo> <mrow> <mrow> <msub> <mi>P</mi> <mrow> <mrow> <mi>j</mi> <mo stretchy="false">+</mo> <mn>1,</mn> </mrow> <mrow> <mi>k</mi> <mo stretchy="false">+</mo> <mn>1</mn> </mrow> </mrow> </msub> <mo stretchy="false">+</mo> <msub> <mi>P</mi> <mrow> <mrow> <mi>j</mi> <mo stretchy="false">+</mo> <mn>1,</mn> </mrow> <mi>k</mi> </mrow> </msub> </mrow> </mrow> <mo fence="true" stretchy="false">)</mo> </mrow> <mo stretchy="false">+</mo> <mrow> <mo fence="true" stretchy="false">(</mo> <mrow> <mrow> <msub> <mi>P</mi> <mrow> <mi>j</mi> <mi>,</mi> <mrow> <mi>k</mi> <mo stretchy="false">+</mo> <mn>1</mn> </mrow> </mrow> </msub> <mo stretchy="false">+</mo> <msub> <mi>P</mi> <mrow> <mi>j</mi> <mi>,</mi> <mi>k</mi> </mrow> </msub> </mrow> </mrow> <mo fence="true" stretchy="false">)</mo> </mrow> </mrow> <mn>2</mn> </mfrac> <annotation encoding="StarMath 5.0">{(P_{j+1,k+1} + P_{j+1,k}) + (P_{j,k+1} + P_{j,k})} over 2</annotation> </semantics> </math> in the northwest quadrant. Pixels here are all averages of row sums of column sums. This specific quadrant becomes the initial image in the next round of DWT scaling. Put another way, these pixels all arise from box filter convolutions running width- and height-wise across the original input image.</li>
+<li><!--?xml version="1.0" encoding="UTF-8"?--> <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"> <semantics> <mfrac> <mrow> <mrow> <mo fence="true" stretchy="false">(</mo> <mrow> <mrow> <msub> <mi>P</mi> <mrow> <mrow> <mi>j</mi> <mo stretchy="false">+</mo> <mn>1,</mn> </mrow> <mrow> <mi>k</mi> <mo stretchy="false">+</mo> <mn>1</mn> </mrow> </mrow> </msub> <mo stretchy="false">&acirc;</mo> <msub> <mi>P</mi> <mrow> <mrow> <mi>j</mi> <mo stretchy="false">+</mo> <mn>1,</mn> </mrow> <mi>k</mi> </mrow> </msub> </mrow> </mrow> <mo fence="true" stretchy="false">)</mo> </mrow> <mo stretchy="false">+</mo> <mrow> <mo fence="true" stretchy="false">(</mo> <mrow> <mrow> <msub> <mi>P</mi> <mrow> <mi>j</mi> <mi>,</mi> <mrow> <mi>k</mi> <mo stretchy="false">+</mo> <mn>1</mn> </mrow> </mrow> </msub> <mo stretchy="false">&acirc;</mo> <msub> <mi>P</mi> <mrow> <mi>j</mi> <mi>,</mi> <mi>k</mi> </mrow> </msub> </mrow> </mrow> <mo fence="true" stretchy="false">)</mo> </mrow> </mrow> <mn>2</mn> </mfrac> <annotation encoding="StarMath 5.0">{(P_{j+1,k+1} - P_{j+1,k}) + (P_{j,k+1} - P_{j,k})} over 2</annotation> </semantics> </math> in the northeast quadrant. Pixels here are all averages of row sums of column differences. Another way to put it is that these pixels all arise from a width-wise Haar wavelet convolution and a height-wise box filter convolution.</li>
+<li><!--?xml version="1.0" encoding="UTF-8"?--> <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"> <semantics> <mfrac> <mrow> <mrow> <mo fence="true" stretchy="false">(</mo> <mrow> <mrow> <msub> <mi>P</mi> <mrow> <mrow> <mi>j</mi> <mo stretchy="false">+</mo> <mn>1,</mn> </mrow> <mrow> <mi>k</mi> <mo stretchy="false">+</mo> <mn>1</mn> </mrow> </mrow> </msub> <mo stretchy="false">+</mo> <msub> <mi>P</mi> <mrow> <mrow> <mi>j</mi> <mo stretchy="false">+</mo> <mn>1,</mn> </mrow> <mi>k</mi> </mrow> </msub> </mrow> </mrow> <mo fence="true" stretchy="false">)</mo> </mrow> <mo stretchy="false">&acirc;</mo> <mrow> <mo fence="true" stretchy="false">(</mo> <mrow> <mrow> <msub> <mi>P</mi> <mrow> <mi>j</mi> <mi>,</mi> <mrow> <mi>k</mi> <mo stretchy="false">+</mo> <mn>1</mn> </mrow> </mrow> </msub> <mo stretchy="false">+</mo> <msub> <mi>P</mi> <mrow> <mi>j</mi> <mi>,</mi> <mi>k</mi> </mrow> </msub> </mrow> </mrow> <mo fence="true" stretchy="false">)</mo> </mrow> </mrow> <mn>2</mn> </mfrac> <annotation encoding="StarMath 5.0">{(P_{j+1,k+1} + P_{j+1,k}) - (P_{j,k+1} + P_{j,k})} over 2</annotation> </semantics> </math> in the southwest quadrant. Pixels here are all averages of row differences of column sums. Put another way, they arise from a width-wise box filter convolution and a height-wise Haar wavelet convolution.</li>
+<li><!--?xml version="1.0" encoding="UTF-8"?--> <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"> <semantics> <mfrac> <mrow> <mrow> <mo fence="true" stretchy="false">(</mo> <mrow> <mrow> <msub> <mi>P</mi> <mrow> <mrow> <mi>j</mi> <mo stretchy="false">+</mo> <mn>1,</mn> </mrow> <mrow> <mi>k</mi> <mo stretchy="false">+</mo> <mn>1</mn> </mrow> </mrow> </msub> <mo stretchy="false">&acirc;</mo> <msub> <mi>P</mi> <mrow> <mrow> <mi>j</mi> <mo stretchy="false">+</mo> <mn>1,</mn> </mrow> <mi>k</mi> </mrow> </msub> </mrow> </mrow> <mo fence="true" stretchy="false">)</mo> </mrow> <mo stretchy="false">&acirc;</mo> <mrow> <mo fence="true" stretchy="false">(</mo> <mrow> <mrow> <msub> <mi>P</mi> <mrow> <mi>j</mi> <mi>,</mi> <mrow> <mi>k</mi> <mo stretchy="false">+</mo> <mn>1</mn> </mrow> </mrow> </msub> <mo stretchy="false">&acirc;</mo> <msub> <mi>P</mi> <mrow> <mi>j</mi> <mi>,</mi> <mi>k</mi> </mrow> </msub> </mrow> </mrow> <mo fence="true" stretchy="false">)</mo> </mrow> </mrow> <mn>2</mn> </mfrac> <annotation encoding="StarMath 5.0">{(P_{j+1,k+1} - P_{j+1,k}) - (P_{j,k+1} - P_{j,k})} over 2</annotation> </semantics> </math> in the southeast quadrant. Pixels here are all averages of row differences of column differences and arise from width- and height-wise convolutions of Haar wavelets.</li>
+</ol>
+
+
+
+   
+</body></html>

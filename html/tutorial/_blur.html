@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="tutorial.css">
+<script type="text/javascript" src="highslide/highslide.js"></script>
+<link rel="stylesheet" type="text/css" href="highslide/highslide.css" />
+<script type="text/javascript">
+hs.graphicsDir = 'highslide/graphics/';
+hs.wrapperClassName = 'wide-border';
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<body>
+
+
+      
+
+
+
+<h1>-blur</h1>
+<p><img src="http://www.particularart.com/static/media/uploads/command_reference/blur/blurexample.png" title="Varanasi green peas - India" class="img_block" style="margin: 3px; border: 0px solid #808080; float: left;" height="200" width="200" />The blur command (abbreviated: -b) replaces every pixel in an image with a weighted average that includes the pixel itself (the <em>center pixel</em>, having the greatest weight) and neigboring pixels, each weighted in a way that become progressively weaker the further a neighboring pixel is from the center pixel. In the Gaussian form of this command, a <a target="_parent" href="http://en.wikipedia.org/wiki/Gaussian_distribution">Gaussian distribution</a> determines rate of drop-off of the weights. The <tt>std_variation</tt> parameter of this command controls the extent of the distribution and, indirectly, the rate of drop-off.</p>
+<p>The blur command is implemented through a convolution, the kernel being either a Gaussian distribution or a less computationally intensive approximation. This command shares quite a bit of basic machinery with the&nbsp;<a target="_parent" href="_convolve.shtml"> -convolve</a> command and much of the inner workings of the blur command may be found there.</p>
+<p>Informally, the blur command smears images, replacing abrupt transitions in color or intensity with more gradual transitions. Artists frequently employ the blur command to soften noise, usually at the expense of sharp edges. In many cases, the <a target="_parent" href="_smooth.shtml">-smooth</a> command is the better noise management tool, as it preserves edges, though it is a computationally expensive tool and its effective use sometimes depends on a subtle use of its parameters. In contrast, blur is a fast tool and easy to use; it may very well serve the purposes at hand.</p>
+<p>The format of the command is:</p>
+<table rules="all" class="table table-striped" border="0">
+<tbody>
+<tr>
+<td><tt>-blur:</tt></td>
+<td>Blur selected images by a quasi-gaussian or gaussian filter (recursive implementation)</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td><tt>std_variation&gt;=0[%],_boundary,_kernel</tt></td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td><tt>axes,std_variation&gt;=0[%],_boundary,_kernel</tt></td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><em>std_variation</em> sets the spread of the Gaussian distribution kernel, indirectly its effective size and informally the amount of blurring. Small numbers, 5 or less, effectively soften pixel size noise; the main features of the image remain intact. Larger numbers substantially change the image and very large numbers replace an image with its average color. One must supply this value; there is no default.</li>
+<li>_<em>boundary</em> chooses a policy about how to handle image edges; see "<a target="_parent" title="Images have edges; now what?" href="images-have-edges.shtml">Pictures have Edges. Now What?</a>" for technical details. a zero flag (0, Dirichlet) assumes that off-image pixels are black. For fairly large values of standard variation, this policy gives rise to a black vignette, which may be pleasing or infuriating, depending on one's purposes and frame of mind. A unit flag (1, Neumann) assumes that off-image pixels have the exact same value as the nearest edge pixel. This eliminates the vignette, but sometimes edge values become uncommonly bright. Neither policy is better than the other, and neither offer a general solution to the "edge problem," but in particular cases, one offers a better result than the other. This value may be omitted and when it is, the command uses the Neumann policy as a default.</li>
+<li><em>_kernel</em> chooses an approximate "quasi-gaussian" kernel when set to zero, or a true Gaussian kernel when set to one. The quasi-gaussian flag also allows use of a somewhat simplified convolution procedure that is faster, but not exactly adhering to definition. It is very difficult to tell the difference in results, and the faster choice can make a difference when processing large image stacks. The Gaussian kernel may be the better choice if further processing of the image is contemplated; downstream commands may reveal noise that the quasi-gaussian variant leaves behind. This value may be omitted; the quasi-gaussian kernel is the default.</li>
+<li><em>axes</em> restricts blurring along (combinations of) x, y, and z axes. One can restrict blurring to just x, y, or z by writing one or another letter in isolation. One may also blur along combinations of axes by choosing two distinct letters. One may harmlessly specify 'xyz' and obtain the same result as not using the axes argument at all. For asymmetric blurring, one may specify a particular axis multiple times. So, to triple-blur along the x axis, but have no blurring at all along the z axis, one could write &hellip;<tt>-blur xxxy,4</tt>&hellip; which will apply a blur with standard deviation of 4 along the <tt>y</tt> axis, but 12 along the <tt>x axis</tt> and 0 along the <tt>z</tt> axis.</li>
+</ul>
+<h2>Application</h2>
+<p><video id="cauldron_title" width="360" height="240" style="float:left;margin:7px;border:1px solid #808080;" poster="http://www.particularart.com/static/media/uploads/command_reference/blur/blur_still.png" preload="metadata" controls="controls"><source src="http://www.particularart.com/static/media/uploads/command_reference/blur/blur.mp4" type="video/mp4" /><source src="http://www.particularart.com/static/media/uploads/command_reference/blur/blur.webm" type="video/webm" /><source src="http://www.particularart.com/static/media/uploads/command_reference/blur/blur.ogv" type="video/ogg" /><source src="http://www.particularart.com/static/media/uploads/command_reference/blur/blur.avi" type="video/avi" /><object id="cauldron_title" width="360" height="240" data="/static/grappelli/tinymce/jscripts/tiny_mce/plugins/media/moxieplayer.swf" type="application/x-shockwave-flash"><param name="src" value="/static/grappelli/tinymce/jscripts/tiny_mce/plugins/media/moxieplayer.swf" /><param name="flashvars" value="url=/static/media/uploads/command_reference/blur/blur.mp4&amp;poster=/static/media/uploads/command_reference/blur/blur_still.png" /><param name="allowfullscreen" value="true" /><param name="allowscriptaccess" value="true" /></object></video>The blur command has a general implementation that functions with images possessing depth &mdash; that is, images that represent three dimensional solids or images that record two dimensional surfaces that change with time. To G'MIC, the distinction is largely immaterial. When operating on images with more than one slice, the blur command operates over a spherical neighborhood instead of a circular one. As a practical manner, this can be a source of quickly composed animation effects; the clip on the left illustrates the concept. The command that made this video is very straightforward:</p>
+<p><tt>gmic -debug 360,240,300,3 -noise[-1] 0.02,2 -blur[-1] 12,0,1 -normalize[-1] 0,255 -shift[-1] 0,0,0,-1.4257,2 -apply_gamma[-1] 1.5 -split[-1] z -output bluranim.avi</tt></p>
+<ol>
+<li>First, we <a target="_parent" title="Conjuring Images out of the Aether and Other Generators" href="conjuring-images.shtml">conjure from the aether</a> a contiguous volume 360 pixels wide, 240 pixels high and three hundred slices deep, sufficient for a ten second video clip at a rate of thirty frames per second. (<tt>gmic 360,240,300,3... </tt>)</li>
+<li>We salt-and-pepper this initially solid black volume with a fairly sparse pattern of pixels (...<tt><a target="_parent" href="http://gmic.eu/reference.shtml#noise">-noise</a>[-1] 0.02,2... </tt>). Since we conjured up three channel slices, these pixels will be red, green or blue, a tedious color combination, but sufficient for demonstration purposes. If you scrub through the image volume at this point in the pipeline (insert <a target="_parent" href="_display.shtml">-display</a> after -noise), the animation would have the appearance of dirty film, with red, green and blue spots flashing hither and yon in space and time.</li>
+<li>(<tt>...-blur[-1] 6,0,1...</tt>) is the heart of the matter; it smears these single pixel flashes across height, width and depth, making blur-balls. This clip stems from a standard variation of six, making blobs about a dozen pixels around in space and time. One could see these pixels wax, pass through maximum intensity and wane in about half a second. Using larger a standard variation value slows the pace of variation; the enlarged blobs mixing into one another, giving rise to pastels. We used the&nbsp;Dirichlet flag for black vignetting around the edges, but it also gave us a free fade-in and fade-to-black. We happened to use a genuine Gaussian kernel but the quasi version works just as well.</li>
+<li>The last three commands constitute housekeeping. By nature, <a target="_parent" href="http://gmic.eu/reference.shtml#noise">-noise</a> generates intensity one signals; we <a target="_parent" href="images-as-datasets.shtml">normalize the image</a> to the range&nbsp; 0,255 for eight bit color (<tt> <a target="_parent" href="_normalize.shtml">...-normalize</a>[-1] 0,255...</tt>). Notice that the right hand decoration references only one image on the stack; that image has, we recall, a depth of 300 slices, but is still only one image in G'MIC terms. In preparation for output, we split our single, three hundred slice image along the depth axis (z) into three hundred single slice images, necessary for the -output command (<tt><a target="_parent" href="http://gmic.eu/reference.shtml#split">-split</a>[-1] z</tt>). We do not decorate the -output command with an image selection. This induces the output command to send the entire image stack to the output file. The -output command recognizes the 'avi' extension as a video container format, in this case the Audio Video Interleaved format common to Microsoft Windows platforms.&nbsp;&nbsp;</li>
+</ol>
+<h2>A Large Bag of Blurs</h2>
+<p>The axes command argument subsumes <a target="_parent" href="_blur_xyz.shtml">-blur_xyz</a>, <a target="_parent" href="_blur_xy.shtml">-blur_xy</a>, -<a target="_parent" href="_blur_x.shtml">blur_x</a>, <a target="_parent" href="_blur_y.shtml">-blur_y</a>, and<a target="_parent" href="_blur_z.shtml"> -blur_z</a> commands, each which also allow the standard variation to be independently set along combination of axes. These older commands are being retained for backward compatibility.</p>
+<p><em>Garry Osgood</em></p>
+
+
+
+   
+</body></html>

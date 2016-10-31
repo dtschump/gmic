@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="tutorial.css">
+<script type="text/javascript" src="highslide/highslide.js"></script>
+<link rel="stylesheet" type="text/css" href="highslide/highslide.css" />
+<script type="text/javascript">
+hs.graphicsDir = 'highslide/graphics/';
+hs.wrapperClassName = 'wide-border';
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<body>
+
+
+      
+
+
+
+<h1>-shared</h1>
+<div id="FigureOne" style="float: left; width: 324px; height: 324px; border: none; padding: 0in;"><img src="http://www.particularart.com/static/media/uploads/command_reference/shared/init_000.png" style="margin: 3px;" height="300" width="300" />
+<p style="font-size: 10pt; line-height: 100%;"><i>Figure 1: Extremely identical twins.</i></p>
+</div>
+<p>Shared places "clones" of its selected images on the image stack. These clones, more formally called shared images, behave in almost every significant way as copies of their reference image except in one significant respect: they share the image buffer of their reference image instead of having their own copy. Any operation invoked on one image is reflected in the other. The shared copy is more like an alias of its reference image than a copy.</p>
+<p>One can, using various addessing schemes, limit the shared image buffer region, however, in each scheme, the shared region must form a contiguous section of the image buffer. Thus, one cannot designate an arbitrarily shaped rectangle as shared, because the rectangle cleaves image rows into left, center and right portions and the left and right excluded portions intersperse with included ones, a noncontiguous state of affairs.</p>
+<p>When establishing a shared image, one designates starting and ending points in the image buffer relative to some reference point, using a particular unit measure. Each variant of the command employs a different unit measure of increasingly larger size. The command 'knows' the pertinent unit measure from counting the number of its arguments, five implying pixel resolution and none implying the entire image.</p>
+<p>Here are the five variants:</p>
+<ol>
+<li><strong>pixel resoltion</strong>: x0[%],x1[%],y[%],z[%],v[%] - y, z, and v designate the particular image row, slice, and channel location to start counting pixels. x0 designates a pixel count from the beginning of row y; x1 indicates the location of the last pixel in the buffer. x0 - x1 + 1 is the size of the buffer in pixels.</li>
+<li><strong>row resolution</strong>: y0[%],y1[%],z[%],v[%] - z and v designate the particular slice and channel location to start counting rows. y0 designates a row count from the beginning of the slice z; y1 indicates the location of the last row in the buffer. y1 - y0 + 1 is the size of the buffer in rows.</li>
+<li><strong>slice resolution</strong>: z0[%],z1[%],v - v designates the particular channel location to start counting slices. z0 designates a slice count from the beginning of channel v. z1 indicates the location of the last slice in the buffer. z1 - z0 + 1 is the size of the buffer in slices.</li>
+<li><strong>channel resolution</strong>: v0[%],v1[%] - v0 designates a channel count from the beginning of the image buffer. v1 indicates the location of the last channel in the buffer. v1 - v0 + 1 is the size of the buffer in channels.</li>
+<li><strong>image resolution</strong>: (no args) Selects the entire image buffer.</li>
+</ol>
+<p>Range arguments are inclusive, so the pair x,x is legitmate and indicates that the buffer begins at x (so many pixels, rows, slices or channels from the reference point) and consists of one unit (x - x + 1), nor are there limits on range arguments, which probably will get you into trouble. Thus '-shared[-1] 0,{w*h*d*s-1},0,0,0' is a rather roundabout way of sharing out the entire buffer of the preceding image on the stack; '-shared[-1]' without arguments achieves the same end and will more likely preserve your sanity.</p>
+<p>It is probably clear to the reader that this command operates at a very low level, bypassing most of the safe guards and checks that normally operate on command line input. The -shared command offers an extremely efficient, low-overhead access mechanism to image data but furnishes few safety nets, should one miscalculate buffer sizes or delete reference images. G'MIC sanity-checks ranges for buffer over runs, but deleting referenced images without doing the same on outstanding shares will probably trigger an operating system memory access violation, terminating G'MIC without giving it a chance to issue any illuminating <em>mea culpas</em> (even though it probably <em>is</em> your fault). That said, one shouldn't avoid the command for its fearfulness, never benefiting from its usefulness. If quantities stem from established image constants and the math is correct, the -shared command furnishes the quickest means of accessing image data.</p>
+<h2>Example</h2>
+<div id="FigureTwo" style="float: left; width: 350px; height: 500px; border: 0px solid #808080; background: #ffffff; padding: 5px; margin: 3px;"><tt style="font-size: small; line-height: 10px;"> #@gimp S-equalizer : gimp_equalize_s, gimp_equalize_s<br /> #@gimp : Contrast = float(1,0,2)<br /> #@gimp : Brightness = float(0,-1,1)<br /> gimp_equalize_s :<br /> -repeat $!<br /> -local[$&gt;]<br /> -split_opacity<br /> -local[0]<br /> -to_rgb<br /> -rgb2hsv<br /> <b>-shared 1,1</b> #selects 2nd channel<br /> -mul[-1] $1<br /> -add[-1] $2<br /> -cut[-1] 0,1<br /> -remove[-1]<br /> -hsv2rgb<br /> -endl<br /> -append c<br /> -endl<br /> -done<br /> </tt></div>
+<p>David Tschumperl&eacute; furnishes an example via <a target="_parent" href="http://gimpchat.com/viewtopic.php?f=28&amp;t=9735">GimpChat</a>, of a filter (left) which sets the saturation and brightness of an image.</p>
+<p>The 'colorfulness' of an image stems from the difference between the largest and smallest saturation value, while its brightness stems from the magnitude of the average saturation value. This filter computes the <a target="_parent" href="http://en.wikipedia.org/wiki/HSL_and_HSV">HSV colorspace</a> values and places the image in that mode, with channel zero containing bue, channel one saturation and channel two containing intensity values. The filter manipulates the saturation channel through a shared image, which seems in its organization to be a single channel grayscale residing on the image stack after the inital image. From an administrative standpoint, there are two images on the stack, but only one HSV image buffer, with its saturation channel shared by the next image on the stack.&nbsp;</p>
+<p>Notice that the clean-up step '-rm[-1]' is harmless; no memory violations take place so long as the deletion of shares take place before the deletion of reference images. Had this line been mistakenly written as '-rm[0]', however, then the share is left with dangling memory references to a no longer existing image buffer; a memory access violation invariably occurs forthwith.</p>
+<p><em>Garry Osgood</em></p>
+
+
+
+   
+</body></html>

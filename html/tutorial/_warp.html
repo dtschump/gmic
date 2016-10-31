@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="tutorial.css">
+<script type="text/javascript" src="highslide/highslide.js"></script>
+<link rel="stylesheet" type="text/css" href="highslide/highslide.css" />
+<script type="text/javascript">
+hs.graphicsDir = 'highslide/graphics/';
+hs.wrapperClassName = 'wide-border';
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<body>
+
+
+      
+
+
+
+<h1>-warp</h1>
+<p><img class="img_block" src="http://www.particularart.com/static/media/uploads/command_reference/warp/warpmono.png" title="Performing x axis shear through the warp command" style="margin: 3px; border: 0px solid #808080; float: left;" height="200" width="201" />Warp shifts pixels in an operand image in accordance to the pixel intensities in a<em> displacement field</em>. The first two channels of the displacement field control, respectively, the horizontal (x) and vertical (y) shift of the operand image. In pipeline previews, <a target="_parent" href="_display.shtml">-display</a> renders the horizontal controller channel red and the vertical controller channel green.</p>
+<p>In the example on the left, a channel 0 gradient from 40 to -40 from bottom to top shears the operand image in a relative warp along the midpoint row. The very last row of the image shifts 40 pixels to the right, the very first row shifts 40 pixels to the left, the middle row does not move.</p>
+<p>The format of the command is:</p>
+<p><code>-warp [displacement_field],_is_relative={ 0 | 1 },_interpolation,_boundary,_nb_frames&gt;0</code></p>
+<p>The first parameter is an <a target="_parent" href="command-decorations.shtml">image selection</a> referencing a displacement field, which we have described already. It must be present (no default).</p>
+<p><em>is_relative</em> sets the interpretation of the displacement field. When zero, channel 0 (x) and channel 1 (y) of the displacement field are taken to be the new coordinates of the corresponding operand pixel and engender an <em>absolute</em> move. When set to one, the channel 0 and channel 1 data are added to the coordinates of the operand, giving rise to a <em>relative move</em>. If absent, is_relative defaults to "0", absolute movement.</p>
+<p><em>interpolation</em> sets the smoothing policy of the resulting image, as displaced operand pixels, in general, will not align with pixels of the resulting image. "0" sets a <em>nearest neighbor</em> policy: a resulting pixel is set to the value of the nearest operand pixel. "1" sets a <em>linear interpolation</em> policy: two-point averages of the two nearest operand pixels sets the color of a resultant. "2" sets a <em>cubic interpolation</em> policy: the resultant pixel arises from an interpolating cubic polynomial using the four nearest pixels as coefficients. If absent, interpolation defaults to "1", linear interpolation.</p>
+<p><em>boundary</em> establishes how to interpolate resulting pixels near image boundaries, where the appropriate operand pixels may fall outside the image boundary, or how to fill vacated regions when displaced boundary pixels move away from the boundary. "0" sets dirichlet policy: if a displaced operand pixel is off-image, its value is taken to be zero for interpolative purposes. Likewise, vacated pixels near boundaries are set to zero. "1" sets neumann policy: if a displaced operand pixel is off-image, its value is taken to be that of the nearest boundary pixel within the image. That is, for purposes of interpolation and infilling vacated pixels, the values of boundary pixels are taken to extend outward from the border and are copied back into the image when needed. "2" sets cyclic policy: pixels displaced to the far sides of boundaries wrap around to a neighborhood on the opposite edge. If absent, boundary defaults to "1"</p>
+<p><em>nb_frames</em> turns the warp into an animation; this parameter sets the number of frames. "1" disables animation and any number greater than one causes the warp command to render the effect incrementally over the specified number of frames. If absent, nb_frames defaults to "1", no animation.`</p>
+<h2 id="ApplicationCheapFakeCloth">Application: Cheap Fake Cloth</h2>
+<p><a target="_parent" href="img/_warp_warpapp_lrge.jpg" class="highslide" onclick="return hs.expand(this)"><img src="http://www.particularart.com/static/media/uploads/command_reference/warp/warpapp.png" title="Fake cloth with folds" class="img_block" style="margin: 3px; border: 0px solid #808080; float: left;" height="256" width="256" /></a></p>
+<p>So long as the pixel displacements are not too large, warp can give the appearance of somewhat askew cloth, stretching a pattern so that it seems bulging and creased. If the displacement is too large, parts of the patterns perform mirror flips, a less convincing effect to the critical eye.</p>
+<p>To pull the effect off, shadows need to be integrated. Fortunately, the displacement field also serves as a source of shadows, highlights and color variations; the G'MIC compositor implemented in the<a target="_parent" href="http://gmic.eu/reference.shtml#blend"> -blend</a> command composites imagery derived from the displacement field for these effect.</p>
+<p>Where does the displacement field come from? Usually from cleverness outside of G'MIC. In this example, the artist repaired to <a target="_parent" href="http://www.gimp.org">GIMP</a> and painted three or four fuzzy brush strokes more or less in the manner of how the folds were to go, then refined the strokes using GIMP's interactive <a target="_parent" href="http://docs.gimp.org/en/plug-in-iwarp.html">IWarp Filter</a>. The gameplan is to compose a height field of folded and pleated cloth; see the first panel in the walkthrough for a typical target image. Of course, any grayscale image may serve as a height field.&nbsp;</p>
+<h3 id="Commands">Commands</h3>
+<p>displacefield.png is a greyscale image interpreted as a height field; see the first panel in the walkthrough. Ampersand.png is an RGB pattern file; see the fifth panel in the walkthrough.</p>
+<p><code>gmic displacefield.png -gradient -a[-2,-1] c -n[-1] 0,100 -blur[-1] 3 ampersand.png -warp[-1] [-2],1,2,2,1 -n[-1] 0,255<br />--direction2rgb[-2] -split[-1] c -rm[-1,-2] -negative[-1] -add[-1] 120 -cut[-1] 0,255 -n[-1] 0,1 -mul[-1,-2] -n[0] -127,127<br />--direction2rgb[0] -blend[-2,-1] pinlight,0.2</code></p>
+<h3 id="Walkthrough">Walkthrough</h3>
+<table frame="border" rules="all" class="table table-striped" align="center" border="1">
+<tbody>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/command_reference/warp/wa_0.png" title="warp mask" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="256" width="256" /></td>
+<td>
+<h3 id="1">1.</h3>
+<p>Displacement field prototype. This particular greyscale height field began life in GIMP as four crescent shaped strokes with a fat (50 pixel) fuzzy brush, arcing roughly from 12 o'clock to 3 o'clock. The artist employed the interactive warp filter to obtain a pleated cloth effect. Various combinations of Move, Shrink, and Grow were applied, with a general tendency to shrink shadows and grow the highlights. Move served to shape and squeeze pleats.</p>
+<p>If one does employ GIMP's interactive warp filter, be sure to make the displacement field about forty or fifty pixels wider and higher than the final production image, cropping the excess away. As it happens, GIMP's interactive warp cannot effectively work with pixels near the edge of an image and these generally do not give rise to useful effects. When you are satisfied with the general appearance of the field, generate the warp and, in the resulting image, crop away the excess forty or fifty pixel margin. This allows a clean height field all the way to the edge of the image.</p>
+</td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/command_reference/warp/wa_1.png" title="x gradient" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="256" width="256" /></td>
+<td>
+<h3 id="2">2.</h3>
+<p><code>gmic displacefield.png <a target="_parent" href="_gradient.shtml">-gradient</a>... </code></p>
+<p>Unless set otherwise, the -gradient command estimates the partial first derivative in the x direction, then in the y direction, and generates two images reflecting the positive change in height (light color) and negative change in height (darger color).</p>
+</td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/command_reference/warp/wa_2.png" title="y_gradient" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="256" width="256" /></td>
+<td>
+<h3 id="3">3.</h3>
+<p>Both partial derivatives are harnessed to generate a displacement field, with each pixel representing a displacement vector, as shown in the next panel. Either can also serve as a source of shadows and highlighting, with suitable modification.</p>
+</td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/command_reference/warp/wa_3.png" title="vector warp field" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="256" width="256" /></td>
+<td>
+<h3 id="4">4.</h3>
+<p><code>...<a target="_parent" href="http://gmic.eu/reference.shtml#append">-a</a>[-2,-1] c <a target="_parent" href="_normalize.shtml">-n</a>[-1] 0,100 <a target="_parent" href="_blur.shtml">-blur</a>[-1] 3...&nbsp; </code></p>
+<p>We append the partial x and y gradients formally into a displacement field, which will warp the cloth sample in the following panel. Mere convention gives the displacement field a greenish/yellowish/reddish cast: the x displacement data coincides with the RGB red channel, the y displacement data coincides with the green channel.</p>
+<p>Normalizing the channel directly affects the warp. Here, we are warping the cloth in first quadrant directions only, as we have normalized the displacement vectors to only allow for positive x and y values. Had we normalized around zero, say -n[-1] -200,200, then displacement vectors would point in all compass directions. This choice of limiting vectors to first quadrant directions rests entirely on aesthetic notions of the particular artist.</p>
+<p>The <a target="_parent" href="_gradient.shtml">-gradient</a> command introduces some pixel noise which can give rise to random pixel displacements. At the price of softening the warp slightly, a <a target="_parent" href="_blur.shtml">-blur</a> around a neighborhood of three pixels avoids the issue.</p>
+</td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/command_reference/warp/wa_4.png" title="cloth pattern" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="256" width="256" /></td>
+<td>
+<h3 id="5">5.</h3>
+<p><code>...ampersand.png...&nbsp; </code></p>
+<p>Almost any texture will do; we're partial to Goudy ampersands here.</p>
+</td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/command_reference/warp/wa_5.png" title="warped pattern" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="256" width="256" /></td>
+<td>
+<h3 id="6">6.</h3>
+<p><code>...-warp[-1] [-2],1,2,2,1 <a target="_parent" href="_normalize.shtml">-n</a>[-1] 0,255...</code></p>
+<p>Here the operand image is the texture at the end of the working set [-1], the displacement field is in the fourth panel, occupying [-2] slot of the working set. We opt for relative displacement, cubic interpolation, cyclic boundary policy, and we are not making an animation.</p>
+<p>For the fake cloth effect, the warping should not be too dramatic. Indeed, it should be barely noticable. Otherwise a strong warp might flip or tear the pattern, which would not be visually convincing.</p>
+<p>We control the degree of warping upstream by normalizing the displacement field to various magnitudes. In this example, we normalized the warp field in the range of&nbsp; 0 to 100 (see the commentary on the fourth panel).</p>
+<p>In the fake cloth effect, warping works in concert with a pattern of shadows, which, in the following panels, we will derive from the vector field.</p>
+</td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/command_reference/warp/wa_6.png" title="shadows and highlights" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="256" width="256" /></td>
+<td>
+<h3 id="7">7.</h3>
+<p>&nbsp;<code>...<a target="_parent" href="_direction2rgb.shtml">--direction2rgb</a>[-2] <a target="_parent" href="http://gmic.eu/reference.shtml#split">-split</a>[-1] c <a target="_parent" href="http://gmic.eu/reference.shtml#remove">-rm</a>[-1,-2]<code><a target="_parent" href="http://gmic.eu/reference.shtml#negative"> -negative</a>[-1].</code>..</code></p>
+<p>We copy the red channel, harnessing it as a source of light and shadow for the cloth effect; we could have easily harnessed the green channel. The red channel may be read as fake light coming from the left or right, the illusion depending on whether we read a pattern of light or dark as a bump lit from the left or a hollow lit from the right. The green channel harbors a similar ambiguity, with light possibly coming from the top or below.</p>
+<p>We will apply the shadow pattern through multiplication, but at present, the red channel is too dark for this purpose; we will lighten it in the next panel.</p>
+</td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/command_reference/warp/wa_7.png" title="shadows selected" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="256" width="256" /></td>
+<td>
+<h3 id="8">8.</h3>
+<p><code>...<a target="_parent" href="http://gmic.eu/reference.shtml#add">-add</a>[-1] 120 <a target="_parent" href="http://gmic.eu/reference.shtml#cut">-cut</a>[-1] 0,255 <a target="_parent" href="_normalize.shtml">-n</a>[-1] 0,1...</code></p>
+<p>We add a large offsetting constant to move highlight and midtone detail of the shadow pattern to values greater than 255 and then cut back to 255, leaving highlights and midtones an undifferentiated white; only the shadows, now much lighter, retain detail.</p>
+<p>In preparation for multiplying the shadow pattern with the final image (panel 9), we normalize the shadow pattern to the range 0,1, so as not to alter the image's dynamic range.</p>
+</td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/command_reference/warp/wa_8.png" title="shadows applied" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="256" width="256" /></td>
+<td>
+<h3 id="9">9.</h3>
+<p><code>...<a target="_parent" href="http://gmic.eu/reference.shtml#mul">-mul</a>[-1,-2]...</code></p>
+<p>A multiplication of panels 8 and 6 applies the shadow, largely completing the effect.</p>
+<p>We'd be home free, but for the particular artists among us. The particular artists point out slight color variations among well-lit and shadowed regions. Shadows are cool because they tend to be filled with blue skylight. Highlights are warm because they tend to get direct sunlight. Back to work.</p>
+</td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/command_reference/warp/wa_9.png" title="color mods" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="256" width="256" /></td>
+<td>
+<h3 id="10">10.</h3>
+<p><code>...<a target="_parent" href="_normalize.shtml">-n</a>[0] -127,127 --<a target="_parent" href="_direction2rgb.shtml">direction2rgb</a>[0]...</code></p>
+For color variation, we again turn to the displacement field, now offsetting it so that its mean value is very nearly zero. We re-map the direction to which vectors point to a hue, the business of <a target="_parent" href="_direction2rgb.shtml">-direction2rgb</a>. This does not <em>quite</em> give the color breakdown the particular artists desire, but it is fairly close, as the downslope vectors point in very different directions from the upslope vectors - in terms of color, they are very nearly complementary.</td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/command_reference/warp/wa_10.png" title="color mods applied" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="256" width="256" /></td>
+<td>
+<h3 id="11">11.</h3>
+<p><code>...<a target="_parent" href="http://gmic.eu/reference.shtml#blend">-blend</a>[-2,-1] pinlight,0.2...</code></p>
+<p>Blend encapsulates G'MIC's composition operators, quite a few in number. We blended in the shadow/highlight color variations by way of pinlight. Increasing the opacity factor to something less transparent than 0.2 can make the color variation quite distinct, even gaudy.</p>
+<p>Our tastes run to a pinlight blending operator, but tastes vary. 'Add', 'lighten', or 'grainmerge', among others, at various opacities, furnish a wide, possibly endless, gauntlet of possibilities.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p><em>Garry Osgood</em></p>
+
+
+
+   
+</body></html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="tutorial.css">
+<script type="text/javascript" src="highslide/highslide.js"></script>
+<link rel="stylesheet" type="text/css" href="highslide/highslide.css" />
+<script type="text/javascript">
+hs.graphicsDir = 'highslide/graphics/';
+hs.wrapperClassName = 'wide-border';
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<body>
+
+
+      
+
+
+
+<h1 id="GimpGMICExperimentalFingerpaintFilter">The Fingerpaint Filter</h1>
+<p>There is something manifestly quirky about writing for a digital paint program a filter which emulates painting on canvas. The new media paying homage to the old, perhaps. Certainly, the idea of utility wasn't first and foremost in my mind. It occured to be at some point that I could do it, and that it would be quite straightforward to do. So, without troubling myself too much on whether it would be useful to anyone, I just set out and did it. I suppose working on the companion command line tutorial unleashed many old memories of the days when I painted a bit. This included an instructor whose name I can't remember, though we had spent hours discussing this and that, including the notion: "The physicality of paint."</p>
+<p>This filter has a simple remit: transform an image into another that seems like a painting of the image &ndash; a<em> finger</em> painting, no less. Not every image relishes to be a finger painting. About half the images I try this filter on turns out dismal results. Those that succeed have simple geometry of bold shapes, and usually bright colors &ndash; the kinds of images that one <em>could</em> fingerpaint, if one were actually fingerpainting, and not running software that emulates finger painting. </p>
+<h3 id="UsingFingerPaint">Using Finger paint</h3>
+<p>For the filter dated &ldquo;26-July-2014&rdquo; you should find two groups of widgets. The widgets clustered under &ldquo;Paint Detail&rdquo; let you furnish hints and policy to guide the business of decomposing an image into strokes; the Physical Paint section in this tutorial covers the underlying mechanisms of these widgets. &ldquo;Render Detail&rdquo; allows you to furnish hints about how the paintings should appear. The &ldquo;Lighting&rdquo; section in this tutorial furnishes underlying information for that grouping of widgets.</p>
+<p>Here are some particulars.</p>
+<h3 id="PaintDetail">Paint Detail</h3>
+<ol>
+<li><b>Finger Size</b>: Ranges from zero to one and defaults to 0.5. Larger values imply larger fingers with less resolving power when it comes to detail. Your image will degenerate into paint swirls near values of one.</li>
+<li><b>Keep Detail:</b> Ranges from zero to one and defaults to 0.5. Larger values makes Finger paint more assiduous about finding edges in your image. Smaller values induce Finger paint to rather randomly scribble. Edges are important because they orient brush strokes. If Finger paint can't be arsed to find edges, strokes generally meander all over the place. That may be perfectly fine in some cases, aggravating in others.</li>
+<li><b>Bristle Size:</b> Ranges from zero to one and defaults to zero. By default, Finger paint uses diffusion ellipses very near to unity eccentricity. This lends a fine, sable-hair brush appearance to the &ldquo;paint.&rdquo; Increasing this number makes the ellipses less eccentric, giving the appearance of fatter, coarser bristles. Near unity, bristles tend to disappear.</li>
+<li><b>Edge Detect Includes Chroma:</b> Turn this on if you'd like to organize brush strokes primarily by color; such an image would tend to have very saturated objects on less saturated backgrounds &ndash; think of colored festival balloons floating off into an evening sky, It is of indifferent utility if the image is unsaturated; you'd be better off turning it off in those cases where chroma isn't.</li>
+</ol>
+<h3 id="RenderDetail">Render Detail</h3>
+<ol>
+<li><b>Light Direction:</b> Ranges from zero to 360&deg; and defaults to 45.&deg; The default value lights up surfaces facing to the northwest; zero degreees lights from the left, 180&deg; lights from the right.</li>
+<li><b>Shadow:</b> Ranges from zero to one and defaults to 0.5. Larger numbers engender darker shadows.</li>
+<li><b>Highlight:</b> Ranges from zero to one and defaults to 0.5. Larger numbers engender brighter highlights but less saturated and darker mid-tones.</li>
+<li><b>Specular:</b> Ranges from zero to 360&deg; and defaults to 45&deg;. Larger numbers might suggest that the paint is glossy.</li>
+</ol>
+<p>It is worthwhile to activate &ldquo;Very Verbose&rdquo; Console or Logfile options on the main Gimp-G'MIC control panel before running the Finger paint filter. These choice spinners are located on the left hand side, under the preview window. The line-by-line G'MIC commentary follows this tutorial fairly closely. There are minor implementation differences between the filter plug in and the walk through script, but nothing that obscures the underlying principles.</p>
+<h3>Example</h3>
+<p>For comparision, ambersweet oranges, rendered with fatter fingers than those used in the walkthrough. Finger size for the walk through was about 0.5, here it is about 0.7. We also specified less detail (0.30) and brighter highlights and specular components (0.6 or so).This gives a somewhat more abstract representation. Enjoy the physicality of the paint.</p>
+<p><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/fingerpaint/fpnt-018.png" title="fpnt-018.png" class="img_block" style="margin: 3px; border: 0px solid #808080; vertical-align: baseline;" height="677" width="600" /></p>
+
+
+
+   
+</body></html>

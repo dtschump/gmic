@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="tutorial.css">
+<script type="text/javascript" src="highslide/highslide.js"></script>
+<link rel="stylesheet" type="text/css" href="highslide/highslide.css" />
+<script type="text/javascript">
+hs.graphicsDir = 'highslide/graphics/';
+hs.wrapperClassName = 'wide-border';
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<body>
+
+
+      
+
+
+
+<h1>Applying a Curve</h1>
+<p><a target="_parent" href="http://gmic.eu/reference.shtml#apply_curve">-apply_curve</a> bears a parametric resemblance to <a target="_parent" href="http://gmic.eu/reference.shtml#function1d">-function1d</a> in that the two parameter sets behave the same way, and a functional resemblance to Gimp's curve tool, in that it remaps a range of intensities to new values. If you start with a linear ramp, such as <code>256,256,1,1,'x'</code> and follow it with -apply_curve with a particular set of parameters, the results are the same as if you had started with -function1d and those same parameters, extending with -expand_y. With -apply_curve, you are not restricted in your mathematical expressions. You may orient a linear ramp at 27&deg; and then remap with -apply curve.</p>
+<table rules="all" class="table table-striped" style="border-color: #7f7f7f; border-width: 1px; border-style: solid;" align="center" border="1">
+<tbody>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/ramps/rampac.png" title="Beam of Light" class="img_right_nospacetop" style="margin: 3px; border: 0px solid #808080;" height="256" width="256" /><br /><br /></td>
+<td><code># Angle a beam of light 27 deg. off vertical.\<br />gmic ang='{pi*27/180}' \<br />&nbsp; 256,256,1,1,'x*cos($ang)+y*sin($ang)' \<br />&nbsp; -apply_curve 1,0,0,63,32,127,255,191,32,255,0</code></td>
+</tr>
+</tbody>
+</table>
+<p></p>
+<table rules="all" style="border-color: #7f7f7f; border-width: 1px; background-color: #ffffff;" align="center" border="1" cellpadding="2">
+<tbody>
+<tr>
+<td><a target="_parent" href="ramps_one-dimensional-functions.shtml">One Dimensional Functions</a></td>
+<td><a target="_parent" href="ramps_remapping-space.shtml">Remapping Space</a></td>
+</tr>
+</tbody>
+</table>
+
+
+
+   
+</body></html>

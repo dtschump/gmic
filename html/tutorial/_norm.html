@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="tutorial.css">
+<script type="text/javascript" src="highslide/highslide.js"></script>
+<link rel="stylesheet" type="text/css" href="highslide/highslide.css" />
+<script type="text/javascript">
+hs.graphicsDir = 'highslide/graphics/';
+hs.wrapperClassName = 'wide-border';
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<body>
+
+
+      
+
+
+
+<h1>-norm</h1>
+<p><img src="http://www.particularart.com/static/media/uploads/command_reference/norm/theatre_moliere.png" title="Theatre Moliere" class="img_block" style="float: left; border: 0px solid #808080; margin: 3px;" height="200" width="200" />Norm regards the channel values of a pixel as components of a vector; it replaces the pixel with a single-channel value, the Euclidean length of that vector. See <a target="_parent" href="_orientation.shtml">-orientation</a> for the general discussion on RGB color spaces, including the treatment of a color as a position vector in that space.</p>
+<p>The format of the command is:</p>
+<p><code>norm</code></p>
+<p>It takes no parameters.</p>
+<p>In the RGB color space framework, -norm is complementary to -orientation, which normalizes the channel values so that the vector so formed is of unit length. If it is one's wont to regard an image as consisting of color vectors, then -norm extracts the length of those vectors and -orientation extracts their direction. Norm is rarely an end in itself; it is an intermediary command that builds a dataset of vector lengths, generally to support further calculations.</p>
+<p id="firstHeading" class="firstHeading" lang="en">Visually, -norm is often thought to be a kind of <a target="_parent" href="http://gmic.eu/reference.shtml#luminance">-luminance</a> command, as its results are superficially like it. -luminance is intended to give a displayable result but&nbsp; -norm will often exceed the upper limit of the 8 bit intensity range (0,255) The image on the left of<span dir="auto"> Th&eacute;&acirc;tre Moli&egrave;re, S&egrave;te, H&eacute;rault compares original color, luminance (middle) and norm (right). Since some pixels exceeded 255 in the right hand section, the highlights are flat and the overall results are washed out. <br /></span></p>
+<p><em>Garry Osgood</em></p>
+
+
+
+   
+</body></html>

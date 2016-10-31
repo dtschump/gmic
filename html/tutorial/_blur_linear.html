@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="tutorial.css">
+<script type="text/javascript" src="highslide/highslide.js"></script>
+<link rel="stylesheet" type="text/css" href="highslide/highslide.css" />
+<script type="text/javascript">
+hs.graphicsDir = 'highslide/graphics/';
+hs.wrapperClassName = 'wide-border';
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<body>
+
+
+      
+
+
+
+<h1>-blur_linear</h1>
+<p><img src="http://www.particularart.com/static/media/uploads/command_reference/blur_linear/hface_flowers.png" title="Linear blur, with indicator" class="img_block" style="margin: 3px; border: 0px solid #808080; float: left;" height="200" width="200" />Linear blurring emulates streaking at a specific angle and is similar in effect to <a target="_parent" href="_blur_xy.shtml">-blur_xy</a>, though it is not confined to a particular axis. In effect, the command entails three steps: (1) setting a standard variance along the x axis, (2) Optionally, setting a standard variance along the y axis, then finally, and also optionally&nbsp; (3) rotating the ensemble a specified number of degrees clockwise; specify a negative quantity for counterclockwise rotation. One might picture the first two parameters as a pair of segments at right angles, the axes of an ellipse that one then rotates to the desired orientation.&nbsp; The maximum effect is transverse to the long axis of the ellipse, with edges parallel to the long axis being minimally blurred. The short axis can be zero, preserving sharp edges parallel to the long axis. Both axes can be zero, a decidedly pointless exercise.</p>
+<p>The format of the command is:</p>
+<p><code>-blur_linear amplitude1[%],_amplitude2[%],_angle,_boundary={ 0=dirichlet | 1=neumann }</code></p>
+<ul>
+<li><em>amplitude1: </em>sets the standard variation, or spread of a gaussian kernel, along a provisional x axis, a non-negative number or percentage. One must supply a value, there are no defaults. Percentages express lengths relative to the longer dimension of a rectangular image.</li>
+<li><em>_amplitude2:</em> sets the standard variation, or spread of a gaussian kernel, along a provisional y axis, a non-negative number or percentage. This is an optional parameter that defaults to zero. Percentages are relative to an image's longer dimension.</li>
+<li><em>_angle:</em> Positive numbers set clockwise rotations of the provisional coordinate system, negative counterclockwise, setting the overall direction of the blur. Numbers are in degrees, and may be omitted, which defaults to zero degrees.</li>
+<li><em>_boundary:</em> Chooses how to handle image edges; see "Pictures have Edges. Now What?. Near edges, the blurring kernel may encompass 'off-image' pixels. '0' (zero: 'Dirichlet' ) regards such as black. '1' (unity: 'Neumann') extends the values of edge pixels out to infinity so that the value of an off-image pixel is taken to be that of the nearest edge pixel. May be omitted and defaults to Neumann policy.</li>
+</ul>
+<p><em>Garry Osgood</em></p>
+
+
+
+   
+</body></html>

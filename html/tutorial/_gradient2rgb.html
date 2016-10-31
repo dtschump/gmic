@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="tutorial.css">
+<script type="text/javascript" src="highslide/highslide.js"></script>
+<link rel="stylesheet" type="text/css" href="highslide/highslide.css" />
+<script type="text/javascript">
+hs.graphicsDir = 'highslide/graphics/';
+hs.wrapperClassName = 'wide-border';
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<body>
+
+
+      
+
+
+
+<h1>-gradient2rgb</h1>
+<div id="InitFigure" style="float: left; width: 325px; height: 370px; border: none; padding: 5px;" dir="ltr"><a target="_parent" href="img/_gradient2rgb_gr-001.jpg" class="highslide" onclick="return hs.expand(this)" title="Blurring Map underneath..."><img src="http://www.particularart.com/static/media/uploads/command_reference/gradient2rgb/gr-000.png" title="gr-000.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="300px" width="300px" /></a>
+<p style="font-style: italic; font-size: small;">Figure 1: Blurring map by way of <tt>-gradient2rgb 1</tt></p>
+</div>
+<p>This command internally computes 2D direction or 2D orientation fields of the selected images and produces a color representation of the fields.</p>
+<p>The command has the following format:</p>
+<p><code>-gradient2rgb: _is_orientation={ 0 | 1 }</code></p>
+<ol style="list-style-position: inside;">
+<li><i>orientaton:</i> Chooses a <a target="_parent" href="_gradient.shtml#VectorFields">2D direction field</a>, 0, the default, produced via <a target="_parent" href="_gradient.shtml">-gradient</a>, or a <a target="_parent" href="_gradient_orientation.shtml"><span class="internal">2D orientation field</span></a>, 1, produced by <a target="_parent" href="_gradient_orientation.shtml">-gradient_orientation</a>.</li>
+</ol>
+<p>Frequently, one creates a 2D direction or orientation field and then produce a color representation via <a target="_parent" href="_direction2rgb.shtml">-direction2rgb</a>. This command consolidates this common idiom into one command.</p>
+<p>This command is a handy source of blurring maps which trace contours for the <a target="_parent" href="blur-by-color-filter.shtml">G'MIC-Gimp Blur by Color</a> filter.</p>
+
+
+
+   
+</body></html>

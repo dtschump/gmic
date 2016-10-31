@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="tutorial.css">
+<script type="text/javascript" src="highslide/highslide.js"></script>
+<link rel="stylesheet" type="text/css" href="highslide/highslide.css" />
+<script type="text/javascript">
+hs.graphicsDir = 'highslide/graphics/';
+hs.wrapperClassName = 'wide-border';
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<body>
+
+
+      
+
+
+
+<h1>-display</h1>
+<p>The -display command (may be shortened to -d) furnishes two important assets. It puts a visualization of the image pipeline within an on-screen interactive viewer. When the command is <a target="_parent" href="command-decorations.shtml">unadorned</a> on the right hand side, each image in the pipeline appears as thumbnails, and it prints <a target="_parent" href="basics.shtml#Summarylines"><span class="internal">statistical information</span></a> of each image in the command shell. One may place any number of display commands on the command line; G'MIC will suspend processing at that point and display the various images currently inhabiting the image stack. Mouse-clicking on an image thumbnail selects it for closer examination. G'MIC hides the other images and expands the size of the selected image. The mouse reads out channel intensity values of the pixel it is resting upon, along with pixel coordinates.</p>
+<p><img src="http://www.particularart.com/static/media/uploads/command_reference/display/display.png" alt="Display of pixel intensities" title="Interactive Window of the Display Command" class="img_block" style="margin: 7px; vertical-align: middle; border: 0px solid #808080;" height="442" width="412" /></p>
+<p>The format of the -display command is:</p>
+<p><code>-display (+): _X,_Y,_Z</code></p>
+<p>Optional parameters, 'X','Y','Z', support 3D volumetric images, that is, images with two or more planes or slices comprising the depth (z) dimension (see <a target="_parent" href="images.shtml">Images</a>). X, Y, and Z pick the location of one corner of the viewing volume.</p>
+<h3>Basic Interactions</h3>
+<p>Without any <a target="_parent" href="command-decorations.shtml">righthand decorations</a>, Display places a representation of the current image stack on the screen. Decorate the righthand side of the command with a selection to limit the number of images. For example, -display[-1] will only show the last image in the stack.&nbsp; Examine a particular image by clicking on it with the left mouse button; other images go away and the selected image becomes larger. Magnify portions of the selected image by a left-mouse-down, drag, left-mouse-up action; you will draw out a rectangle that, on mouse-up, expands to fill the entire window. Step out by single-clicking with the left mouse button without dragging out a rectangle. Exit the display command by pressing the 'ESC' key.</p>
+<p>A number of control key combinations furnish additional services:</p>
+<ol>
+<li>CTRL+D: Increase window size.</li>
+<li>CTRL+C: Decrease window size.</li>
+<li>CTRL+R: Reset window size.</li>
+<li>CTRL+F: Toggle fullscreen mode.</li>
+<li>CTRL+S: Save current window snapshot as numbered file &rsquo;gmic xxxx.bmp&rsquo;.</li>
+<li>CTRL+O: Save current instance of the viewed data, as numbered file &rsquo;gmic xxxx.cimgz&rsquo;.</li>
+</ol>
+<h3>Normalization</h3>
+<p>The -display command implicitly normalizes images, a convenience that sows no end of confusion among new (and experienced) G'MIC users, because the <a target="_parent" href="http://gmic.eu/reference.shtml#output">-output</a> command does not concomitantly normalize images when it saves it to file &ndash; nor should it, if data integrity has any meaning at all. Not a few G'MIC users, having seen the Perfect Image during a -display session, invoke -output without further concern, discovering far too late in the game that the dynamic range of the image is incompatible with the image file, or is beyond the ken of downstream image editors. The primer on <a target="_parent" href="images-as-datasets.shtml">Images as Datasets</a> explores the issue in detail; it suffices here to note that -display is not really a What-You-See-Is-What-You-Get command. It's workalike variant, <a target="_parent" href="http://gmic.eu/reference.shtml#display0">-display0</a>, operates like this command in all but one respect: it does not normalize pipeline images.</p>
+<h3>Viewing Volumes</h3>
+<p><img src="http://www.particularart.com/static/media/uploads/command_reference/display/disp_vol.png" title="Volumetric Display Mode" class="img_block" style="margin: 3px; border: 0px solid #808080; float: left;" height="233" width="250" />For volumetric data &mdash; images with depths of more than one slice &mdash; G'MIC's -display divides into quadrants. The upper left quadrant shows the plan view (X, Y), the upper right&nbsp; shows the (Y, Z) elevation view and the lower left shows the (X, Z) elevation view. New control keys become available:</p>
+<div style="margin-left: 10px;"><ol>
+<li>CTRL+A: Toggles the visibility of selection crosshairs.</li>
+<li>CTRL+P: Supresses the two elevation views and progesses depthwise through the image; the plan view shows an animation of the progression. Pressing CTRL+P again stops the animation and restores the two elevation views. &nbsp;</li>
+<li>CTRL+V: Toggles on (or off) a thumbnail of the plan view in the lower right quadrant.</li>
+<li>CTRL+Mousewheel: Zooms in (or out) along the depth axis</li>
+<li>SHIFT+Mousewheel: Pans left (or right) along the width axis</li>
+<li>ALT+Mousewheel: Pans up (or down) along the height axis</li>
+</ol></div>
+<p>The mouse will select viewing volumes in a manner similar to flat images. Left mouse button down in the plan or either elevation, then sweep out a rectangle to specify two of the three dimensions, Then release the left mouse button and&nbsp; move the cursor&nbsp; to another view to sweep out the last dimension. Left mouse down again then sets the new viewing volume. (Example: Mouse down in the (X, Z) elevation to set width and depth, Release and move to the plan view to set Y).</p>
+<p><em>Garry Osgood</em></p>
+
+
+
+   
+</body></html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="tutorial.css">
+<script type="text/javascript" src="highslide/highslide.js"></script>
+<link rel="stylesheet" type="text/css" href="highslide/highslide.css" />
+<script type="text/javascript">
+hs.graphicsDir = 'highslide/graphics/';
+hs.wrapperClassName = 'wide-border';
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<body>
+
+
+      
+
+
+
+<h1>Images</h1>
+<p><img class="img_block" src="http://www.particularart.com/static/media/uploads/gmic_image.png" style="margin: 5px; float: left;" height="300" width="400" />Wherever images come from, G'MIC constructs an internal representation with four dimensional attributes. In principle, these dimensions may have any positive integer measure &ndash; millions of pixels and billions of channels, but the amount of memory in your machine sets a practical limit.</p>
+<p>Three dimensions are discrete quantities measured in pixels. You are probably familiar with width and height, the rectangular dimensions of an image on a surface. To this G'MIC adds depth, perpendicular to the surface.</p>
+<p>With depth, G'MIC images represent volumes, a construct that readily supports tomographic imaging (i.e., 'CATScans'). Video footage also constitutes one 'image' on a G'MIC image list, depth a proxy for time. A one minute NTSC video, 720x480 pixels shot at 29.97 frames per second, becomes a G'MIC image with a depth of 1798 pixels. Increments along the depth axis are often called<em> slices</em>, a frame in the larger context of a video, and a two dimensional section in the larger context of tomographic imaging.</p>
+<p>Images are commonly one pixel deep&nbsp;&ndash; one slice&nbsp;&ndash; but many G'MIC commands will function in the depth direction as well. For example, the '<a target="_parent" href="_blur.shtml">-blur</a>' command will spread a bright pixel in all directions, including neighboring slices. With depth a proxy for time in videos and animation, blur and other depth-aware commands can produce various animation effects.</p>
+<p>The fourth G'MIC dimension is 'spectral,' the number of channels an image may have, also a discrete quantity. Commonly, these are the 'red', 'green', 'blue' and 'transparency' components of an image, but G'MIC does not impose this or any other&nbsp; interpretation on the spectral dimension. Particular interpretations arise when images with specific color spaces are input, leading to notions of RGB or CMYK colorspaces, or when particular commands harness specialized images. For example, the '<a target="_parent" href="_warp.shtml">-warp</a>' command employs two channel images called 'displacement fields': one channel represents horizontal displacement at a particular pixel, the other vertical displacement, establishing x and y components of a vector which tells G'MIC how much and in which direction to warp the pixel. In this example the two channels have nothing to do with color. G'MIC's display command happens to render these displacement channels in red and green, but this is by convention only.</p>
+<p>Internally, G'MIC calculates with with thirty-two bit floating point data. Newly <a target="_parent" href="_input.shtml">-input</a> images are automatically converted to this format without requiring explicit action. It is an accommodating format which does not incur much loss during internal calculations.</p>
+<p>One doesn't care too much about internal numeric formats until one wishes to put an image elsewhere, perhaps in a file on disk that has a particular image format. The '<a target="_parent" href="http://gmic.eu/reference.shtml#output">-output</a>' command, which one uses to put images elsewhere, will pass image data to some format-specific file writer, and 'the right thing,' whatever that means, probably won't happen. That is, your image will seem to be black, or white, or posterized or in funny colors and you will wonder, perhaps out loud, perhaps out louder than necessary, what kind of &lt;<tt>insert what you care to here</tt>&gt; are those G'MIC people anyway? Someone might point out, after the 'Absolutely No Warrantry Whatsoever' language, that G'MIC is a technical image research tool, the implication being that you need to be smart enough to plan your output strategy; it's assumed that you have some idea how to do that. So, following is some idea how to do that.</p>
+<p>There are a couple of aspects to this issue: the depth of an image and the rescaling of its data to an apt range for the target file format. The handling the first aspect, image depth, may happen automatically and unobtrusively if the file format accommodates multiple images. Tagged Image File Format (TIFF) has a concept of pages; each slice will go on a separate page. If the output file format does not support pages or similar constructs (i.e., Portable Network Graphics, among others), then you will need to <a target="_parent" href="http://gmic.eu/reference.shtml#split">-split</a> any image with more than one slice along the z (depth) axis.This will replace the one image with multiple slices a set of single-sliced images. In writing these and other images on the image list, G'MIC will employ a series of numbered files, foo-000000.png, foo-000001.png, ..., one for each item on the image list, to ensure that all items on the G'MIC image list have a unique output file name.</p>
+<p>But what about data scale? The dynamic range of floating point numerals is wider than most integer file formats and may range to values less than zero, "blacker than black" for unsigned integer file formats. This aspect requires more thought and a certain amount of upfront planning.</p>
+<p>One can kick the issue down the road by employing G'MIC's native .cimg format, which will accommodate images of arbitrary depth, width, height, spectral length and number format. It is not a format many other programs can read, but one may read the .cimg file back into G'MIC later when one becomes ready to choose particular formats. <a target="_parent" href="images-as-datasets.shtml">Images as Datasets</a> goes into greater detail, including methods to match the data format and numeric range of images on the pipeline with image file formats.</p>
+<h2 class="western">Other Topics</h2>
+<ol>
+<li>
+<p><a target="_parent" href="images-as-datasets.shtml">Images as Datasets</a></p>
+</li>
+<li>
+<p><a target="_parent" href="conjuring-images.shtml">Conjuring Images out of the Aether and Other Generators</a></p>
+</li>
+<li>
+<p><a target="_parent" href="images-have-edges.shtml">Images Have Edges. Now What?</a></p>
+</li>
+</ol>
+
+
+
+   
+</body></html>

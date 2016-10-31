@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="tutorial.css">
+<script type="text/javascript" src="highslide/highslide.js"></script>
+<link rel="stylesheet" type="text/css" href="highslide/highslide.css" />
+<script type="text/javascript">
+hs.graphicsDir = 'highslide/graphics/';
+hs.wrapperClassName = 'wide-border';
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<body>
+
+
+      
+
+
+
+<h1>-gradient</h1>
+<p><img src="http://www.particularart.com/static/media/uploads/command_reference/gradient/gradientgraph.png" title="A Bell Curve and its gradient" class="img_left" style="margin: 3px; border: 0px solid #808080; float: left;" height="300" width="400" />The gradient of an image displays the rate of change of the operand's intensity along the horizontal (left to right), vertical (top to bottom) or depth (front to back) axes. The graph on the left charts the intensity of a one dimensional bell curve image (red), the green curve charts the bell curve's rate of change (or <em>slope</em>). The gradient is closely related to the first derivative, which it approximates, and is computed by taking successive differences of neighboring pixels along a given directional axis.&nbsp;</p>
+<p>The format of the command is:</p>
+<p><code class="western">-gradient: axis,scheme</code></p>
+<ol style="list-style-position: inside;">
+<li><em>axis:</em> one of 'x', 'y', or 'z' and chooses a directional axis. With 'x', the command computes the gradient by taking successive differences of pixels, from left to right, along the horizontal direction. 'y' chooses successive differences along the vertical direction from top to bottom, and 'z' chooses successive differences along the depth direction from front (top) slices to rear (bottom) slices.<em></em></li>
+<li><em>scheme:</em>can be:<ol style="list-style-position: inside;">
+<li>-1=backward</li>
+<li>0=centered</li>
+<li>1=forward</li>
+<li>2=sobel</li>
+<li>3=rotation-invariant (default)</li>
+<li>4=deriche</li>
+<li>5=vanvliet</li>
+</ol></li>
+</ol>
+<p>and chooses among several different methods to estimate the gradient.</p>
+<p>Both the axis and scheme parameters are optional. Without parameters, the command computes all significant 2d/3d components using a scheme of 3 (rotation invariant).</p>
+<h2 id="VectorFields">Vector (a.k.a. direction) fields</h2>
+<p>It is quite common to follow the -gradient command with<a target="_parent" href="http://gmic.eu/reference.shtml#append"> -append</a> c which folds the output images into one 2 or 3 channel image of a special character called a 2 or 3D <em>direction field</em>. Each pixel may be regarded as a vector and the overall image a <em>vector field</em>.</p>
+<p>In the case of -gradient's output, the vector field encodes the pointwise direction and magnitude of intensity gradients observed in the original image.</p>
+<p>Such vector fields may be visualized with <a target="_parent" href="http://gmic.eu/reference.shtml#quiver">-quiver</a>, rendering the field with arrow markers, or <a target="_parent" href="_direction2rgb.shtml">-direction2rgb</a>, rendering the field with color.&nbsp; We may extract the vector lengths with <a target="_parent" href="_norm.shtml">-norm</a> and their directions, or orientations with <a target="_parent" href="_orientation.shtml">-orientation</a>. The<a target="_parent" href="http://gmic.eu/reference.shtml#divergence"> -divergence</a> command estimates pointwise outflow and inflow of vector fields.</p>
+<p>The <a target="_parent" href="_warp.shtml">-warp</a> command employs 2D direction fields as the object controlling image distortion. The command <a target="_parent" href="_eigen2tensor.shtml">-eigen2tensor</a> takes pairs of vector fields and transforms them into tensor fields. In this operation, the first vector field contain pairs of eigenvalues and the second is a field of unit vectors (an <a target="_parent" href="_gradient_orientation.shtml"><em>orientation field</em></a>), representing one of two eigenvectors per tensor. The other one&nbsp; may be inferred as it points in a 90&deg; direction from the first. Tensor fields are used in encoding image structure and making <a target="_parent" href="_diffusiontensors.shtml#SmoothingGeometryDiffusion">smoothing geometries</a>.&nbsp;</p>
+<h2 id="Examples">Examples:</h2>
+<table class="table table-striped" border="0">
+<tbody>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/command_reference/gradient/cubic.png" title="Bell Curve" style="margin: 3px; border: 0px solid #808080; vertical-align: middle;" /></td>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/command_reference/gradient/cubic_gradient_x.png" title="Bell Curve gradient along horizontal direction" style="margin: 3px; border: 0px solid #808080; vertical-align: middle;" height="200" width="200" /></td>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/command_reference/gradient/cubic_gradient_y.png" title="Bell Curve gradient along vertical direction" style="margin: 3px; border: 0px solid #808080; vertical-align: middle;" height="200" width="200" /></td>
+</tr>
+<tr>
+<td>
+<p>A bell curve from above (<code>cubic.png</code>). The red curve in the graph at the beginning of this article is a horizontal section of this grayscale image, taken through the midpoint line.</p>
+<p>Running: <code>$ gmic cubic.png -gradient</code> produces two gradient images, depicted on the right.</p>
+</td>
+<td>
+<p>Horizontal gradient of the bell curve on the left (<code>cubic.png</code>). The green curve in the graph at the beginning of this article is a horizontal section of this image, taken along the midpoint line.</p>
+<p>Gray maps to zero in this image and represents unchanging regions in <code>cubic.png</code>. Light gray and white represent positive values and regions of increasing intensity in <code>cubic.png</code>. Similarly dark gray and black represent negative values and regions of decreasing intensity.</p>
+</td>
+<td>Vertical gradient of the bell curve on the far left&nbsp; (<code>cubic.png</code>). But for orientation, the particulars of this image are the same as the horizontal gradient on the immediate left.</td>
+</tr>
+<tr>
+<td width="256"><img style="margin: 3px; border: 0px solid #808080; vertical-align: middle;" class="img_block" src="http://www.particularart.com/static/media/uploads/command_reference/gradient/flwr_a.png" width="200" /></td>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/command_reference/gradient/flwr_c.png" class="img_block" style="margin: 3px; border: 0px solid #808080; vertical-align: middle;" height="300" width="200" /></td>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/command_reference/gradient/flwr_b.png" class="img_block" style="margin: 3px; border: 0px solid #808080; vertical-align: middle;" height="300" width="200" /></td>
+</tr>
+<tr>
+<td>
+<p>A <b style="font-size: xx-small;"><em>Isophysis tasmanica</em></b> Tasmania, Australia. (<code>isophysistasmanica.png</code>)</p>
+<p><code>$ gmic isophysistasmanica.png --luminance...</code></p>
+</td>
+<td>
+<p><code>... -gradient[-1] xy,1 -a[-2,-1] c ...</code></p>
+<p>We generate gradients in both the x and y directions and append these two images into the horizontal and vertical channels of a vector field.</p>
+</td>
+<td>
+<p><code>... --norm[-1] -negative[-1] --unsharp[-1] 20% -cut[-1] 0,255...</code></p>
+<p>We take the norm of this vector field, obtaining an image where dark lines trace the rapidly changing gradients of the original image.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p></p>
+<p><em>Garry Osgood</em></p>
+
+
+
+   
+</body></html>

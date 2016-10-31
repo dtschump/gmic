@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="tutorial.css">
+<script type="text/javascript" src="highslide/highslide.js"></script>
+<link rel="stylesheet" type="text/css" href="highslide/highslide.css" />
+<script type="text/javascript">
+hs.graphicsDir = 'highslide/graphics/';
+hs.wrapperClassName = 'wide-border';
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<body>
+
+
+      
+
+
+
+<h1>-input</h1>
+<p><img style="margin: 3px; border: 0px solid #808080; float: left;" class="img_block" src="http://www.particularart.com/static/media/uploads/command_reference/input/hollerith.png" height="285" width="300" />-Input is the least written, most frequently used command in the G'MIC scripting language. It places images from some source onto the image list, on its end unless it has an <a target="_parent" href="command-decorations.shtml">selection decorator,</a> and creating the list if necessary.</p>
+<p>The input command has the following form:</p>
+<p><code>gmic -input[&lt;destination selection&gt;] &lt;external resource&gt; |<br /> &lt;list selector&gt; |<br /> &lt;image specification&gt; |<br /> &lt;image streams&gt;</code></p>
+<p>-Input has an implied (invisible) form. If the G'MIC command parser cannot associate an item with a command (something beginning with a hyphen) or a parameter (something following a command) then it infers that the -input command precedes the item. It then classifies the item as a parameter for the -input command. Finally, the parser passes the (presumed) image to -input for processing.</p>
+<p>To make best use of the -input command, one should become familar with the four variations that the input argument can take and how the command interprets its right hand selector decoration. Very broadly, the input argument, in one of four forms, specifies the <em>source</em> images. The right hand selecton decorator, if present, specifies their <em>destination</em>. The -input command must have a source specification. The destination is optional and if omitted implies an insertion point to the right of the last poisition on the list.</p>
+<h2 id="SourceSpecifications">Source Specifications</h2>
+<p>Section 1.4 of <a target="_parent" href="http://gmic.eu/gmic_reference.pdf"><i>The Handbook</i></a> furnishes a terse, but complete list of methods which the -input command employs to sort out images from the true riff-raff. There are four broad approaches, each with numerous variants.</p>
+<p><a target="_parent" name="extern_resource" id="extern_resource"></a></p>
+<h3 id="ExternalResources">External Resources</h3>
+<p>-Input thinks the item is a resource locator. The item either identifies a file on the local machine, with, possibly, a path preceding the filename, the entire construct written according to the operating system's rules for identifying files, or it is an <a target="_parent" href="http://en.wikipedia.org/wiki/Uniform_Resource_Locator">Uniform Resource Locator</a> (URL) identifying an image somewhere on the Internet. In this case, -input will initiate an HTTP request to retrieve the image via the Hypertext Transfer Protocol.</p>
+<p>Here are a few command lines which fetch external resources:</p>
+<ol type="a">
+<li>
+<p><code>gmic gmicky.png</code> (the resource is a file in the current working directory)</p>
+</li>
+<li>
+<p><code>gmic /media/berthawork/webcontent/gmic/input/hollerith.png</code> (Similar, but the resource has a full path written for a UNIX-like file system)</p>
+</li>
+<li>
+<p><code>gmic http://upload.wikimedia.org/wikipedia/commons/d/df/Lullwater_south_from_Binnen-Bridge_Prospect_Park.jpg</code> (The resource is at Wikimedia Commons, a FOSS media repository)</p>
+</li>
+</ol>
+<p>There are a few resource locators for special circumstances.</p>
+<ol start="4" type="a">
+<li>
+<p>A single hyphen <code> - </code>indicates piped content from another process, a standard UNIX convention. To this convention, G'MIC permits a hyphen-dot-file extension construct. For example, <code> -.png </code> induces G'MIC to treat the piped input as a Portable Network Graphics file stream.</p>
+</li>
+<li>
+<p>A prefix consisting of a standard file extension followed by a colon induces G'MIC to read the file according to the type dictated by the prefix, regardless of the file extension. In this case, the file may not even have an extension. For example, <code> jpg:gmicky.png </code> will be processed as a Joint Photographers Group file, not as a Portable Network Graphics file.</p>
+</li>
+</ol>
+<p><a target="_parent" name="image_list" id="image_list"></a></p>
+<h3 id="ImageListSelections">Image List Selections</h3>
+<p>-Input regards items withn square brackets as image <a target="_parent" href="command-decorations.shtml">selectors</a> referencing positions of other items on the image list. This form begins with a right-pointing square bracket (<b>[</b>) and finishes with a left-pointing square bracket (<b>]</b>), which together encompass a selection specification (<i>selectors</i>). Depending on how they are written, selectors may reference the list positions of individual, enumerated, ranged, modulo subsets, sets of other than the cited (exception), or named images. Section 1.5 of <a target="_parent" href="http://gmic.eu/gmic_reference.pdf"><i>The Handbook</i></a> lists the complete selection syntax, as does &ldquo;<a target="_parent" href="command-decorations.shtml">Command Decoration &ndash; Image Selection</a>&rdquo; on this site.</p>
+<p>In the G'MIC scripting language this form implements image copying, as the language does not have an explicit -copy command. Appending a literal <b>'x'</b> character followed by a numeral <i>n</i> after the closing square bracket of a selector will replicate the images referenced by the selector <i>n</i> times. Take heed that the selector itself may already reference many images! It is easy to make vast image lists with this form. Examples include:</p>
+<ol type="a">
+<li>
+<p><code>gmic foo.png [0]</code> ([0] copies the first image, foo.png, in the image list. The copy becomes the second and last image in the list.)</p>
+</li>
+<li>
+<p><code>gmic ... [-2,-1] ...</code> (copies the penultimate and last images in the image list. The copies are also placed on the end in of the list in the same order as the originals)</p>
+</li>
+<li>
+<p><code>gmic ... [charley] ...</code> (copies all the images referenced by the selection named &ldquo;charley&rdquo;. See the <a target="_parent" href="http://gmic.eu/reference.shtml#name">-name</a> command)</p>
+</li>
+<li>
+<p><code>gmic ... [^0]x2 ...</code> (makes duplicates of all the images in the list, <i>except the first</i>, placing the copies at the end of the list, these in the same order as the originals on the list &ndash; this may involve a <i>lot</i> of images!)</p>
+</li>
+</ol>
+<p><a target="_parent" name="image_spec" id="image_spec"></a></p>
+<h3 id="ImageSpecification">Image Specification</h3>
+<p><img style="margin: 3px; border: 0px solid #808080; float: right;" class="img_block" src="http://www.particularart.com/static/media/uploads/command_reference/input/ramp.png" title="gmic '256,256,1,3,if(c==0,y,if(c==1,x,64))' -o ramp.png" height="256" width="256" />The command line item is an image specification, a set of up to five parameters, separated by commas that collectively specify a new image and, possibly, its content (see <a target="_parent" href="images.shtml">Images</a>). The five parameters list the new image's width, height, depth (number of slices), spectrum (number of channels) and either a list of intensities or a mathematical expression, specifying content. This -input command format underlies the method of <a target="_parent" href="conjuring-images.shtml">conjuring images from the aether.</a> These specifications take the form:</p>
+<ol type="a">
+<li>
+<p>{width[%] &ge; 0 | [<i>&lt;selection&gt;</i>]},&hellip;</p>
+</li>
+<li>
+<p>{height[%] &gt; 0 | [<i>&lt;selection&gt;</i>]},&hellip;</p>
+</li>
+<li>
+<p>{depth[%] &gt; 0 | [<i>&lt;selection&gt;</i>]},&hellip;</p>
+</li>
+<li>
+<p>{spectrum[%] &gt; 0 | [<i>&lt;selection&gt;</i>]},&hellip;</p>
+</li>
+<li>
+<p>{value_0, value_1, &hellip;, value_n | <i>&lt;procedural formula&gt;</i>}</p>
+</li>
+</ol>
+<p>The first parameter (a) specifies the width of the new image and is mandatory. Items (b&hellip;e) following are optional parameters and when omitted default to one pixel. The width parameter has a special form. The numeral zero (0), with no further parameters, creates an empty image. It is not a black image, but an image literally without data. In real life, there is almost no need for an image <i>sans</i> width, height, depth, and channels, but empty images accommodate a few obscure scripting needs.</p>
+<p>Apart from the special width case, the first four parameters (a&hellip;d) may be similarly written.</p>
+<ol type="a">
+<li>
+<p>The first way (i) is a specific number that explicitly states the dimension as a particular number of pixels. Apart from the special case of width = 0, this must be a positive number.</p>
+</li>
+<li>
+<p>The second way (ii) is a relative dimension based on those of the preceding image on the list. '100%' indicates that the dimension is the same as the preceding image on the list. <i>N%</i> for N  &isin; {1.0 &hellip; 99.9̅} specifies that the dimension is a fractional percentage of the preceding image on the list. One may write a percentage with any degree of precision, but the value is rounded to the nearest whole pixel in any case. The relative form cannot be employed for the first image on the list, as there is no antecedent to furnish a basis for percentages.</p>
+</li>
+<li>
+<p>The third way (iii) specifies that the dimension is the same as some other image on the list, referenced by a single image selector, to wit: a numeral in square brackets. It is an error to reference an image that does not exist, so this notation does not work for the first image in the list as there are no antecedents to reference.</p>
+</li>
+<li>
+<p>Height, depth, and spectrum are optional parameters and default to one pixel unless width itself is zero. In that form, height, depth and spectrum are meaningless and specifying them raises an error.</p>
+</li>
+<li>
+<p>The fifth parameter (e) is also optional and specifies image content. Without this parameter, images come into being with all channels set to zero. The image is black and transparent when an opacity channel is in the spectrum. Otherwise, when the fifth parameter is present, image content may take one of two forms:</p>
+<ul>
+<li>it may be a literal image specification. Such is made from list of comma-separated intensities. The length of this list of must be exactly equal to the product of width &times; height &times; depth &times; spectral size or an error occurs. Data populate images first by column, then by row, then by spectrum and finally by depth.</li>
+<li>it may be a procedural formula, written according to the syntax rules given in Section 1.8 of <a target="_parent" href="http://gmic.eu/gmic_reference.pdf"><i>The Handbook</i></a> for G'MIC mathematical expressions.</li>
+</ul>
+</li>
+</ol>
+<p>Here are a few image specifications:</p>
+<ol type="a">
+<li><code>gmic ... 512,256,1,3 ...</code> (creates a 512 pixel by 256 pixel image that is one slice in depth and has a spectrum of three channels)</li>
+<li><code>gmic ... 100%,100% ...</code> (creates an image with the same width and height as the preceding image on the list. Since depth, spectral, and image content have not been specified, these default to a depth of one slice, a spectrum with one channel and channel content set to zero)</li>
+<li><code>gmic ... 0 ...</code> (an empty image, which is not black, white, transparent or anything at all, but an image without data store.)</li>
+<li><code>gmic ... 345,37.5%,[-2],[-1],x ...</code> (an image with a width of 345 pixels, a height that is 37.5% of the preceding image &mdash; which must exist &mdash; a depth that is the same as the penultimate image on the list &mdash; which must exist &mdash; a spectrum equal to the number of channels of the last image on the list &mdash; which generally exists unless the image list itself is empty &mdash; and with pixel intensities set by the mathematical expression 'x', a construct which assigns the column number of the image which a pixel occupies to the pixel's intensity. For an RGB color space, the image looks like a black to white horizontal ramp).</li>
+<li><code>gmic ... 256,2,1,1,u ...</code> (a rather long, stout image. In G'MIC, images are not exclusively harnessed to depict pictures but can also provide general purpose data storage. In this example, the image has been procedurally initialized with the mathematical expression 'u', a construct which sets pixel intensities with randomly distributed values taken from the semi-closed interval [0,&hellip;1). Among other things, we can provide such an 'image' to -pointcloud, which can create another image and seed it with white pixel dust<br /> <br /> &nbsp;&nbsp;<code>gmic -input 256,2,1,1,u -*[-1] 1024 -round[-1] 1 -pointcloud 0,1024,1024 -normalize 0,255 -output[-1] stars.png</code><br /> <br /> In this example, the rather long, stout, randomly initialized 'image' was used by -pointcloud as a source of coordinates. This particular example could be implemented faster with a -noise variant, but had we wanted to tailor the distribution in a not quite random way, -pointcloud, coupled with our peculiar set of coordinates, would have been the way to go.)</li>
+</ol>
+<p><a target="_parent" name="image_stream" id="image_stream"></a></p>
+<h2>Image Streams</h2>
+<p>The command line item is a formatted data stream. Almost always, this variation is not how humans specify images, except, perhaps for tiny data sets. Suppose you code an image generator in some other computer language, and it starts a G'MIC interpretor in a child process. Your image generator could output the entire command line for the child process, starting with 'gmic' and including an image stream as a command line parameter. Your script does not have to know a great deal about how G'MIC works. It only needs to be able to write images streams by these rules:</p>
+<ol type="1">
+<li>Since an image stream is, above all, a command line item, it cannot embed whitespace anywhere.</li>
+<li>The stream starts with an open parenthesis, <i><b>(</b></i>, and finishes with a closed parenthesis.<i><b>)</b></i> '()' is disallowed. Something must appear between the parentheses.</li>
+<li>Between parentheses, the stream consists of <i>at least</i> an initial floating point numeral.</li>
+<li>This initial floating point numeral necessarily occupies column x=0, row y=0, slice z=0 and channel c=0.</li>
+<li>If the next character is the closing parenthesis, then a complete, though very small, image has been fully specified. It has one column, row, slice and channel and consists of one pixel. That pixel's intensity is equal to the floating point numeral.</li>
+<li>If the image is to be larger than this, then the next item will be one of four delimiters, each structuring the overall shape of the image in particular ways. These delimiters are: (i) Commas (,) which separate and link runs of pixels into columns, (ii) semicolons (;), which separate and link runs of columns into rows. (iii) carets (^) which separate and link blocks of columns and rows into channels, and (iv) slashes (/) which separate blocks of columns and rows stacked as channels into slices.</li>
+<li>Once the interpreter receives the closing parenthesis, it can infer the image's dimensions:
+<ul>
+<li>The column count comes from the longest contiguous run of commas, plus one. If there are no commas anywhere in the stream, the image has one column.</li>
+<li>The row count comes from the longest run of semicolons unbroken by carets or slashes, plus one. If there are no semicolons anywhere in the stream, the image has only one row.</li>
+<li>The channel count comes from the longest run of carets unbroken by slashes, plus one. If there are no carets anywhere in the stream, the image has only single channel spectra.</li>
+<li>The slice count comes from the total number of slashes in a stream, plus one. If there are no slashes anywhere in the stream, the image has only one slice.</li>
+</ul>
+</li>
+<li>This scheme allows one to specify only as much of an image as needed. Omitted entries default to pixels with zero value. That is, columns, rows, or channels with insufficient elements are padded as needed with zero so that all runs of a particular delimiter class equals the largest one observed in the stream.</li>
+</ol>
+<p>Here are some examples:</p>
+<h4 id="WhiteCrossOnABlackField">A white cross on a black field</h4>
+<p><code>gmic '(0,0,0,255;0,0,0,255;0,0,0,255;255,255,255,255,255,255,255;0,0,0,255;0,0,0,255;0,0,0,255)'</code></p>
+<p><img src="http://www.particularart.com/static/media/uploads/command_reference/input/whitecross.png" title="7x7 pixel white cross generated from partial data" height="98" width="98" /></p>
+<h4 id="StGeorgesCross">St. George's Cross</h4>
+<pre>gmic '(\<br />255,255,255,255,255,255,255,255,255,255,255,206,206,206,255,255,255,255,255,255,255,255,255,255,255;
+255,255,255,255,255,255,255,255,255,255,255,206,206,206,255,255,255,255,255,255,255,255,255,255,255;
+255,255,255,255,255,255,255,255,255,255,255,206,206,206,255,255,255,255,255,255,255,255,255,255,255;
+255,255,255,255,255,255,255,255,255,255,255,206,206,206,255,255,255,255,255,255,255,255,255,255,255;
+255,255,255,255,255,255,255,255,255,255,255,206,206,206,255,255,255,255,255,255,255,255,255,255,255;
+255,255,255,255,255,255,255,255,255,255,255,206,206,206,255,255,255,255,255,255,255,255,255,255,255;
+206,206,206,206,206,206,206,206,206,206,206,206,206,206,206,206,206,206,206,206,206,206,206,206,206;
+206,206,206,206,206,206,206,206,206,206,206,206,206,206,206,206,206,206,206,206,206,206,206,206,206;
+206,206,206,206,206,206,206,206,206,206,206,206,206,206,206,206,206,206,206,206,206,206,206,206,206;
+255,255,255,255,255,255,255,255,255,255,255,206,206,206,255,255,255,255,255,255,255,255,255,255,255;
+255,255,255,255,255,255,255,255,255,255,255,206,206,206,255,255,255,255,255,255,255,255,255,255,255;
+255,255,255,255,255,255,255,255,255,255,255,206,206,206,255,255,255,255,255,255,255,255,255,255,255;
+255,255,255,255,255,255,255,255,255,255,255,206,206,206,255,255,255,255,255,255,255,255,255,255,255;
+255,255,255,255,255,255,255,255,255,255,255,206,206,206,255,255,255,255,255,255,255,255,255,255,255;
+255,255,255,255,255,255,255,255,255,255,255,206,206,206,255,255,255,255,255,255,255,255,255,255,255^
+255,255,255,255,255,255,255,255,255,255,255,17,17,17,255,255,255,255,255,255,255,255,255,255,255;
+255,255,255,255,255,255,255,255,255,255,255,17,17,17,255,255,255,255,255,255,255,255,255,255,255;
+255,255,255,255,255,255,255,255,255,255,255,17,17,17,255,255,255,255,255,255,255,255,255,255,255;
+255,255,255,255,255,255,255,255,255,255,255,17,17,17,255,255,255,255,255,255,255,255,255,255,255;
+255,255,255,255,255,255,255,255,255,255,255,17,17,17,255,255,255,255,255,255,255,255,255,255,255;
+255,255,255,255,255,255,255,255,255,255,255,17,17,17,255,255,255,255,255,255,255,255,255,255,255;
+17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17;
+17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17;
+17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17;
+255,255,255,255,255,255,255,255,255,255,255,17,17,17,255,255,255,255,255,255,255,255,255,255,255;
+255,255,255,255,255,255,255,255,255,255,255,17,17,17,255,255,255,255,255,255,255,255,255,255,255;
+255,255,255,255,255,255,255,255,255,255,255,17,17,17,255,255,255,255,255,255,255,255,255,255,255;
+255,255,255,255,255,255,255,255,255,255,255,17,17,17,255,255,255,255,255,255,255,255,255,255,255;
+255,255,255,255,255,255,255,255,255,255,255,17,17,17,255,255,255,255,255,255,255,255,255,255,255;
+255,255,255,255,255,255,255,255,255,255,255,17,17,17,255,255,255,255,255,255,255,255,255,255,255^
+255,255,255,255,255,255,255,255,255,255,255,36,36,36,255,255,255,255,255,255,255,255,255,255,255;
+255,255,255,255,255,255,255,255,255,255,255,36,36,36,255,255,255,255,255,255,255,255,255,255,255;
+255,255,255,255,255,255,255,255,255,255,255,36,36,36,255,255,255,255,255,255,255,255,255,255,255;
+255,255,255,255,255,255,255,255,255,255,255,36,36,36,255,255,255,255,255,255,255,255,255,255,255;
+255,255,255,255,255,255,255,255,255,255,255,36,36,36,255,255,255,255,255,255,255,255,255,255,255;
+255,255,255,255,255,255,255,255,255,255,255,36,36,36,255,255,255,255,255,255,255,255,255,255,255;
+36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36;
+36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36;
+36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36;
+255,255,255,255,255,255,255,255,255,255,255,36,36,36,255,255,255,255,255,255,255,255,255,255,255;
+255,255,255,255,255,255,255,255,255,255,255,36,36,36,255,255,255,255,255,255,255,255,255,255,255;
+255,255,255,255,255,255,255,255,255,255,255,36,36,36,255,255,255,255,255,255,255,255,255,255,255;
+255,255,255,255,255,255,255,255,255,255,255,36,36,36,255,255,255,255,255,255,255,255,255,255,255;
+255,255,255,255,255,255,255,255,255,255,255,36,36,36,255,255,255,255,255,255,255,255,255,255,255;
+255,255,255,255,255,255,255,255,255,255,255,36,36,36,255,255,255,255,255,255,255,255,255,255,255<br />)'</pre>
+<p style="font-size: small;"><img style="margin: 3px; border: 0px solid #808080;" src="http://www.particularart.com/static/media/uploads/command_reference/input/stgeorge.png" title="100 X 60 pixel St George's Cross " height="60" width="100" /></p>
+<h2 id="InputDecorators">Input Decorators</h2>
+<p>As with nearly every G'MIC command, the -input command may be <a target="_parent" href="command-decorations.shtml">decorated on the right hand side</a> with a selector, informally designating the image positions upon whose occupants the command operates; its omission signals that the command operates on every image on the list.</p>
+<p>We don't usually worry too much over the very fine distinction that the numerals (or the names) within selectors directly reference <em>image positions</em>, and only by indirection, the images themselves. So while '[X]' typically induces us to think "The image X", strictly speaking we should think "The image at <strong>position</strong> X."</p>
+<p>The slight mental elision rarely gets us into trouble, but with the particular interpretation that the -input command places on its right hand decorator, we should pinch ourselves (hard) and remember that essentially, selectors contain <strong>positional notations</strong> first, which <strong>reference images</strong> second.</p>
+<p>Considering ourselves pinched, we proceed to the particular case which covers about 99 44/100% of the uses to which the -input command is put.</p>
+<p>Almost always, the -input command has no right hand decoration whatsoever. Its absence tells -input to insert the images identified in its argument&nbsp;&mdash; the <em>copy set</em>&nbsp;&mdash; at the end of the list. Almost always, that's exactly what we want. Observe that if the -input command is implied (i.e., <tt>$gmic iaminput.jpg&hellip;</tt>), then it has no right hand decoration.&nbsp;</p>
+<p>Suppose, however, that we want -input to insert the copy set at some point other than the end.</p>
+<p>In that case, we have to write the -input command explicitly, and we have to write a right hand decoration for it.</p>
+<p>The right hand decoration is a selector of image list positions that mark where -input is to insert copy sets.</p>
+<p>If the right hand decoration selector itemizes more than one position, then the input command will duplicate the copy set at<em> each</em> position.</p>
+<p>The sign of the position matters.</p>
+<ol>
+<li>If a position has no sign, it is taken to be counted from the beginning of the list and the -input command inserts the copy set at a point to the left (i.e. before) the indicated position.&nbsp;&nbsp;</li>
+<li>If a position has a negative sign, it is taken to be counted from the end of the list and the -input command inserts the copy set at a point to the right (i.e., after) the indicated position.</li>
+</ol>
+<p>Some examples might help. Suppose images of the letters 'A', 'B', 'C', 'D', and 'E' are on an image list, these initially occupying positions 0, 1, 2, 3 and 4. The symbol &lt;copy set&gt; represents a (temporary) list that contains images which the -input command discovered when parsing its argument. The &lt;copy set&gt; could contain more than one image and may even contain items from the image list proper, as a selection is one of the types of input arguments.&nbsp;</p>
+<table rules="all" class="table table-striped" style="border-color: #808080; border-width: 0px;" border="0">
+<tbody>
+<tr>
+<td>&lt;copyset&gt;</td>
+<td>'A', 'B', 'C', 'D', 'E', &lt;copyset&gt;</td>
+<td>implicit -input</td>
+</tr>
+<tr>
+<td>-input[-1] &lt;copy set&gt;</td>
+<td>'A', 'B', 'C', 'D', 'E', &lt;copyset&gt;</td>
+<td>same as undecorated</td>
+</tr>
+<tr>
+<td>-input[0] &lt;copy set&gt;</td>
+<td>&lt;copyset&gt; 'A', 'B', 'C', 'D', 'E'</td>
+<td>left of position 0</td>
+</tr>
+<tr>
+<td>-input[3] &lt;copyset&gt;</td>
+<td>'A', 'B', 'C', &lt;copyset&gt;, 'D', 'E'</td>
+<td>left of position 3</td>
+</tr>
+<tr>
+<td>-input[-4] &lt;copyset&gt;</td>
+<td>'A', 'B', &lt;copyset&gt;, 'C', 'D', 'E'</td>
+<td>right of position -4</td>
+</tr>
+<tr>
+<td>-input[3,-4] &lt;copyset&gt;</td>
+<td>'A', 'B', &lt;copyset&gt;, 'C', &lt;copyset&gt;, 'D', 'E'</td>
+<td>left of position 3, right of position -4</td>
+</tr>
+<tr>
+<td>-input[2-4] &lt;copyset&gt;</td>
+<td>'A', 'B', &lt;copyset&gt;, 'C', &lt;copyset&gt;, 'D', &lt;copyset&gt;, 'E'</td>
+<td>left of position 2, left of position 3 and left of position 4</td>
+</tr>
+<tr>
+<td>-input[0-4] &lt;copyset&gt;</td>
+<td>&lt;copyset&gt;, 'A', &lt;copyset&gt;, 'B', &lt;copyset&gt;, 'C', &lt;copyset&gt;, 'D', &lt;copyset&gt;, 'E'</td>
+<td>&nbsp;left of everything</td>
+</tr>
+<tr>
+<td>-input[-1--5] &lt;copyset&gt;</td>
+<td>'A', &lt;copyset&gt;, 'B', &lt;copyset&gt;, 'C', &lt;copyset&gt;, 'D', &lt;copyset&gt;, 'E', &lt;copyset&gt;</td>
+<td>&nbsp;right of everything</td>
+</tr>
+<tr>
+<td>-input[0--1] &lt;copyset&gt;</td>
+<td>&lt;copyset&gt;, 'A', &lt;copyset&gt;, 'B', &lt;copyset&gt;, 'C', &lt;copyset&gt;, 'D', &lt;copyset&gt;, 'E', &lt;copyset&gt;</td>
+<td>left and right of everything</td>
+</tr>
+<tr>
+<td>-input[2,-4]</td>
+<td>'A', 'B', &lt;copyset&gt;, 'C', 'D', 'E',</td>
+<td>Only one &lt;copyset&gt;. To the left of 'C' (index 2) and the right of 'B' (index -4) identify the exact same insertion point, giving rise to one insertion only.</td>
+</tr>
+</tbody>
+</table>
+<p>Right hand selection decorators on the -input command can be tricky to understand, particularly when the argument given to -input itself contains selectors; the command is then copying various elements of the list to itself. As tricky as that may seem, it is a highly efficient duplication scheme, in that the copying runs in compiled C++ code, and can replace many kinds of naive -repeat&nbsp;&hellip; -done copying loops.</p>
+<p>The following G'MIC snippet:</p>
+<p><tt>gmic -repeat 5 100,100,1,1 -text[-1] '{$&gt;}',50,50,30,1,255 -done -output numlst.cimg</tt></p>
+<p>writes out an image list to disk consisting of five 100x100x1x1 gray scale images of numerals '0' through '4', initially occupying those same positions on the image list. It may be used to examine the effects of different kinds of insertions. Indeed:</p>
+<p><tt>gmic -input numlst.cimg -input[0--1] [0--1]</tt></p>
+<p>generates this 35 element image list:</p>
+<p><tt> 0 1 2 3 4 0 0 1 2 3 4 1 0 1 2 3 4 2 0 1 2 3 4 3 0 1 2 3 4 4 0 1 2 3 4</tt></p>
+<p>Readers who understand why this list has 35 elements and why they fall in this particular order have truly grasped the essence of the -input command in all of its varigated manifestations.</p>
+<p style="font-size: small;">Top image: <a target="_parent" href="https://www.census.gov/history/www/innovations/technology/the_hollerith_tabulator.html">A Hollerith Tabulating Machine</a> of the kind used in the 1890 United States Census. Example at <a target="_parent" href="http://en.wikipedia.org/wiki/Computer_History_Museum">Computer History Museum</a>, Mountain View, CA, United States of America. Image by Jennifer,<a target="_parent" href="http://commons.wikimedia.org/wiki/File:Hollerith_census_machine.CHM.jpg" class="highslide" onclick="return hs.expand(this)"> Wikimedia Commons</a></p>
+<p><em>Garry Osgood</em></p>
+
+
+
+   
+</body></html>

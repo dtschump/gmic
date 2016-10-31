@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="tutorial.css">
+<script type="text/javascript" src="highslide/highslide.js"></script>
+<link rel="stylesheet" type="text/css" href="highslide/highslide.css" />
+<script type="text/javascript">
+hs.graphicsDir = 'highslide/graphics/';
+hs.wrapperClassName = 'wide-border';
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<body>
+
+
+      
+
+
+
+<h2 id="PaintingWithWavesPartOne">Painting With Waves: Part One</h2>
+<p>We now have something like a map. It is not complete but corresponds in character to a <a target="_parent" href="http://en.wikipedia.org/wiki/Tabula_Rogeriana"><i>Tabula Rogeriana,</i></a> deficient, yet perhaps complete enough for our first strokes, which will be simple things, akin to painting single points in the spatial sense &ndash; just simple waves. To do this we employ G'MIC's Discrete Fourier Synthesis command, <tt>-ifft</tt>.</p>
+<p>Harnessing G'MIC's <tt>-set</tt> command, we plot coefficients in pairs of otherwise black (zeroed out) 200 &times; 200, one slice and channel images (gray scales), each, respectively, the real and imaginary components of the spectral domain. We feed these mostly empty spectral domains to <tt>-ifft</tt>, obtaining the corresponding waveforms.</p>
+<p>The preamble to our <span style="font-family: Nimbus Mono L,monospace;" face="Nimbus Mono L, monospace">-set</span> commands:</p>
+<p><tt>gmic -input 200,200,1,1 [-1] &hellip;</tt></p>
+<p>produces the real and imaginary components of the spectral domain, initially empty. The post script:</p>
+<p>&hellip;<tt>-ifft[-2,-1] -remove[-1] -normalize 0,255 -output[-1] wavy.png</tt></p>
+<p>transforms our plotted coefficients into the spatial domain, producing waves, and writes the normalized real component out as separate image. Sandwiched betwixt these, our sundry <tt>-set</tt> commands.</p>
+<p>The <i>real component?</i> Yes, the real component, for the G'MIC Inverse Fast Fourier Transform also represents the spatial domain as a field of complex numbers and <i><a target="_parent" href="#2.1.2.The Hanging Tale|outline">thereby hangs a tale</a></i>. It suffices to note at this time that both transforms switch views on the same underlying dataset, one that requires complex numbers in order to be fully expressed.</p>
+<p>At our present map-making state, this requirement is not that clear to us. The imaginary component seems a mysterious and slightly annoying extra which more often than not becomes a deletable supernumary. Recent 1.6.x G'MIC releases furnish <tt>-fft</tt> and <tt>-ifft</tt> work-a-likes, <tt>-dct</tt> and <tt>-idct</tt>, which hide the imaginary component from our ken. For cyclic workflows where one customarily transforms forward to the spectral domain with <tt>-fft</tt>, alter coefficients to serve some aim, then transit back to the spatial with <tt>-ifft</tt>, the <a target="_parent" href="http://en.wikipedia.org/wiki/Discrete_cosine_transform">Discrete Cosine Transform</a> (<tt>-dct</tt>) and <a target="_parent" href="http://en.wikipedia.org/wiki/Discrete_cosine_transform">Inverse Discrete Cosine Transform</a> (<tt>-idct</tt>) furnish imaginary-free spectral editing, a practical convenience. We're map-making, however, and hiding things is not conducive to making good maps. So here we will stick with <tt>-fft</tt> and <tt>-ifft</tt> for the sheer mysteries they offer.</p>
+<p>Chiral pairing, and that some coefficients do not have counterparts, constitute the most prominent feature of our nascent map. Most coefficients pair off with their "reflection images" across horizontal and vertical reflection axes. The coefficients that do not pair in that way coincide with the various intersection points of these reflection axes. Sitting on the reflection axis, they "self-reflect."&nbsp;</p>
+<h3 id="TheSelfChirals">The Self-Chirals</h3>
+<p>We begin with a gallery of these self-chirals. Though we are formally working with complex numbers, in this round the imaginary components of all our plots are zero, and since our spatial domain components come out of the box as zero, we need not plot zero all over again, so we only use one <tt>-set</tt> command where two would normally prevail.</p>
+<table style="border-color: #808080; border-width: 1px; border-style: solid;" rules="all" class="table table-striped" border="0">
+<tbody>
+<tr>
+<td><tt style="text-align: center;">-set[0] 1,0,0,0,0</tt></td>
+<td><tt style="text-align: center;">-set[0] 1,100,0</tt></td>
+</tr>
+<tr>
+<td>
+<p style="text-align: center;"><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/spectral/spa-17.png" title="spa-17.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="200" width="200" /></p>
+</td>
+<td>
+<p style="text-align: center;"><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/spectral/spa-18.png" title="spa-18.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="200" width="200" /></p>
+</td>
+</tr>
+<tr>
+<td>A solid gray, which normalization drives to zero (omitted from the postscript in this rendition). We set the coefficient at 0:0 &ndash; the origin, you recall &ndash; to 1 + i0. The other arguments which <tt>-set </tt>takes are for the current slice, 0, and the current channel, 0, and as these values will not change, the corresponding arguments will be omitted here on.
+<p>In this example, the transformed image is composed of one value, a &ldquo;sinusoidal wave&rdquo; with a frequency of zero and an infinite wavelength. Recall that in the spectral domain, the frequency pair associated with the coefficient y = x = 0 is 0:0. The origin of the spectral domain corresponds to a frequency of zero along the length and breadth of the spatial image. In essence, the origin coefficient defines an unchanging bias value that is applied to every pixel in the spatial image.</p>
+</td>
+<td>&nbsp; A varying signal, mean of 0. We set the coefficient 100:0 to 1 + i0. The transformed image varies from positive to negative at a wavelength of two pixels, this the Nyquist rate for the 200 &times; 200 pixel image, which cannot reliably reproduce variations at shorter wavelengths.<br /> This particular coefficient, 100:0, is at the top edge of the spectral map, right at pixel column 100, row 0, and the image has a frequency of 100 cycles along the width, but 0 cycles along the height.<br /> You might be thinking that there is a relation between frequency and coefficient positions in the specular domain. Nudge, nudge, wink, wink.</td>
+</tr>
+<tr>
+<td><tt style="text-align: center;">-set[0] 1,0,100</tt></td>
+<td><tt style="text-align: center;">-set[0] 1,100,100</tt></td>
+</tr>
+<tr>
+<td>
+<p style="text-align: center;"><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/spectral/spa-19.png" title="spa-19.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="200" width="200" /></p>
+</td>
+<td>
+<p style="text-align: center;"><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/spectral/spa-20.png" title="spa-20.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="200" width="200" /></p>
+</td>
+</tr>
+<tr>
+<td>A varying signal, mean of 0. We set the coefficient at 0:100 to 1 + i0 <br />Everything noted about the other waveforms corresponding to Nyquist rates apply here as well. Here we set the coefficient at column 0, row 100 on the left edge of the image and the transformed image produced by <tt>-ifft</tt> portrays a frequency of 0 cycles along the width, but 100 cycles along the height.<br /> You might be thinking that there is a relation between frequency and coefficient positions in the specular domain. We'll kick you once, hard, in the shins if you don't.</td>
+<td>A varying signal, mean of 0, and a one pixel sized checkerboard. Keep <tt>-ifft</tt> in mind when you want to generate Damn Fast checkerboards at single pixel resolutions.<br /> The reason for this should not be a surprise. We set the Nyquist coefficient at 100:100 to 1 + i0. This gives rise to a variation at the Nyquist rate along the height and width. With a two pixel wavelength in both the width and height, a checkerboard necessarily arises.<br /> So setting the coefficient at location 100:100 in the 200 &times; 200 spectral domain image gives rise to an image with a frequency of 100 cycles along the height and a 100 cycles along the width. You don't suppose there is a relationship between the coordinates of a coefficient in the spectral domain and frequencies in the spatial domain?</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<table style="border-color: #7f7f7f; border-width: 1px; background-color: #ffffff;" rules="all" align="center" border="1" cellpadding="2">
+<tbody>
+<tr>
+<td><a target="_parent" title="The Complex Number Field" href="spectral-art_the-complex-number-field.shtml">The Complex Number Field</a></td>
+<td><a target="_parent" title="Painting With Waves: Part Two" href="spectral-art_painting-with-waves-part-two.shtml">Painting With Waves: Part Two</a></td>
+</tr>
+</tbody>
+</table>
+
+
+
+   
+</body></html>

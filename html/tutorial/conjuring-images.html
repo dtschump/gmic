@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="tutorial.css">
+<script type="text/javascript" src="highslide/highslide.js"></script>
+<link rel="stylesheet" type="text/css" href="highslide/highslide.css" />
+<script type="text/javascript">
+hs.graphicsDir = 'highslide/graphics/';
+hs.wrapperClassName = 'wide-border';
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<body>
+
+
+      
+
+
+
+<h2>Conjuring Images out of the Aether and Other Generators.</h2>
+<p>Typically, images arrive at the pipeline by way of the <a target="_parent" href="_input.shtml">-input</a> command or as an output of some transformative command. To this, one may also conjure images out of the aether, using specialized variations of the -input command.</p>
+<p>Conjuring images from the aether is fairly straightforward. One writes a series of as many as four integer parameters, spatial dimensions, separated by commas, with no embedded white space. The four numbers represent the width, height, depth and spectral dimensions of an image, like so:</p>
+<p><code>$ gmic 1036,850,1,3 ...</code></p>
+<p>which will produce an image 1036 pixels wide, 850 pixels high, one pixel deep, with a spectral dimension of three channels; it will be black unless one writes an optional fifth parameter, a mathematical script that defines image content procedurally. The <a target="_parent" href="ramps.shtml">tutorial on image ramps</a> and the -input command itself have examples of procedural image definitions. The four dimensions will conjure an image out of the aether, ready to be transformed by some follow-on command, typically a generator like&nbsp;<a target="_parent" href="_plasma.shtml">-plasma</a> or <a target="_parent" href="http://gmic.eu/reference.shtml#noise">-noise</a>.&nbsp;</p>
+<p>Not all dimensions need to be furnished; omitted dimensions default to one. So</p>
+<p><code>$ gmic 100</code></p>
+<p>produces a 100x1x1x1 image. The special form</p>
+<p><code>$ gmic 0</code></p>
+<p>produces an empty image where all dimensions are zero. If output, the resulting file will have zero bytes. This special case primarily serves scripts that may be generating images dynamically; the zero dimensioned image serves as a boundary case that can trigger a loop exit.&nbsp;</p>
+<p>Images may also be conjured up from other images by way of <a target="_parent" href="command-decorations.shtml#isoselect" title="Isolated Selections: Implied Copy Command">selections</a>, image indices appearing within square braces. This is an implied copy command; it places the copied images at the end of the pipeline.</p>
+
+
+
+   
+</body></html>

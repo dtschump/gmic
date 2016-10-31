@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="tutorial.css">
+<script type="text/javascript" src="highslide/highslide.js"></script>
+<link rel="stylesheet" type="text/css" href="highslide/highslide.css" />
+<script type="text/javascript">
+hs.graphicsDir = 'highslide/graphics/';
+hs.wrapperClassName = 'wide-border';
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<body>
+
+
+      
+
+
+
+<h1 id="colormap">-colormap</h1>
+<p><img src="http://www.particularart.com/static/media/uploads/command_reference/colormap/cdc_inset_0.png" title="Soup With Color Bars" class="img_block" style="margin: 3px; border: 0px solid #808080; float: left;" width="300" height="300" /></p>
+<p>Given one or more selected images and a count, <tt>-colormap</tt> generates palettes containing like numbers of estimated &ldquo;good-fit&rdquo; colors. Palettes are small images, usually one pixel high and a just a few pixels long, though it is not unusual to have a few hundred pixels in a palette. Each pixel is a color swatch, and tend to reflect the dominant colors of the image. One could think of the <tt>-colormap</tt> command as a "dominant color detector."</p>
+<p>Use <tt>-colormap</tt> with <a target="_parent" href="_index.shtml"><tt>-index</tt></a> to make a new image that uses very few colors compared to the original, but remains a reasonably good reproduction.</p>
+<p>Use -colormap with <a target="_parent" href="_map.shtml">-map</a> to convert gray scales into false color images.&nbsp;</p>
+<p>The command has the form:</p>
+<table rules="all" class="table table-striped" border="0">
+<tbody>
+<tr>
+<td><tt>-colormap:</tt></td>
+<td>
+<p><tt>Color count (desired palette size)</tt></p>
+</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>
+<p><tt>Method: 0|1 (median cut only | median cut and k-means)</tt></p>
+</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>
+<p><tt>Sort 0|1 (ascending or descending)</tt></p>
+</td>
+</tr>
+</tbody>
+</table>
+<ol>
+<li>
+<p><b>Color count:</b> Sets the size of the color palette. <tt>-colormap</tt> prepares a palette of this many colors so estimated as to fairly match the original hues in the given image. If the count is zero, every unique color in the original becomes a part of the palette; this is practical only for small images or images which have been color-reduced and imaged through <tt>-index</tt> or <a target="_parent" href="_autoindex.shtml"><tt>-autoindex</tt></a>; these images have only limited numbers of unique colors.</p>
+</li>
+<li>
+<p><b>Method:</b> When False, <tt>-colormap</tt> only uses the median-cut method. Otherwise, (True) <tt>-colormap</tt> harnesses the <a target="_parent" href="https://en.wikipedia.org/wiki/K-means_clustering">k-means</a> clustering algorithm to refine an initial median-cut-based estimate. The extra stage adds some processing overhead.</p>
+</li>
+<li>
+<p><b>Sort:</b> When unspecified, the colors in the palette are approximately ordered from dark-to-light, but have not been fully sorted. Sorting with a '0' flag strictly arranges the palette from dark to light. Sorting with a '1' flag orders from light-to-dark.</p>
+</li>
+</ol>
+<p>Consider writing your palettes in a high precision format such as <tt>.cimg</tt>. In particular, eight bit unsigned integer formats will shave away the hard-won precision furnished by the k-means algorithm; you may as well not use k-means at all if you then save your color map in an eight bit <tt>.png</tt> or <tt>.jpg</tt> file.</p>
+<p>If you find yourself invoking <tt>-colormap</tt> often, then making reduced-color versions of the originals with <tt>-index</tt>, consider using <a target="_parent" href="_autoindex.shtml"><tt>-autoindex</tt></a> which combines <tt>-colormap </tt>and <tt>-index</tt>. Note that <tt>-autoindex</tt> generates the palette internally, deleting it when finished. Running <tt>-colormap[&hellip;] 0,0</tt> with the output of <tt>-autoindex</tt> referenced in the selector will recover an equivalent version of the palette.</p>
+<p>Technical Note: <a target="_parent" href="gmic-color-mapping.shtml">Color Mapping in G'MIC</a></p>
+<p style="text-align: right;"><em>&mdash;&nbsp;Garry Osgood</em></p>
+
+
+
+   
+</body></html>

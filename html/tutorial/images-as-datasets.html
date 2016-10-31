@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="tutorial.css">
+<script type="text/javascript" src="highslide/highslide.js"></script>
+<link rel="stylesheet" type="text/css" href="highslide/highslide.css" />
+<script type="text/javascript">
+hs.graphicsDir = 'highslide/graphics/';
+hs.wrapperClassName = 'wide-border';
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<body>
+
+
+      
+
+
+
+<h2>Images as Data Sets</h2>
+<p>First and formost, G'MIC is a research tool. Many commands routinely produce 'images' which are useful data sets, but do not span a range of values compatible with standard graphic file formats. Commonly, <a target="_parent" href="_display.shtml">-display</a> will normalize such data sets so that your computer screen will show something, but the <a target="_parent" href="http://gmic.eu/reference.shtml#output">-output</a> command will not concomitantly write normalized data to the file. For all that G'MIC knows, you may <em>want</em> your data set in a non-standard range.</p>
+<p>The&nbsp;<a target="_parent" href="_display.shtml"> -display</a> command does report a set of metrics for each image in the pipeline following the summary lines. Of particular interest are the maximum and minimum pixel values of each image. Some commands produce pixels that exceed the so-called normal range of image formats and, if output, these files will not work in other programs. One should always review the image metrics as well as the display window to ensure that an image is within the norms expected for the output format.</p>
+<p>For example, we may harness the <a target="_parent" href="_bandpass.shtml">-bandpass</a> command to get only the very low frequency content of an image. Artistically, it furnishes a very distinctive pattern.</p>
+<p><code>$ gmic -input example.png -bandpass 0.005,0.01 -display -output ex_outofband.png</code></p>
+<p><code>[gmic]-0./ Start G'MIC parser.</code></p>
+<p><code>[gmic]-0./ Input file 'example.png' at position [0] (1 image 250x250x1x3).</code></p>
+<p><code>[gmic]-1./ Apply bandpass filter [0.005,0.01] to image [0].</code></p>
+<p><code>[gmic]-1./ Display image [0] = 'example.png*'.<br />[0] = 'example.png':</code></p>
+<p><em>&lt;detailed metrics omitted for brevity&gt;</em></p>
+<p><code>min = -83.5938, max = 93.4782, mean = 1.7197e-09, std = 23.2746, coords_min = (188,0,0,1), coords_max = (167,120,0,0)</code></p>
+<p></p>
+<table class="table-striped" id="display_example" summary="Display Example" align="center" border="1" cellpadding="2" cellspacing="2" lang="en-US"><colgroup span="2"> <col width="50%" /> </colgroup>
+<tbody>
+<tr>
+<td><center><img class="img_block" src="http://www.particularart.com/static/media/uploads/ex_bpass.png" title="-bandpass command, as displayed" height="150" width="150" /></center></td>
+<td><center><img class="img_block" src="http://www.particularart.com/static/media/uploads/ex_outofband.png" title="-bandpass command, on disk" height="150" width="150" /></center></td>
+</tr>
+<tr>
+<td>
+<p><em>How the '-display' command depicts the output of the '-bandpass' command.</em></p>
+</td>
+<td>
+<p><em>How the '-output' command writes '-bandpass' data to disk.</em></p>
+</td>
+</tr>
+<tr>
+<td colspan="2"><center><a target="_parent" href="img/images-as-datasets_example_graphic.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="Comparison of image data as it was originally in the G'MIC pipeline and as it was written to a PNG file." src="http://www.particularart.com/static/media/uploads/example_graphic_thumb.png" title="Original v. Output to PNG" height="240" width="320" /></a></center></td>
+</tr>
+<tr>
+<td colspan="2">
+<p><em>Pixel row 177, (red channel). Green curve: data from the left image, as it originally was in the image stack. Red curve: data from the right image, as it was written to disk.</em></p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>In this example, the data set resulting from the <a target="_parent" href="_bandpass.shtml">-bandpass</a> command ranged from a minimum of -83.5938 &ndash; <em>blacker than black</em> &ndash; to a maximum of 93.4782. Following on, the&nbsp;<a target="_parent" href="http://gmic.eu/reference.shtml#output">-output</a> command wrote a PNG file.</p>
+<p>It so happens that PNG files usually consist of eight or sixteen bits per channel unsigned integers that range from 0 to 255 for eight bits or 0 to 65535 for sixteen bits. In the example, a default conversion from floating point to unsigned integers took place: so-called 'blacker than black' pixels, negative quantities, wrapped around to positive quantities, because, by definition, negative numbers cannot be represented in unsigned integer formats. In the conversion from floating point to unsigned integers, signed integers are an intermediary form. Negative signed integers are written in two's complement, with the most significant bit representing the sign and set to one to indicate a value less than zero. In eight bit channels, -1 has the two's complement representation of 11111111. This bit pattern has a very different meaning as an unsigned eight bit integer. In that interpretation, the most significant bit is not a sign, but represents the 2<sup>7</sup> binary place, 1111111 represents 255 among unsigned eight bit integers, not -1. In effect, the literal bit patterns are written to disk, but not the signed/unsigned interpretation. But for the width of the data channel, similar circumstances prevail for sixteen bit unsigned integer channels.</p>
+<p>Opening the PNG file in one's favorite paint program gives rise to surprising results, all the 'blacker than black' intensities represented in the G'MIC preview as dark shades appear white or nearly white in one's favorite paint program, the conversion of negative 'blacker than black' values wrapping around through the virtual addition of&nbsp; 256, for eight bits, or 65,536 for sixteen bit files.</p>
+<p>To visualize this, we graphed the red channel from one scan line of the example as it was originally in the image stack, and again after it was written to file encoded as unsigned eight bit integers. The green curve depicts the original data; the red depicts data on disk after conversion. So long as the original data were positive, the eight bit unsigned numerals on disk tracked their original floating point counterparts fairly closely, with only minor rounding error. Where the original data are negative, however, the corresponding file quantities swing abruptly positive, offset from the original by exactly 256. The blacker-than-black' values wrap around to white or very nearly white.</p>
+<p>Visually, the data in the file is quite different than what the <a target="_parent" href="_display.shtml">-display</a> command showed. And yet, nothing is broken. Every command is strictly doing what it has been designed to do. The difficulty is that what they have been designed to do is not what we want. To really get what we want, we have to prepare data sets to be stored in standard graphic files, that is, knowing that a particular output format consists of unsigned integers ranging from 0 to 255. We then have to decide how to scale and offset data in a way that doesn't (much) change the data's visual representation.</p>
+<h3>Data Management</h3>
+<p>G'MIC commands have no knowledge (or concern) about the bandwidth of outputs. To give people some idea about what is going on, the G'MIC ' <a target="_parent" href="_display.shtml">-display</a> command implicitly normalizes pixel values to a range that the screen can accomodate, typically 0&nbsp;&ndash; 255. This alteration can give rise to display values which are very different than the image stack values. To bridge this mismatch, the mouse pointer reports the actual pixel values as stored in G'MIC's image stack when the <a target="_parent" href="_display.shtml">-display</a> command is active and a specific image is selected.</p>
+<p>At the end of the day, however, some decision needs to be made about an image being written to a file. The common choices are:</p>
+<ol>
+<li>Nothing</li>
+<li>Cut</li>
+<li>Normalize</li>
+</ol>
+<h4>Nothing</h4>
+<p>Nothing is pretty easy. G'MIC has its own native format, cimg, named after its core image processing library. It is a very simple, very accommodating format that will, as much as humanly possible, preserve <em>numerical data</em> - it stores pixels as floating point numerals, preserving the sign and as much of the precision of the data as the floating point format allows. It is also a multi-image format; an <a target="_parent" href="command-decorations.shtml">undecorated</a> <a target="_parent" href="http://gmic.eu/reference.shtml#output">-output</a> command will write the entire image stack to one .cimg file. This is the best choice when you know you are not ready to display data as images yet, that you may very well have other operations in mind; maybe you aren't quite sure what those operations are yet. Writing the image stack out to a .cimg file essentially puts the entire stack on ice. Later on, when you know what you want to do with the data, you can <a target="_parent" href="_input.shtml">-input</a> the .cimg file of your iced image stack and pick up where you left off. Writing a .cimg file is easy: simply name a file with a .cimg extension and the <a target="_parent" href="http://gmic.eu/reference.shtml#output">-output</a> command will do the rest.</p>
+<p>The difficulty with doing nothing is that you probably can't display the data without distorting it in some fashion, and you most likely can't hand it off to a graphics program. If you are bent on displaying a data set, then you need to make some choices about the out-of-band values, i. e. those that fall outside of 0&nbsp;&ndash; 255 for an eight bit PNG file. That is what the remaining choices are for.</p>
+<h4>Cut</h4>
+<p>If your image has pixels with channel values less than zero or greater than what your file format can accommodate, you can clip out-of-bounds data with the <a target="_parent" href="http://gmic.eu/reference.shtml#cut">-cut</a> command, which takes a bottom and top clipping values. Pixel channel values falling below the lower bound are set to that boundary value. Similarly, pixel channel values above the upper bound are set to that value. The upside is that intermediary values are not changed, so channel values and the colors they form are undisturbed. The downside is that details conveyed by out of band channel values will be flattened to one or the other boundary and be lost.</p>
+<h4>Normalize</h4>
+<p>If details matter, the G'MIC <a target="_parent" href="_normalize.shtml">-normalize</a> command may be harnessed to adjust minimum and maximum values to match the minimum and maximum values of the destination file format. The channel values stored in the file will be scaled to fit within the lower and upper boundaries, to wit:</p>
+<p><img src="http://www.particularart.com/static/media/uploads/normalize.png" height="44" width="100" /></p>
+<p>where <em>R</em> is a desired upper boundary value and where zero will be the implied lower boundary value. You pick <em>R</em> to be apt for the destination file, <em>V<sub>max</sub></em> and <em>V<sub>min</sub></em> represent the largest and smallest channel values present in a pre-normalized image, and <em>V<sub>o</sub></em> is a pre-normalized channel value of a pixel in need of adjustment. This ratio scales <em>V<sub>o</sub></em> to a normalized value which will fall within 0.0 and <em>R</em> inclusive. This scheme will preserve details so long as the dynamic range of the original is not vastly larger than <em>R</em>. but original color relationships in will necessarily change.</p>
+<p>The <a target="_parent" href="_normalize.shtml">-normalize</a> command is not a panacea for all out-of-band ills, however. Images with high dynamic ranges would be ruined if constrained to eight bit unsigned integers; in this case, the <a target="_parent" href="http://www.openexr.com/" target="_blank" title="OpenEXR Format">EXR</a> image format might be a better choice.</p>
+
+
+
+   
+</body></html>

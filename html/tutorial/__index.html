@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="tutorial.css">
+<script type="text/javascript" src="highslide/highslide.js"></script>
+<link rel="stylesheet" type="text/css" href="highslide/highslide.css" />
+<script type="text/javascript">
+hs.graphicsDir = 'highslide/graphics/';
+hs.wrapperClassName = 'wide-border';
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<body>
+
+
+      
+
+
+
+<h1 class="western">G'MIC</h1>
+<p><img class="img_left" src="http://www.particularart.com/static/media/uploads/gmic_front.jpg" style="margin: 5px; float: left;" height="300" width="400" />On the piece of the planet that I inhabit, G'MIC, <a target="_parent" href="http://gmic.eu/index.shtml">GREYC's Magic for Image Computing</a>, falls deep within the shadow cast by <a target="_parent" href="http://www.imagemagick.org/script/index.php">ImageMagick.</a></p>
+<p><a target="_parent" href="https://www.google.com/search?q=ImageMagick&amp;ie=utf-8&amp;oe=utf-8&amp;aq=t&amp;rls=org.mozilla:en-US:official&amp;client=firefox-a">Google ImageMagick</a> and you will garner hundreds of hits, all relevant, crowding your first dozen pages or so. In contrast <a target="_parent" href="https://www.google.com/search?q=GMIC&amp;ie=utf-8&amp;oe=utf-8&amp;aq=t&amp;rls=org.mozilla:en-US:official&amp;client=firefox-a">Googling G'MIC</a> turns up &ldquo;GMIC - Silicon Valley's Largest Mobile Conference and Expo&rdquo;, &ldquo;Green Meeting Industry Council&rdquo; and, lest we forget, the &ldquo;Glass Manufacturing Industry Council.&rdquo; To be sure, <a target="_parent" href="http://gmic.eu/index.shtml">G'MIC's SourceForge page</a> is in the mix, one of many brand contenders.</p>
+<p>David Tschumperl&eacute; and other moving spirits behind G'MIC seem little perturbed by this encroaching anonymity. They know what they have &ndash; a real good image processing pipeline &ndash; which they cheerfully maintain for their own purposes and those of a loyal band of <em>cognoscenti. </em>So the rest of the world, it seems, can go hang. David Tschumperl&eacute; and friends are too busy image processing to spoon-feed a marketing blitz to anyone.</p>
+<p>In real life, <a target="_parent" href="https://tschumperle.users.greyc.fr/">Dr. Tschumperl&eacute;</a> is a research scientist at <a target="_parent" href="https://www.greyc.fr/en/node/1810">GREYC Laboratory</a> in Caen, France, and G'MIC is a part of that life. Every process which generates images also generates noise. A better separation of signal from noise is what motivates much of G'MIC and its underlying CImg library. The worry of confounding the reality of tumors with splotches of noise unsettles everyone, and such serious mindedness engenders an intensity of purpose. That notwithstanding, many image processing algorithms also serve artistic goals, a fact that has not been lost on Dr. Tschumperl&eacute; or his team, and they have fashioned a suite of access toolkits which let the rest of us in on the fun.</p>
+<p>This toolkit consists of a <a target="_parent" href="http://www.gimp.org/">GIMP</a> <a target="_parent" href="http://gmic.eu/gimp.shtml">plugin</a>, which is a visual interface for artists, a G'MIC interpreter, a tool for designing and executing image processing pipelines, a <a target="_parent" href="https://gmicol.greyc.fr/">web service</a>, which will filter images without requiring any locally installed software, ZArt, a GUI tool for real-time manipulations of video streams, and an application interface library so programmers can wrap their own applications around CImg and G'MIC.</p>
+<p>The most well-known component is the GIMP plugin, a monster among its siblings. Most GIMP plugins implement an effect or two. The G'MIC plugin harbors some twenty groupings of effects, each containing from half a dozen to more than two dozen effects each &ndash; nearly five hundred in version 1.5.8.1 (December 2013). Many effects have multiple settings. One might spend weeks exploring the possibilities inherent in one effect, and years exploring the whole library. There are a number of active discussion groups (<a target="_parent" href="http://gimpchat.com/viewforum.php?f=28">GIMPChat/G'MIC</a>, <a target="_parent" href="https://plus.google.com/117441237982283011318/posts">G'MIC at Google+</a>, <a target="_parent" href="http://www.flickr.com/groups/gmic/discuss">G'MIC at Flickr</a>), supporting the G'MIC GIMP plugin.</p>
+<p>Alas, there is not as much information lying around for the standalone G'MIC interpreter, which is a shame, as the GIMP G'MIC plugin is built on top of the interpreter and knowledge of the interpreter is essential in extending the plugin. Like the more well-known ImageMagick, the G'MIC interpreter embodies the notion of a pipeline -- a sequence of images upon which a gamut of processing tools operate. Particular operations begin life on (rather long) command lines, but these are soon subsumed in script files and become G'MIC commands in their own right, for G'MIC is a self-extending interpreter. Possibly this mode of operation is a bit intimidating, so people naturally gravitate away from the interpreter to the friendly GIMP plugin. That is perfectly fine, however it has engendered a dearth of documentation on the interpreter itself. That is unfortunate, because when one encounters a need for a pipeline &ndash; a tool which can uniformly apply operations upon many images &ndash; the one-shot character of the GIMP plugin is not ideal. The underlying G'MIC interpreter is the better choice.</p>
+<p>There are a few interpreter-specific gems lying around. Dr. Tschumperl&eacute; has written a a <a target="_parent" href="http://gmic.eu/gmic_reference.pdf" target="_blank">massive reference manual</a> for the interpreter. While encyclopedic, it does not quite develop a sense of how the whole articulates together. He has also written a <a target="_parent" href="http://gmic.eu/tutorial/convert_raw.shtml">nice introduction to the G'MIC interpreter</a> which does give a sense of how the whole articulates together. Others at the SourceForge <a target="_parent" href="http://sourceforge.net/p/gmic/wiki/Home/">G'MIC wiki</a> offer pearls of wisdom, situated at various levels of expertise. In the future, perhaps, there will be a G'MIC user manual and a nice cookbook. Until such niceties come along, builders of image processing pipelines will have to content themselves with ad-hoc recipes, such as the few I have assembled here.</p>
+<p>For those new to the G'MIC interpreter, the first four topics in the following list constitutes a primer. The fifth topic, the <a target="_parent" href="command-guide.shtml">Command Guide</a>, embodies the meat of the interpreter. At this writing (January, 2014), it contains little more than the G'MIC Handbook, which is tersely sufficient for the experienced user but mysterious for beginners. One of the long term goals of this project is to amplify on that terseness, but that will be a while. &nbsp;</p>
+<ol>
+<li><a target="_parent" href="basics.shtml" hreflang="en-us">Basics</a></li>
+<li><a target="_parent" href="images.shtml" hreflang="en-us">Images</a></li>
+<li><a target="_parent" href="command-decorations.shtml" hreflang="en-us">Command Decorations</a></li>
+<li><a target="_parent" href="beginners-cookbook.shtml" hreflang="en-us">Beginner's Cookbook</a></li>
+<li><a target="_parent" href="command-guide.shtml">Command Guide</a></li>
+</ol>
+
+
+
+   
+</body></html>

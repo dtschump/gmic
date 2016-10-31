@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="tutorial.css">
+<script type="text/javascript" src="highslide/highslide.js"></script>
+<link rel="stylesheet" type="text/css" href="highslide/highslide.css" />
+<script type="text/javascript">
+hs.graphicsDir = 'highslide/graphics/';
+hs.wrapperClassName = 'wide-border';
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<body>
+
+
+      
+
+
+
+<h1>Command Guide</h1>
+<p>G'MIC command documentation follows the classifcation scheme of the <em><a target="_parent" href="http://gmic.eu/gmic_reference.pdf" target="_blank">G'MIC Handbook</a></em> which has pretty much set everyone's expectations of where various commands are. These links will bring you to various tables; the tables will bring you to the commands themselves.</p>
+<p>If you are not sure where a command falls in this classification scheme, try <em>'-&lt;command&gt;'</em> in this site's search facility. That is, put the command in single quotes, use the hyphen (which usually means 'not this' in that search box, but the single quotes escape that behavior), and substitute <em>&lt;command&gt;</em> with the command name you think you want.</p>
+<p>You may also Google It. the form 'gmic command <em>&lt;command&gt;</em>' will get you content from this site and gmic.eu and, sometimes points in between; these last are (sometimes) gems.</p>
+<h2 id="GMICCommandClassifications">G'MIC Command Classifications</h2>
+<table rules="all" class="table table-striped" style="border-color: #808080; border-width: 1px;" border="1">
+<tbody>
+<tr>
+<td><a target="_parent" href="http://www.particularart.com/tools-and-toys/gmic/command-guide/global-options/">Global Options</a></td>
+<td>These work anywhere and everywhere</td>
+<td><a target="_parent" href="http://www.particularart.com/tools-and-toys/gmic/command-guide/inputs-outputs/">Inputs/Outputs</a></td>
+<td>Loads media into and off of the image list</td>
+</tr>
+<tr>
+<td><a target="_parent" href="http://www.particularart.com/tools-and-toys/gmic/command-guide/list-manipulation/">List Manipulation</a></td>
+<td>Reorders items on the image list</td>
+<td><a target="_parent" href="http://www.particularart.com/tools-and-toys/gmic/command-guide/mathematical-operators/">Mathematical Operators</a></td>
+<td>Trigs. Logs. Powers. Basics.</td>
+</tr>
+<tr>
+<td><a target="_parent" href="http://www.particularart.com/tools-and-toys/gmic/command-guide/values-manipulation/">Values Manipulation</a></td>
+<td>Manipulates luminance rather than color, though color can be affected</td>
+<td><a target="_parent" href="http://www.particularart.com/tools-and-toys/gmic/command-guide/color-manipulation/">Color Manipulation</a></td>
+<td>Manipulates color rather than luminance, though luminance can be affected.</td>
+</tr>
+<tr>
+<td><a target="_parent" href="http://www.particularart.com/tools-and-toys/gmic/command-guide/geometry-manipulation/">Geometry Manipulation</a></td>
+<td>Alter the structure or shape of the image itself, though image content may be collaterally affected.</td>
+<td><a target="_parent" href="http://www.particularart.com/tools-and-toys/gmic/command-guide/filtering/">Filtering</a></td>
+<td>A large class (80+) which alter the content of images in myriad ways.</td>
+</tr>
+<tr>
+<td><a target="_parent" href="http://www.particularart.com/tools-and-toys/gmic/command-guide/feature-extraction/">Feature Extraction</a></td>
+<td>A technical class generally supporting the field of computer vision, commands singly (or in groups) search for, identify and sometimes mark pixels which exhibit particular characteristics.&nbsp;</td>
+<td><a target="_parent" href="http://www.particularart.com/tools-and-toys/gmic/command-guide/image-drawing/">Image Drawing</a></td>
+<td>Commands here draw on images, altering or replacing original content.</td>
+</tr>
+<tr>
+<td><a target="_parent" href="http://www.particularart.com/tools-and-toys/gmic/command-guide/matrix-computation/">Matrix Computation</a></td>
+<td>Recall that G'MIC images need not depict things like flowers or cats, but may be numerical data sets. For those data sets that look like tensors or tensor fields, these commands perform basic (or not so basic) linear alebra on them. Linear least squares, Singular Value Decompositions &mdash; if you don't know what these are, these commands will be largely mysterious.</td>
+<td><a target="_parent" href="http://www.particularart.com/tools-and-toys/gmic/command-guide/3d-rendering/">3D Rendering</a></td>
+<td>All the commands which work on objects in three-space. These commands (80+) constitute an application within an application.</td>
+</tr>
+<tr>
+<td><a target="_parent" href="http://www.particularart.com/tools-and-toys/gmic/command-guide/program-control/">Program Control</a></td>
+<td>These commands support program flow control, branching, looping, argument query and checking or managing the runtime environment (thread control). These are what you need to write gmic or gmic-Gimp filter scripts.</td>
+<td><a target="_parent" href="http://www.particularart.com/tools-and-toys/gmic/command-guide/arrays-tiles-frames/">Arrays Tiles Frames</a></td>
+<td>
+<p>Puts a myriad of frames around images, or carves them into tiles or arrays</p>
+</td>
+</tr>
+<tr>
+<td><a target="_parent" href="http://www.particularart.com/tools-and-toys/gmic/command-guide/artistic/">Artistic</a></td>
+<td>Filters images so that they seemed to have been drawn or painted with particular tools (sketchbw), made by artists in particular schools (cubism), made with historic or hysteric imaging devices (polaroid) or are workalikes of filters with expensive licenses or which are found only in expensive programs.</td>
+<td><a target="_parent" href="http://www.particularart.com/tools-and-toys/gmic/command-guide/warpings/">Warpings</a></td>
+<td>Commands that stretch, convolute, ripple or distort images, or remap images from one kind of surface to another (like planes to spheres and back)</td>
+</tr>
+<tr>
+<td><a target="_parent" href="http://www.particularart.com/tools-and-toys/gmic/command-guide/degradations/">Degradations</a></td>
+<td>Mezzoscale noise and structured noise, the kind that alters noticably large clusters of pixels in particular ways.</td>
+<td><a target="_parent" href="http://www.particularart.com/tools-and-toys/gmic/command-guide/blending-and-fading/">Blending and Fading</a></td>
+<td>Combines images, but through using blurred or uncertain borders</td>
+</tr>
+<tr>
+<td><a target="_parent" href="http://www.particularart.com/tools-and-toys/gmic/command-guide/image-sequences/">Image Sequences</a></td>
+<td>Makes animations or volumes from select images.</td>
+<td><a target="_parent" href="http://www.particularart.com/tools-and-toys/gmic/command-guide/interactive-demos/">Interactive Demos</a></td>
+<td>That's what these are!</td>
+</tr>
+<tr>
+<td><a target="_parent" href="http://www.particularart.com/tools-and-toys/gmic/command-guide/pink-library-operators/">PINK Library Operators</a></td>
+<td>Commands based on the <a target="_parent" href="https://pinkhq.com/jhome/">PINK image processing library</a>. These will fail in various ways without the PINK library and executables installed.</td>
+<td><a target="_parent" href="http://www.particularart.com/tools-and-toys/gmic/command-guide/convenience-functions/">Convenience Functions</a></td>
+<td>&nbsp;Mainly scripting support, and run the gamut: communication with file systems and operating systems, number conversion utilities, image metrics and more.</td>
+</tr>
+</tbody>
+</table>
+<p>Alas, the command documentation on this site largely reflects the <em>Handbook</em>. As time permits, we'll augment the canonical stubs, furnish extended examples and applications. This will proceed no particular order; those that we use a good deal tend to migrate to the top of the priority stack.</p>
+<p><em>Garry Osgood</em></p>
+
+
+
+   
+</body></html>

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="tutorial.css">
+<script type="text/javascript" src="highslide/highslide.js"></script>
+<link rel="stylesheet" type="text/css" href="highslide/highslide.css" />
+<script type="text/javascript">
+hs.graphicsDir = 'highslide/graphics/';
+hs.wrapperClassName = 'wide-border';
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<body>
+
+
+      
+
+
+
+<div id="FigureOne" style="float: left; width: 3.25in; height: 3.375in; border: none; padding: 0in;"><img style="margin: 3px; border: 0px solid #808080;" class="img_block" src="http://www.particularart.com/static/media/uploads/command_reference/map/map_julia.png" title="Julia Set Colorized" width="300" height="300" />
+<p style="font-size: 10pt; line-height: 100%;"><i>Figure 1: A mapping from gray to color</i></p>
+</div>
+<h1 id="map">-map</h1>
+<p>Map assigns <em>palettes of reference colors</em> to <em>index maps</em>. The index map is a single channel gray scale. The numeric values of its pixels are taken to be indices which select colors from a given palette of reference colors.</p>
+<p>Informally, <tt>-map</tt> is the "paint-by-numbers" command. The palette corresponds to a box of enumerated paints; these can't be mixed nor used from somewhere else. The index map corresponds to the card printed with various enumerated regions. The painter corresponds to the <tt>-map</tt> command; he or she looks at the card and paints regions the color corresponding to the number printed in the region.</p>
+<p>In a restricted sense, <tt>-map</tt> is the inverse operator of <a target="_parent" href="_index.shtml"><tt>-index</tt></a>. When one sets that command's <tt>map_palette</tt> parameter False, <tt>-index</tt> produces a single channel gray scale image, the <em>index map</em>. its pixels contain indices that assign reference colors from the palette to the pixels. The <tt>-map</tt> command produces a new image by following all of the assignments indicated in the index map.</p>
+<p>In a less restricted sense, one may regard any gray scale image as an index map; such need not be produced by <tt>-index</tt>. Taking this liberty, then <tt>-map</tt> becomes a tool to convert gray scales into "false color" images.</p>
+<p>One practical aim of this idea is to make lucid features that are not particularly clear in some gray scale representation of a phenomenon. One makes a correspondence between gray levels and color (i. e., constructs a palette of reference colors) and then makes astute color assignments for those very nearly identical grays that are difficult to distinguish.</p>
+<p>The command has the form:</p>
+<table border="0">
+<tbody>
+<tr>
+<td><tt>-map</tt></td>
+<td>
+<p><tt>{ [palette] | predefined_palette },</tt></p>
+</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>
+<p><tt>boundary</tt></p>
+</td>
+</tr>
+</tbody>
+</table>
+<ol>
+<li>
+<p><b>palette:</b> An <a target="_parent" href="command-decorations.shtml#image_selection">image selection</a> or the index number of one among a number of predefined Look-up Tables (LUT). Either form furnishes the -map command with an enumerated set of reference colors that it can assign to gray scale levels.</p>
+<p>When this parameter is an image selection (a numeric index in square brackets), the selected image is taken to be a single row, multicolumn set of reference colors, regardless of the image dimensions. The command indexes the pixels in the reference image from left-to-right, top-to-bottom, taking each pixel to be a reference color. While the image may be any size, it is rarely practical to have more than a few hundred reference colors, and a few dozen are usually ample. The image is almost always quite small.</p>
+<p>When this parameter is a integer, it is taken to be a reference to a number of built-in color lookup tables. As distributed, G'MIC has eight such tables which may be selected through integers 0 through 7:</p>
+<ol start="0" type="1">
+<li><em>Default:</em> the 256 colors of an 8&times;8&times;8 RGB color cube</li>
+<li><em>HSV:</em> 256 steps counterclockwise around the HSV color circle,</li>
+<li><em>Line:</em> 256 colors of varying saturation and luminance that collectively resembles the &ldquo;average picture&rdquo;,</li>
+<li><em>Hot:</em> 256 steps from the black to red, red to yellow, and yellow to white,</li>
+<li><em>Cool:</em> 256 step ramp from cyan to magenta,</li>
+<li><em>Jet:</em>256 step ramp clockwise around an arc of the HSV color circle, from 240&deg; (blue), through 120&deg; (green), 60&deg; (yellow) and 0&deg; (red), Often used in false color visualizations.</li>
+<li><em>Flag:</em> 4 steps: black followed by the French tricolor,</li>
+<li><em>Cube:</em> 256 step ramp traversing the black, red, green, yellow, cyan, white, blue and magenta vertices of the RGB color cube.</li>
+</ol></li>
+<li>
+<p><b>boundary:</b> Sets policy when indices in the map reference colors outside the range of the palette:</p>
+<ol start="0" type="1">
+<li><em>dirichlet:</em> Assume the color beyond the reference palette is black.</li>
+<li><em>neumann:</em> Assume the color beyond reference palette is the same as that of the largest index value.</li>
+<li><em>cyclic:</em> Replace the out-of-bounds index, <em>k</em> with <em>r</em> = <em>k</em> <a target="_parent" href="https://en.wikipedia.org/wiki/Modulo_operation">modulo</a> <em>p</em>, where <em>p</em> is the length of the pallete. That is, indices exceeding the length of the palette &ldquo;wrap around&rdquo; to the beginning of the palette. The color appearing in the output corresponds to <em>r</em>.</li>
+</ol></li>
+</ol>
+<h2 id="Example">Example</h2>
+<p>Root polishing by <a target="_parent" href="http://mathworld.wolfram.com/NewtonsMethod.html">Newton's method</a> entails using a succession of trial values starting from initial guesses. These trial guesses take the form of complex numbers, <em>x + iy</em>. Some guesses converge very rapidly toward the roots of a given polynomial; others do not converge until thousands of iterations have taken place and some guesses never converge.</p>
+<p>The picture below stems from a dense, rectangular mesh sampling the complex plane around the origin. Each sample becomes an initial guess for convergence under Newton's method to a designated root of some degree two (or greater) polynomial. If the guess converges to one of the other roots, the pixel corresponding to the sample is set to black. Otherwise, it is set to a gray.</p>
+<p>The level of this gray, <em>L</em>, relates to the number of interations, <em>i</em>, through:</p>
+<p style="text-align: center;"><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"> <semantics> <mrow> <mi>L</mi> <mo stretchy="false">=</mo> <mfrac> <mn>176.752531</mn> <mrow> <mi>log</mi> <mrow> <mo fence="true" stretchy="false">(</mo> <mrow> <mrow> <mn>1</mn> <mo stretchy="false">+</mo> <mi>i</mi> </mrow> </mrow> <mo fence="true" stretchy="false">)</mo> </mrow> </mrow> </mfrac> </mrow> <annotation encoding="StarMath 5.0">L = 176.752531 over { log( 1 + i) }</annotation> </semantics> </math></p>
+<p>for total iterations <em>i</em>, an integer greater than zero. If it should happen that a sample value converges acceptably close to the root in as little as one iteration of Newton's Method, then <em>L</em> &asymp; 255.0 and the pixel corresponding to the sample is set to white. As the number of iterations increase, the gray level, <em>L</em>, converges to zero, but never reaches it. If, after 10,000 iterations, the guess is still has not converged, we abandon all hope for that particular sample and set the corresponding pixel to <em>L</em> &asymp; 19, the darkest gray in the image that is still not black. Samples that converge to a particular root compose its <em>basin of attraction</em>. The picture below depicts a portion of the basin of attraction for one root of some polynomial (for present purposes, it does not matter which one).</p>
+<p>It turns out that the basin of attraction for a particular root has a really quite fantastic, fractal shape if the degree of the associated polynomial is two or higher. But there is a problem with the way we are imaging this basin of attraction. A sample that takes more than 10,000 iterations to converge upon the designated root is a very dark gray. A sample that converges to some other root is black. These two very distinct cases, that have very different meanings, have almost the same shade of gray!&nbsp;</p>
+<p>This is the kind of conundrum that <tt>-map</tt> can fix.</p>
+<table style="width: 100%;" rules="all" class="table table-striped" border="0"><colgroup> <col width="60%" /> <col width="40%" /> </colgroup>
+<tbody>
+<tr>
+<td><a target="_parent" href="img/_map_map_nrmask_l.jpg" class="highslide" onclick="return hs.expand(this)"><img src="http://www.particularart.com/static/media/uploads/command_reference/map/map_nrmask.png" title="Basin of attraction in shades of grey" class="img_block" style="margin: 3px; border: 0px solid #808080; vertical-align: middle;" width="400" height="400" /></a></td>
+<td>
+<p><strong>basin_index_map.png</strong></p>
+<p>A basin of attraction for one of the roots of some polynomial.</p>
+<p>Very dark gray corresponds to parts of the basin which take a very large number of iterations before converging on a root.</p>
+<p>Black corresponds to other basins of attraction.</p>
+<p>`Tis not a very distinct distinction.</p>
+</td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/command_reference/map/map_palette.png" title="palette of reference colors" class="img_block" style="margin: 3px; border: 0px solid #808080; vertical-align: middle;" width="400" height="42" /></td>
+<td>
+<p><strong>palette.png</strong></p>
+<p>We make a palette of reference colors that is almost a blue gray <a target="_parent" href="ramps.shtml">ramp</a>, but we set the color corresponding to index 0 (black) to a violet. This color will correspond to samples that belong in other basins of attraction. We have also designated other indices as interesting; red, for example, corresponds to those samples that converge upon the designated root in just two iterations.</p>
+</td>
+</tr>
+<tr>
+<td><a target="_parent" href="img/_map_map_remap_l.jpg" class="highslide" onclick="return hs.expand(this)"><img src="http://www.particularart.com/static/media/uploads/command_reference/map/map_remap.png" title="Apply the palette to the gray scale via -map" class="img_block" style="margin: 3px; border: 0px solid #808080; vertical-align: middle;" width="400" height="400" /></a></td>
+<td>
+<p><strong>basin.png</strong></p>
+<pre>gmic -input basin_index_map.png \
+     -input palette.png         \
+     -map[-2] [-1],0            \
+     -remove[-1]                \
+     -output[-1] basin.png
+</pre>
+<p>Mapping violet to position 0 of the reference palette has given us a clear indication of samples that belong to other basins and those that belong to the designated basin, but take a great many iterations to converge. It appears that those high iteration samples trace out a <a target="_parent" href="https://en.wikipedia.org/wiki/Julia_set">Fatou set</a> of some sort, which is interesting, but its investigation takes us rather far afield from G'MIC.</p>
+<p>The key takeaway is that <tt>-map</tt> made clear a pattern that is obscure and could otherwise escape our attention. But, with a new phenomenon made lucid through <tt>-map,</tt> we now have an interesting line of investigation that we may write up elsewhere in the sweet fullness of time.</p>
+</td>
+</tr>
+</tbody>
+</table>
+
+
+
+   
+</body></html>

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="tutorial.css">
+<script type="text/javascript" src="highslide/highslide.js"></script>
+<link rel="stylesheet" type="text/css" href="highslide/highslide.css" />
+<script type="text/javascript">
+hs.graphicsDir = 'highslide/graphics/';
+hs.wrapperClassName = 'wide-border';
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<body>
+
+
+      
+
+
+
+<h1>-eigen</h1>
+<p><img src="http://www.particularart.com/static/media/uploads/command_reference/eigen/init-000.png" title="init-000.png" class="img_block" style="margin: 3px; border: 0px solid #808080; float: left;" height="300" width="300" /><tt>-eigen</tt> solves for the <a target="_parent" href="dyidiffusion_eigenvalues-and-eigenvectors.shtml">eigenvalues and eigenvectors</a> of selected images, these being regarded as specialized datasets not particularly pictoral in nature. The command has two distinct modes of operation which stems from the organization of the selected images.</p>
+<h3>Square Matrices.</h3>
+<p>In the simplest case, the selected image is square, has a depth of one, has a single channel spectrum and forms a <a target="_parent" href="https://en.wikipedia.org/wiki/Symmetric_matrix">square symmetric matrix</a>. The pixel intensities are taken to be real value coefficients. Being symmetric, a pixel at row j and column k for j &ne; k is equal to its counterpart at row k and column j. Informally, one can fold the image along the diagonal pixels, like a napkin, so that pixels in the upper right and lower left match up; matching pixels are equal.</p>
+<p>Under these circumstances, <tt>-eigen</tt> factors such <em>n&nbsp;&times; n</em> matrices into two tensors, a<em> n &times; </em>1 column vector of eigenvalues, sorted by descending magnitude, and a&nbsp;<em>n&nbsp;&times; n</em> matrix, where each column is an <em>n &times; </em>1 eigenvector. The command places these on the image list in eigenvalue, eigenvector order. Since the given matrices are square, symmetric and populated with real values, the resulting eigenvalues and eigenvectors also are populated with real values. Note that <tt>-eigen</tt> is not intended for use with general (unsymmetric) square matrices; the results from such are almost surely not what you want.</p>
+<p>The matrix may be arbitrarily large but there are practical limits regarding memory and user patience. The command decomposes a 1024 <em>&times; </em>1024 matrix in about five to six minutes, which is probably an extreme use case. More typically, <tt>-eigen</tt> solves relatively small matrices with about one hundred coefficients or less.</p>
+<h3>Tensor fields</h3>
+<p>In the more common case, the selected image is a <a target="_parent" href="_eigen2tensor.shtml#TensorFields"><em>tensor field</em></a>&nbsp;&ndash; an array of tensors. In this case, each image pixel consists of the diagonal and upper triangular coefficients of either a 2<em>&times;</em>2 or 3<em>&times;</em>3&nbsp; symmetric matrix, coefficients in <a target="_parent" href="http://en.wikipedia.org/wiki/Row-major_order/">row-major</a> order, indexed from channel zero. The tensor field is associated with an image and each pixel in the tensor field conveys some information about the locale of the corresponding pixel in the associated image. Particulars depend on the generator of the field. See<a target="_parent" href="_structuretensors.shtml"> <tt>-structuretensors</tt></a> and <a target="_parent" href="_diffusiontensors.shtml"><tt>-diffusiontensors</tt></a>. 2<em>&times;</em>2 tensors capture the dynamics surrounding pixels in the width and height cardinal directions,&nbsp; 3<em>&times;</em>3 tensors include the additional depth dimension. Tensor fields need not be square; indeed they match the width, height and depth of their associated image, but tensor fields must have the exact number of channels to hold the diagonal and upper triangle of the tensor, three for 2x2 tensors and six for 3x3 tensors.</p>
+<h3>Usage</h3>
+<p>The command takes no parameters, but places constraints on the organization of selected images. These may either be square, single channel and one slice, which are regarded as symmetric matrices with real coefficients, or have arbitrary width, height and depth, which are regarded as tensor fields. Single slice tensor fields must have three channels; multi-slice tensor fields must have six channels in each slice. See the&nbsp; <a target="_parent" href="_eigen2tensor.shtml#TensorFields">"Tensor Field"</a> discussion in the <a target="_parent" href="_eigen2tensor.shtml"><tt>-eigen2tensor</tt></a> documentation.</p>
+<p>When operating on tensor fields, the command "expands" single instances of these into two images, the first containing eigenvalues, the second an abridged set of eigenvectors.</p>
+<p>For tensor fields associated with single slice images, where there is no depth dimension; the eigenvalue image contains two channels, one for each eigenvalue of the original 2<em>&times;</em>2 tensor. The eigenvector image contains normed components of just one of the two eigenvectors. Since the original 2<em>&times;</em>2 tensor is symmetric, the second eigenvector is at right angles to the first, so its components may be easily derived.&nbsp;</p>
+<p>For tensor fields associated with multiple slice images, there is a depth dimension; the eigenvalue and eigenvector images have the same number of slices as the associated image. In each slice, the eigenvalue image has three channels, one for each eigenvalue of the original 3<em>&times;</em>3 tensor. The eigenvector image has six channels in each slice, containing normed components of two eigenvectors at right angles to one another, this following from the symmetry of the original 3<em>&times;</em>3 tensor. The components of the third eigenvector may be inferred as it is normal to the plane defined by the other two eigenvectors.&nbsp;</p>
+<p>Whether it was a single or multi-channel tensor field originally in the offing, the command places the eigenvalue image on the image list first, followed by the abridged eigenvector set. This is precisely the order expected by <tt>-eigen2tensor</tt>, which regenerates tensor fields from eigenvalue - eigenvector image pairs. Insofar as such pairs are concerned, the command <tt>-eigen2tensor</tt> operates in the opposite direction and "restores" a tensor field unpacked by this command.</p>
+<p style="text-align: right;">&mdash;&nbsp;<em>Garry Osgood</em></p>
+
+
+
+   
+</body></html>

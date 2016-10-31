@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="tutorial.css">
+<script type="text/javascript" src="highslide/highslide.js"></script>
+<link rel="stylesheet" type="text/css" href="highslide/highslide.css" />
+<script type="text/javascript">
+hs.graphicsDir = 'highslide/graphics/';
+hs.wrapperClassName = 'wide-border';
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<body>
+
+
+      
+
+
+
+<h1>-compose_channels</h1>
+<p><img src="http://www.particularart.com/static/media/uploads/command_reference/compose_channels/testpattern.png" class="img_block" style="margin: 3px; border: 0px solid #808080; float: left;" height="256" width="256" />This command uses image channels as operands in an arithmetic or logical operation. The command's parameter specifies the particular operator which defaults to 'add'.</p>
+<p>For example the underlined snippet in this pipeline:</p>
+<p><code>gmic 16,16,1,2,'if(c==0,x,y)' <span style="text-decoration: underline;">-compose_channels and</span><code></code></code></p>
+<p>Is equivalent to:</p>
+<p><code>gmic 16,16,1,2,'if(c==0,x,y)' <span style="text-decoration: underline;">-split c -and[-2,-1]</span><code></code></code></p>
+<p>We made the graphic on the left with this somewhat more complete example:</p>
+<p><code>gmic 16,16,1,2,'if(c==0,x,y)'<br /> &nbsp;&nbsp;--compose_channels[0] and<br /> &nbsp;&nbsp;--compose_channels[0] xor<br /> &nbsp;&nbsp;-compose_channels[0] or<br /> &nbsp;&nbsp;-append c -resize2dx 256,1<br /> &nbsp;&nbsp;-normalize 0,255 -o[-1] testpattern.png</code></p>
+<p>In this example, we find the dot products between elements of two vector fields, one in a.cimg, the other in b.cimg:</p>
+<p><code>gmic a.cimg b.cimg -mul[-2,-1] -compose_channels[-1] add</code></p>
+<p>The format of the command is:</p>
+<p><code>-compose_channels oper</code></p>
+<ul>
+<li><em>oper:</em> Any binary arithmetic, logical or comparison test operator that takes a pair of image operands and produces a single result.</li>
+</ul>
+<p>One writes the operator without any leading hyphens as it is being passed as a parameter rather than being immediately invoked. Figuratively, the command inserts N &minus; 1 copies of the operator between the N channels of an image, and then reduces the result pairwise from channel zero, accumulating the result in channel zero.</p>
+<p>It is a harmless yet pointless exercise to employ a single channel image with -compose_channels, a bit like the sound of one hand clapping. In this case, such an image is left unchanged by the command. On the other hand, the G'MIC command passed to -compose_channels really must be a pairwise image operator that reduces a multi-spectral operand image to a single channel result. Unpredictable behavior can arise, though an inappropriate command usually results in a error.</p>
+<p><em>Garry Osgood</em></p>
+
+
+
+   
+</body></html>

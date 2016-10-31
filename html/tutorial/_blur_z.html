@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="tutorial.css">
+<script type="text/javascript" src="highslide/highslide.js"></script>
+<link rel="stylesheet" type="text/css" href="highslide/highslide.css" />
+<script type="text/javascript">
+hs.graphicsDir = 'highslide/graphics/';
+hs.wrapperClassName = 'wide-border';
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<body>
+
+
+      
+
+
+
+<h1>-blur_z</h1>
+<p><img src="http://www.particularart.com/static/media/uploads/command_reference/blur_z/blur_z.png" title="gmic 100,100,100,1 -noise 0.2,2 -blur_z 8,0,0" class="img_block" style="margin: 3px; border: 0px solid #808080; float: left;" height="200" width="200" />This command is a specialization of the <a target="_parent" href="_blur.shtml">-blur</a> command, one that convolves images only in the depth dimension. As such, it is not especially useful for single-slice images.</p>
+<p>For multiple-slice images, -blur_z convolves an image along the z axis, preserving details along the other two axes. The <a target="_parent" href="_display.shtml">-display</a> of a small star field, depicted on the left, illustrates the effect. Stars are sharp in the X-Y plane, situated in the upper left quadrant. In contrast, both the Y-Z and X-Z elevations, upper right and lower left quadrants, illustrates how stars smear through the volume's depth. Scrub through this image with the -display command (CTRL-P) and observe how the stars twinkle (<code> gmic 100,100,100,1 <a target="_parent" href="http://gmic.eu/reference.shtml#noise">-noise</a> 0.2,2 -blur_z 8,0,0 <a target="_parent" href="_display.shtml">-display </a></code>).</p>
+<p>The format of the command is:</p>
+<p><code>-blur_z amplitude[%]&gt;=0,_boundary={ 0=dirichlet | 1=neumann }</code></p>
+<ul>
+<li><em>amplitude:</em> sets the spread of the Gaussian distribution kernel, informally the amount of blurring.&nbsp; One must supply this value; there is no default.</li>
+<li><em>_boundary:</em> chooses how to handle image edges; see "<a target="_parent" title="Images have edges; now what?" href="images-have-edges.shtml">Pictures have Edges. Now What?</a>" A zero flag (0, Dirichlet) assumes that off-image pixels are black. A unit flag (1, Neumann) assumes that off-image pixels have the exact same value as the nearest edge pixel. Neumann does not exhibit a black vignette, but sometimes edge values become uncommonly bright. This value may be omitted and when it is, the command uses the Neumann policy as a default.</li>
+</ul>
+<h2>Application: A Hoard of Happy Faces</h2>
+<p><video id="zbuffer" width="360" height="240" style="float:left;margin:7px;" poster="http://www.particularart.com/static/media/uploads/zbuf_still.png" preload="metadata" controls="controls"><source src="http://www.particularart.com/static/media/uploads/command_reference/blur_z/zblur.mp4" type="video/mp4" /><source src="http://www.particularart.com/static/media/uploads/command_reference/blur_z/zblur.webm" type="video/webm" /><source src="http://www.particularart.com/static/media/uploads/command_reference/blur_z/zblur.ogv" type="video/ogg" /><source src="http://www.particularart.com/static/media/uploads/command_reference/blur_z/zblur.avi" type="video/avi" /><object id="zbuffer" width="360" height="240" data="/static/grappelli/tinymce/jscripts/tiny_mce/plugins/media/moxieplayer.swf" type="application/x-shockwave-flash"><param name="src" value="/static/grappelli/tinymce/jscripts/tiny_mce/plugins/media/moxieplayer.swf" /><param name="flashvars" value="url=/static/media/uploads/command_reference/blur_z/zblur.mp4&amp;poster=/static/media/uploads/zbuf_still.png" /><param name="allowfullscreen" value="true" /><param name="allowscriptaccess" value="true" /></object> </video></p>
+<p>There are those here who cannot look at a single pixel without thinking "impulse!", a species of signal which causes convolution kernels to take snapshots of themselves. We noted this effect in the <a target="_parent" href="_convolve.shtml">-convolve</a> article; see its 'Application' section.</p>
+<p>For us, it means that winking star fields like the one in the introduction can pre-image all kinds of winking things, possibly to horrific effect. However, these stars are nothing if not impulses and convolution can change these into whatever kernel we may harness. So we start with a happy face.</p>
+<p>Here is the general plan. Run the<a target="_parent" href="_convolve.shtml"> -convolve</a> command over a volume of stars that are blurred only along the z-axis, giving the command a happy face kernel (hface.png). Wherever -convolve finds an impulse among the various slices, it will replace that with a happy face. The happy face will reflect the intensity of the inpulse, which waxes and wanes along the z axis, courtesy of the blur_z command. A waxing and waning star then becomes a waxing and waning happy face. Here are the particulars:&nbsp;</p>
+<h3>Command</h3>
+<p><code>gmic <a target="_parent" href="_input.shtml">-input</a> hface.cimg 360,240,300,1 <a target="_parent" href="http://gmic.eu/reference.shtml#noise">-noise</a>[-1] 0.02,2 -blur_z[-1] 10,0 \<br /> <a target="_parent" href="http://gmic.eu/reference.shtml#to_rgb">-to_rgb</a>[-1] <a target="_parent" href="_convolve.shtml">-convolve</a>[-1] [0],0,0 <a target="_parent" href="http://gmic.eu/reference.shtml#remove">-remove</a>[0] <a target="_parent" href="_normalize.shtml">-normalize</a>[-1] 0,255&nbsp; \<br /><a target="_parent" href="http://gmic.eu/reference.shtml#split">-split</a>[-1] z <a target="_parent" href="http://gmic.eu/reference.shtml#output">-output</a> /path/to/your/animation.mov</code></p>
+<h3>Walkthrough</h3>
+<table frame="border" rules="all" class="table table_striped" style="border-color: #808080; border-width: 1px;" border="0">
+<tbody>
+<tr>
+<td><code><a target="_parent" href="_input.shtml">-input</a> hface.cimg 360,240,300,1 <a target="_parent" href="_input.shtml">-noise</a>[-1] 0.02,2...</code></td>
+<td>
+<h4>1</h4>
+<p>We establish an image stack with a happy-face kernel in position zero and a black volume with three hundred slices in position one. The latter image consists of monochrome slices, each with just one intensity channel. Into this space, we spread sparse salt-and-pepper noise. &nbsp;</p>
+</td>
+</tr>
+<tr>
+<td><code>...-blur_z[-1] 10,0 <a target="_parent" href="http://gmic.eu/reference.shtml#to_rgb">-to_rgb</a>[-1]... </code></td>
+<td>
+<h4>2</h4>
+<p>The blur_z command spreads each other-than-black pixel through the depth of the volume, leaving the other axes alone. Viewed along the z axis, this volume would still seem to to consist of pin-point stars, but viewed along the y or x axes, the side-view of stars reveal them to be long strings, waxing from black to white, then waning from white to black. Should we scrub through this volume now, the stars would twinkle, going from black to white and then back to black. Refer to the illustration at the start of this article for a visualization.</p>
+The -to_rgb command entails a bit of channel matching. Our volume consists of single channels, the kernel is a three channel color image. This command expands the number of channels within each slice of the volume to three. Why didn't we do this at the outset? Had we started with a volume with three channel slices, -noise would have spread red, green and blue pixels, that is, random noise in each channel. We wished to work with white stars, however. That said, you are always free to experiment however you want. Do conjure an image volume with three channels ( <code>...360,240,300,3...)</code> and omit -to_rgb, as it would be unnessary in this new scheme. Observe how the faces render out.</td>
+</tr>
+<tr>
+<td><code>...<a target="_parent" href="_convolve.shtml">-convolve</a>[-1] [0],0,0 <a target="_parent" href="http://gmic.eu/reference.shtml#remove">-remove</a>[0]... </code></td>
+<td>
+<h4>3</h4>
+<p>The -convolve command takes the kernel, an image of a happy face on the stack at position zero and convolves it with each slice of the of the volume in position one. That is, from left to right, top to bottom, for each slice, the -convolve command moves the kernel image pixel-by-pixel, and, at each, tabulates a pixel-wise multiplication of the kernel and the neighborhood around the pixel. It then sums these pixel-wise products to establish the value of the corresponding output pixel. Truth be told, this command could run for some minutes. Relax, take a potty break, play with the cat.</p>
+<p>In its travels over slices, the kernel will encounter off-edge pixels; we choose to regard these as zero-valued, indicated by a second parameter flag of zero (Dirichlet policy). We also opt out of a per-slice normalization, third parameter flag zero, as we will be instigating a volume-wide normalization later in the pipeline.</p>
+<p>Some minutes later, after the potty break and the cat now sick of our company, the -convolve command finishes on the last slice. We remove the kernel image at position zero as we are about to turn the image stack into a series of animation frames and do not wish to incorporate the kernel itself into the series.</p>
+</td>
+</tr>
+<tr>
+<td><code>...<a target="_parent" href="_normalize.shtml">-normalize</a>[-1] 0,255<a target="_parent" href="http://gmic.eu/reference.shtml#split">-split</a>[-1] z <a target="_parent" href="http://gmic.eu/reference.shtml#output">-output</a> ...</code></td>
+<td>
+<h4>4</h4>
+<p>These three commands constitute animation set-up housekeeping. Convolutions will generally leave images with out-of-bound values for eight bit unsigned formats; we scale the image volume to an eight-bit, unsigned range. See<a target="_parent" href="images-as-datasets.shtml"> "Images as Datasets"</a> for a more detailed explanation.</p>
+<p>Splitting a three hundred slice volumetric image along the depth axis gives rise to three humdred single-slice images, preparation for the -output command, which, for the video media formats, require frames arrayed as single slice images. Those planning more precise control over the video stream should save the image stack as a numbered sequence of PNG files, to wit: -output /path/to/my/animation.png</p>
+</td>
+</tr>
+</tbody>
+</table>
+
+
+
+   
+</body></html>

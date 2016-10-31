@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="tutorial.css">
+<script type="text/javascript" src="highslide/highslide.js"></script>
+<link rel="stylesheet" type="text/css" href="highslide/highslide.css" />
+<script type="text/javascript">
+hs.graphicsDir = 'highslide/graphics/';
+hs.wrapperClassName = 'wide-border';
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<body>
+
+
+      
+
+
+
+<h1>-normalize</h1>
+<p><img src="http://www.particularart.com/static/media/uploads/command_reference/normalize/gmicpitfall.png" title="G'MIC Rabbit Hole" class="img_block" style="margin: 3px; border: 0px solid #808080; float: left;" height="480" width="640" />For the poor, blighted souls who once pranced, care-free, through the flowered vales of Gimp-G'MIC, spreading Pixel Dust and making fine digital art, but who <span style="font-family: Cantarell;" face="Cantarell">―</span> in moments of unguarded curiosity <span style="font-family: Cantarell;" face="Cantarell">―</span> tried one or another of those mysterious &ldquo;underlying commands&rdquo; lurking in the &ldquo;custom code&rdquo; section of the Gimp-G'MIC plugin, fell into the G'MIC Rabbit Hole and from then on couldn't produce an image that was otherwise all black, or all white, or posterized, or inverted, or in Strange Colors, there are two commands which can lead them back to the Lands of Fairness and Light:</p>
+<ol>
+<li>
+<p><a target="_parent" href="http://gmic.eu/reference.shtml#cut">-cut</a>, which sounds dreadful, and is dealt with elsewhere</p>
+</li>
+<li>
+<p>-normalize, which is probably the command you are looking for.</p>
+</li>
+</ol>
+<h2>On a More Serious Note</h2>
+<p>-normalize performs <a target="_parent" href="http://en.wikipedia.org/wiki/Normalization_(statistics)#Examples">H-L Normalization</a>. Raw image data, <i>i,</i> ranging between a maximum value <i>i</i><sub><i>M</i></sub> and a minimum value <i>i</i><sub><i>m</i></sub><i>,</i> can be shifted and scaled to fall between a new maximum, <i>H</i>, and minimum <i>L </i><span style="font-style: normal;">by the formula:</span></p>
+<p style="text-align: center;"><img src="http://www.particularart.com/static/media/uploads/command_reference/normalize/normalize_equ.png" height="59" width="183" /></p>
+<p>where the rescaled image data <i>i'</i> fall within the boundaries <i>H</i> and <i>L.</i></p>
+<p>The format of the command is one of:</p>
+<ol>
+<li>
+<p><code>-normalize {value<sub>0</sub>[%] | <sub>[image0</sub>]},<code>{value1[%] | [image1]}</code></code></p>
+</li>
+<li>
+<p><code>-normalize [image]</code></p>
+</li>
+</ol>
+<ul>
+<li><em>value0:&nbsp;</em> Sets <em>L</em>, the lower boundary value of the new range. No pixel data will be less than <em>value0</em> (<em>L</em>) after rescaling.</li>
+<li><em>value1</em>: Sets<em> H</em>, the higher boundary value of the new range. No pixel data will be greater than <em>value1</em> (<em>H</em>) after rescaling.</li>
+<li><em>image0</em>: Sets <em>L</em> from the minimum value of <em>image0</em>.</li>
+<li><em>image1:</em> Sets <em>H</em> from the maximum value of <em>image1</em>.</li>
+<li><em>image:</em> Sets<em> L</em> and<em> H</em> from the minimum and maximum values of <em>image</em>.</li>
+</ul>
+<p style="font-style: normal;" align="LEFT">Normalization is typically the penultimate G'MIC command before <a target="_parent" href="http://gmic.eu/reference.shtml#output">-output</a>, where it shifts the minimum and maximum boundaries of an image to the prescribed minimum and maximum values required by the output format, scaling intermediary values in the process. For example, the eight-bit <a target="_parent" href="http://en.wikipedia.org/wiki/Portable_Network_Graphics">Portable Network Graphics</a> file format expects image data to fall within the range of 0 &ndash; 255, in terms of the normalization relation, this calls for <i>H</i> = 255 and <i>L</i> = 0.</p>
+<p style="font-style: normal;" align="LEFT">If one plans on using a paint program on images processed in a G'MIC pipeline, or &ndash; in the case of the Gimp-G'MIC custom coding &ndash; return the image to a Gimp layer, use of the -normalize 0,255 is almost mandatory, because the G'MIC layer stack can be in one of a variety of numeric formats and is not likely to be directly compatible with the paint program or the Gimp layer stack. See &ldquo;<a target="_parent" href="images-as-datasets.shtml">Images as Datasets</a>&rdquo; for further details.</p>
+<h2 style="font-style: normal;" align="LEFT">normalize and cut</h2>
+<p>Normalization generally affects the magnitude of difference between pixels, and if particular differences between pixels matter, then -normalize probably is not what you want. -cut, in contrast to -normalize, leaves relative differences among pixel values undisturbed, simply setting out-of-bound values to that of the nearest boundary. One does have to ensure that the differences of interest fall within the boundaries given to -cut. </p>
+<p style="font-style: normal;" align="LEFT"></p>
+<p style="font-style: normal;" align="LEFT"><em>Garry Osgood</em></p>
+
+
+
+   
+</body></html>

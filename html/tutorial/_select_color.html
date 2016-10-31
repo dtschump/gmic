@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="tutorial.css">
+<script type="text/javascript" src="highslide/highslide.js"></script>
+<link rel="stylesheet" type="text/css" href="highslide/highslide.css" />
+<script type="text/javascript">
+hs.graphicsDir = 'highslide/graphics/';
+hs.wrapperClassName = 'wide-border';
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<body>
+
+
+      
+
+
+
+<h1>-select_color</h1>
+<p><img title="Balloons over Ch&acirc;teau-d&rsquo;&OElig;x, Switzerland" src="http://www.particularart.com/static/media/uploads/command_reference/select_color/balloon.png" class="img_block" style="margin: 3px; border: 0px solid #808080; float: left;" height="300" width="300" />This command finds pixels which more-or-less match a reference color, according to a given tolerance, returning a single channel, bi-value image (1, 0 or 'True', 'False') where unitary pixels ('True') indicate that the corresponding pixel in the original image is within the given the tolerance.</p>
+<p>The graphic on the far left depicts balloons over Ch&acirc;teau-d&rsquo;&OElig;x in the canton of Vaud, Switzerland, and is an eight bit, unsigned integer RGB image. The command <code>-select_color[-1] 20%,230,233,147</code> identifies a pale yellow reference color similar to the top half of the middle balloon. The near-left image shows the output of the command; White identifies pixels with colors within a twenty percent range of the specified color, the given tolerance. Black identifies pixels outside this range, with colors too unlike the pale yellow to merit consideration.</p>
+<p>The <a target="_parent" href="_distance.shtml">-distance</a> command gives an example of using -select_color. See "Application: Modifying a Warning Image" in that article. Also, see the Theory section below.</p>
+<p>The format of the command is:</p>
+<p><code>-select_color tolerance[%]&gt;=0,col1,..,colN</code></p>
+<ul>
+<li><em>tolerance</em>: sets the degree to which mismatched colors may be acceptable. Without a percentage, the number is a colorspace distance, which depends on the numerical format of the image being tested. For the common case of unsigned, eight bit integers, this distance can range from a minimum of zero (exact match required) to &radic;(3&times;255) for three channel images like RGB (about 441 pixels), or &radic;(4&times;255) for RGBA (510 pixels). Large measures like 451 and 510 signal acceptance of just about any color, and actually select the complementary of the reference color by inverse logic. That is, colors most like the complementary of the reference color will be black in an otherwise almost all white output image. These tolerance parameters are in terms of the color space Euclidean distance between pixels in the original image and the reference color (See <a target="_parent" href="_orientation.shtml">-orientation</a> for a background on color spaces). Tolerance may also be expressed as a percentage and indicates a relative intensity with respect to the dynamic range of an intermediary normed difference image, a single channel gray scale image upon which the Theory section elaborates. The dynamic range is the difference between the maximum intensity (i<sub>M</sub>) and minimum intensity (i<sub>m</sub>) observed in the normed difference image and can vary from image to image, making the expression of tolerance in terms of absolute color space difficult. Using relative tolerances relieves the script writer from worrying about the size of the dynamic range. As a practical matter, percentages should range from '0%' to '99%'. Tolerance may be omitted and defaults to zero (0%).</li>
+<li><em>col1,...,colN</em>: a list of intensities, specifying a reference color, generally matching the number of channels present in the images on which the command operates. To use this command effectively, the script writer generally needs to know something about how the input images are built, in particular, the channel count (image spectra) and expected numeric range. Seeking a saturated 8 bit color space red (255,0,0) in an single channel, bi-value image is largely a fruitless exercise. -select_color is just as equanimous with mismatches between color channels present in images and the number of intensities given on the command line. If the command line has too few entries compared to the images being tested, -select_color sets the remaining channels of the reference colort to zero. This can lead to image-dependent surprises. -select_color 10%,255 will find shades of grey reasonably close to white in a gray scale image without a transparency channel, but it will find red (255,0,0), and <em>not</em> white, in an RGB image, and transparent red (255,0,0,0) in an RGBA image. Likewise, -select_color ignores excess intensities in the reference color if the images under examination have fewer channels.</li>
+</ul>
+<p>The image produced by -select_color is bi-valued, its pixels either zero or one and would not work well in paint programs. Use -normalize 0,255, or similar, if the output is intended for use as a mask in a paint program. See "<a target="_parent" href="images-as-datasets.shtml">Images as Datasets</a>".</p>
+<h2>Theory</h2>
+<p>The command builds a difference image by subtracting the reference color, composed as a constant color image, from the original image, then applies <a target="_parent" href="_norm.shtml">-norm</a> to the difference image, generating a single channel gray scale image of vector lengths, a <em>vector field</em>. the command interprets the tolerance parameter as a maximum admissable length of vectors, representing colors more or less like the reference color. Here is a detailed walkthrough of -select_color's internal pipeline:</p>
+<table rules="all" class="table table-striped" style="border-color: #808080; border-width: 0px;" border="0" lang="en_US">
+<tbody>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/command_reference/select_color/flower_00.png" title="An RGBA image of a flower" height="200" width="200" /></td>
+<td>
+<h3>1</h3>
+An RGBA image of a flower, an image stack item.
+<p><code>gmic flower.png...</code></p>
+</td>
+</tr>
+<tr>
+<td width="256"><p><img src="http://www.particularart.com/static/media/uploads/command_reference/select_color/flower_01.png" title="A constant color image selecting rgba(255,222,30,255), the darkest yellow petal on the flower." height="200" width="200" /></p>
+</td>
+<td>
+<h3>2</h3>
+A reference color image selecting rgba(255,222,30,255), the darkest yellow petal on the flower in image 1. This color stems from the second parameter given to select_color and is used internally as a parameter to <a target="_parent" href="http://gmic.eu/reference.shtml#fill_color">-fill_color</a>.
+<p><code>...fill_color 255,222,30,255...<br /></code></p>
+</td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/command_reference/select_color/flower_02.png" title="The difference between the original flower image and the constant color image. This is a normalized image; the visible colors are not very meaningful." height="200" width="200" /></td>
+<td>
+<h3>3</h3>
+-select_color takes the difference between the original flower image and the constant color image. We depict a <a target="_parent" href="_normalize.shtml">normalized</a>image here; the visible colors are not very meaningful. Internally, this differences image will exhibit both positive and negative intensities in each channel. The dark yellow petal, exactly equal to the reference color, now has a value of rgba(0, 0, 0, 0), but in this normalized image, appears to be a rather warm gray instead of black.
+<p><code>...-sub[-2,-1]...<br /></code></p>
+</td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/command_reference/select_color/flower_03.png" title="This image results from the -norm command operating on image 3, above" /></td>
+<td>
+<h3>4</h3>
+This image results from the <a target="_parent" href="_norm.shtml">-norm</a>command operating on image 3, above and is a data set of vector lengths, a single channel gray scale, with the smallest-length vectors very nearly black. These small vectors correspond to pixels in the original image (1) that are very much like the reference color (2).
+<p><code>...-norm...</code></p>
+</td>
+</tr>
+<tr>
+<td width="256"><p><img src="http://www.particularart.com/static/media/uploads/command_reference/select_color/flower_04.png" height="200" width="200" /></p>
+<p></p>
+</td>
+<td>
+<h3>5</h3>
+The first parameter given to -select_color, tolerance, is used at the end of the pipeline as a parameter to the logic command <a target="_parent" href="http://gmic.eu/reference.shtml#le">-le</a>. This command produces a single channel, bi-value image, the output of select_color, and indicates pixels with a magnitude of 32 or less, corresponding to those in the original image (1) with color space distances equal to or less than 32 pixels from the reference color (2). With this absolute tolerance of 32 pixels, two petals fall within the range of interest, the one with the reference color, of course, at a distance of zero from itself, and an another with a very similar color (255, 249, 45, 255), at a distance of 30.89 pixels from the reference color. All other colors are out of tolerance.
+<p><code>...-le 32</code></p>
+</td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/command_reference/select_color/flower_05.png" title="Tolerance of 128" height="200" width="200" /></td>
+<td>
+<h3>6</h3>
+This single channel, bi-value image arises from an alternate tolerance parameter of 128 pixels, reflecting a somewhat more encompassing tolerance that selects vector lengths from image 4 with a magnitude of 128 or less, corresponding to pixels in the original image (1) with color space distances equal to or less than 128 pixels away from the reference color. All petals qualify as well as the center of the flower, though its color is more orange-red than yellow. At (255,136,83,255), it is 101.02 pixels away from the reference color. Clearly, the 128 pixel sphere around the reference color accommodates many, not particularly yellow-like colors.
+<p><code>...-le 128<br /></code></p>
+</td>
+</tr>
+</tbody>
+</table>
+<p style="font-size: small;">Image:<a target="_parent" href="http://en.wikipedia.org/wiki/File:Balloons_Festival_-_Chateaux_d%27Oex.jpg" class="highslide" onclick="return hs.expand(this)">Balloon Festival, January 2006 at Ch&acirc;teau-d&rsquo;&OElig;x</a>, Switzerland.&nbsp; <a target="_parent" href="http://jynus.com/">Jamie Crespo</a> (jynus) Wikimedia Commons</p>
+<p><em>Garry Osgood</em></p>
+
+
+
+   
+</body></html>

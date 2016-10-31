@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="tutorial.css">
+<script type="text/javascript" src="highslide/highslide.js"></script>
+<link rel="stylesheet" type="text/css" href="highslide/highslide.css" />
+<script type="text/javascript">
+hs.graphicsDir = 'highslide/graphics/';
+hs.wrapperClassName = 'wide-border';
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<body>
+
+
+      
+
+
+
+<h1>Blurring</h1>
+<p>The -blur command provides one of the more straightforward ramp techniques; the result may not be strictly linear, but the setup is straightforward and intuitive. Essentially, one splits along the x or y axis and blurs to a degree that suits.</p>
+<table rules="all" class="table table-striped" style="border-color: #7f7f7f; border-width: 1px;" border="1" cellpadding="2" align="center">
+<tbody>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/ramps/rampb.png" title="Blurred Ramp" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="256" width="256" /></td>
+<td><code>#Split, fill, append, blur.<br />&nbsp;gmic 256,256,1,1 -split x \<br />&nbsp;&nbsp; -fill_color[-1] 255 \<br />&nbsp;&nbsp; -append x \<br />&nbsp;&nbsp; -blur 127 \<br />&nbsp;&nbsp; -normalize 0,255</code></td>
+</tr>
+</tbody>
+</table>
+<p></p>
+<table rules="all" style="border-color: #7f7f7f; border-width: 1px; background-color: #ffffff;" border="1" cellpadding="2" align="center">
+<tbody>
+<tr>
+<td><a target="_parent" href="ramps_warp.shtml"><span class="internal">Warps</span></a></td>
+<td><a target="_parent" href="ramps_resizing.shtml">Resizing</a></td>
+</tr>
+</tbody>
+</table>
+
+
+
+   
+</body></html>

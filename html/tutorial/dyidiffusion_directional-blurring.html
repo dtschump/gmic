@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="tutorial.css">
+<script type="text/javascript" src="highslide/highslide.js"></script>
+<link rel="stylesheet" type="text/css" href="highslide/highslide.css" />
+<script type="text/javascript">
+hs.graphicsDir = 'highslide/graphics/';
+hs.wrapperClassName = 'wide-border';
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<body>
+
+
+      
+
+
+
+<h2 id="DirectionalBlurs"><a target="_parent" name="0.4.Directional Blurs|outline"></a>Directional Blurs</h2>
+<p>Lawdy. We've hardly messed with <b>Cosine</b> and <b>Sine</b>. Let's make corkscrews.</p>
+<table style="border-color: #808080; border-width: 1px; border-style: solid;" rules="all" class="table table-striped" cols="2" border="1">
+<tbody>
+<tr>
+<td colspan="2"><tt> gmic <span style="color: #9a3000;">-srand 78124</span> \<br /> street.png \<br /> <span style="color: #9a3000;">'(1^0)' \<br /> -resize[-1] [-2],[-2],[-1],[-1],1 \<br /> 5,5,1,2,'2*u-1' \<br /> -resize[-1] [-3],[-3],[-1],[-1],5 \<br /> -orientation[-1]</span> \<br /> -eigen2tensor[-2,-1] \<br /> -repeat 3 \<br /> -smooth[-2] [-1],50 \<br /> -done \<br /> -rm[-1] </tt></td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/dyidiffusion/dyid-13.png" title="dyid-13.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="283" width="400" /></td>
+<td>At first glance, it may not be clear how we went about setting <b>EigenOne, EigenTwo, Cosine and Sine</b>.<ol>
+<li>For the eigenvalues, we started with a one pixel, two channel image with <b>EigenOne</b> set to constant one and <b>EigenTwo</b> set to constant zero. <code>'(1^0)'</code>. We resized this to the input dimensions but did not bother to split the channels out as they are set to the way we would like to have them and are ready for -eigen2tensor.</li>
+<li>
+<p>We made a tiny 5-by-5, two channel image for <b>Cosine</b> and <b>Sine</b>, using the special math notation <code>'2*u-1'.</code> This sets the fifty or so pixels to random values between -1 and 1. <code>'u'</code> itself is an interesting variable, taking on a different value in the range of [0 &ndash; 1] every time it is referenced. We then resized this 5-by-5 image up to the dimensions of the input image, using a high quality cubic interpolation (go look at Ramp Recipes, which is where we got this technique).</p>
+</li>
+<li>Whenever we use random processes we like to set the random number generator to a specific seed. Later, we can produce the exact same result. That's what <code>-srand 78124</code> does. See <a target="_parent" href="_plasma.shtml">-plasma</a> for details.</li>
+<li><a target="_parent" href="_orientation.shtml">-orientation</a> ensures that each pixel in our <b>Cosine</b> and <b>Sine</b> image are scaled to unit vectors.</li>
+<li>As with <b>EigenOne</b> and <b>EigenTwo</b>, there is no need to split out <b>Cosine</b> and <b>Sine</b> gray scales. We left them as two channel images ready for -eigen2tensor.</li>
+</ol>
+<p>In effect, we specified 25 random directions on a 5 by 5 grid. On resizing, we interpolated these samples over the much larger dimensions of the input image, using a cubic interpolation scheme. We got it by setting <a target="_parent" href="http://gmic.eu/reference.shtml#resize">-resize</a>&rsquo;s interpolation parameter to '5'. This filled the <b>Cosine</b> and <b>Sine</b> images with smoothly varying values for each pixel, these nestled among the original 25 explicit samples. The curves manifested by -smooth are B&eacute;zier-like, which, like the interpolation used here, are grounded on cubic polynomials. Run this pipeline with other -resize interpolation schemes and see what happens!</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3 id="ZeroingOutEigenOneAndEigenTwo">Zeroing Out EigenOne and EigenTwo</h3>
+<table style="border-color: #808080; border-width: 1px; border-style: solid;" rules="all" class="table table-striped" cols="2">
+<tbody>
+<tr>
+<td colspan="2"><tt>gmic \<br /> -srand 78124 \<br /> street.png \<br /> '(1^0)' \<br /> -resize[-1] [-2],[-2],[-1],[-1],1 \<br /> <span style="color: #9a3000;">msk.png \<br /> -normalize[-1] 0,1 \<br /> -mul[-2,-1]</span> \<br /> 5,5,1,2,'2*u-1' \<br /> -resize[-1] [-3],[-3],[-1],[-1],5 \<br /> -orientation[-1] \<br /> -eigen2tensor[-2,-1] \<br /> -repeat 3 \<br /> -smooth[-2] [-1],50 \<br /> -done \<br /> -rm[-1]</tt></td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/dyidiffusion/dyid-14.png" title="dyid-14.png" style="margin: 3px; border: 0px solid #808080;" height="283" width="400" /></td>
+<td>Despite utter chaos, some people Just Know How To Keep On Shopping.<br /> We introduce a mask (<tt>msk.png</tt>) cut to the outline of the woman in the foreground. Nothing complicated. The woman is zero bits, everything else is 255. It sets a region in the <b>EigenOne</b> to zero. Concomitantly, <b>EigenTwo</b> is entirely zero, so the region occupied by our shopper has both <strong>EigenOne</strong> and <strong>EigenTwo</strong> set to zero, and she is not blurred at all.<br /> So, generally, when both eigenvalues are zero blurring turns off.<br /> And, more generally, we may vary the overall degree of blurring by varying <b>EigenOne</b> and <b>EigenTwo</b>. To the extent they differ, directional blurring take place.</td>
+</tr>
+</tbody>
+</table>
+<p>Yea, yea, yea. We hear some of you out there telling us that all we had to do was select/float the woman off of a pristine copy and paste her onto the swirly stuff. Sure. No argument. Six of one. Half a dozen of the other. Either way, we're still cutting masks, and that's the time pig. Moreover, we're demonstrating <i>principles </i>here, and the principle here is: blurring is going to be no more than the larger of <b>EigenOne</b> or <b>EigenTwo</b>. Both zero. No Blur. That's the takeaway!</p>
+<h3 id="SelectiveWhirlBlur">Selective Whirl Blur</h3>
+<p>Instead of total chaos, we can just have streamers of chaos.</p>
+<table style="border-color: #808080; border-width: 1px; border-style: solid;" class="table table-striped" cols="2" border="1">
+<tbody>
+<tr>
+<td colspan="2"><tt>gmic -srand <span style="color: #9a3000;">78924</span> <br /> street.png <br /> '(1^0)' <br /> -resize[-1] [-2],[-2],[-1],[-1],1 <br /> <span style="color: #9a3000;">--luminance[0] <br /> -apply_curve[-1] 0.4,0,0,63,64,127,255,191,64,255,0 </span><br /> -normalize[-1] 0,1 <br /> -mul[-2,-1] <br /> 5,5,1,2,'2*u-1' <br /> -resize[-1] [-3],[-3],[-1],[-1],5 <br /> -orientation[-1] <br /> -eigen2tensor[-2,-1] <br /> -repeat 3 <br /> -smooth[-2] [-1],50 <br /> -done <br /> -rm[-1] <br /> </tt></td>
+</tr>
+<tr>
+<td width="256"><p><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/dyidiffusion/dyid-15.png" title="dyid-15.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="283" width="400" /></p>
+</td>
+<td>The deal here is we took the luminance of the input image and then made a gray scale mask where the midtones map to white, but shadows and highlights map to black, the digerati's classic posterization curve. The tool for this is <a target="_parent" href="http://gmic.eu/reference.shtml#apply_curve">-apply_curve</a>, G'MIC's equivalent to GIMP's curve tool. We used this mask as a multiplier against <b>EigenOne.</b> <b>EigenTwo</b> is constant zero, so we are dealing with skinny blurring ellipses throughout. This gives rise to the hairlike swirl.<br /> The effect is something like a selective blur, with the highlights and shadows holding structure while midtones form swirling banners.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="AnisotropicSmoothingBits">The Anisotropic Smoothing Bits</h3>
+<p>We've been referencing the anisotropic smoothing bits for pages and pages without introducing them to you. That's because we live in Brooklyn, Noo Yawk and Why Do You Wanna Know?</p>
+<p>OK. Got the Attitude out of the way. Here are the Anisotropic Smoothing Bits:</p>
+<ol>
+<li><b>-structuretensors</b>: Finds edges. Makes a tensor field encoding where they are along with their orientation. Its output is often called a &ldquo;structure tensor field&rdquo; because the field encodes these edges and their orientations. This makes up the first part of the anisotropic smoothing pipeline. We rarely call -structuretensors; -smooth or -diffusiontensors calls it on our behalf.</li>
+<li><b>-diffusiontensors</b>: Calls -structuretensors internally to perform edge detection and orientation, then finds the blurring directions and magnitudes for -smooth. It encodes these in a &ldquo;diffusion tensor field&rdquo;.</li>
+<li><b>-smooth</b>: The general purpose directional blurring tool. It's behavior is entirely dictated by the tensor map it is given. You can give it whatever you want. If you don't give it anything, anisotropic smoothing kicks in for the operand image. -smooth calls -diffusiontensors; -diffusiontensors calls -structuretensors and they pass tensor fields around. Eventually -smooth gets a diffusion tensor field which tells it what to do.</li>
+</ol>
+<p>At the data container level, diffusion and structure tensor fields look exactly the same. The conversion from structure to diffusion tensor fields entail redirecting and rescaling vectors, but one tensor field could easily be swapped for the other and -smooth wouldn't care &ndash; it would just give you funny results and take a very long time to do it.</p>
+<p>Along the way, there are two useful utilities.</p>
+<ol>
+<li><b>-eigen</b>: Unpacks structure tensor fields into a set of vector magnitudes and directions &ndash; our <b>EigenOne</b>, <b>EigenTwo</b>, <b>Cosine</b> and <b>Sine</b> images. <b>-eigen</b> packages these as a pair of two-channel images; we often further unpack them into four grayscale images. These are simple -split and -append exercises.</li>
+<li><b>-eigen2tensor:</b> The functional reverse of <b>-eigen</b>. Given a magnitude and direction pair of images, creates a tensor field. You can concoct your own magnitude and direction fields, as we have been doing throughout this Cookbook Recipe, then call -eigen2tensor as a last step before invoking -smooth.</li>
+</ol>
+<table rules="all" style="border-color: #7f7f7f; border-width: 1px; background-color: #ffffff;" align="center" border="1" cellpadding="2">
+<tbody>
+<tr>
+<td><a target="_parent" href="dyidiffusion_eigenvalues-and-eigenvectors.shtml"><span class="internal">Eigenvalues and Eigenvectors</span></a></td>
+<td><a target="_parent" href="dyidiffusion_tensors-for-the-tonsorially-challenged.shtml"><span class="internal"><span class="internal">Tensors for the Tonsorially Challenged </span></span></a></td>
+</tr>
+</tbody>
+</table>
+
+
+
+   
+</body></html>

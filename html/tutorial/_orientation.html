@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="tutorial.css">
+<script type="text/javascript" src="highslide/highslide.js"></script>
+<link rel="stylesheet" type="text/css" href="highslide/highslide.css" />
+<script type="text/javascript">
+hs.graphicsDir = 'highslide/graphics/';
+hs.wrapperClassName = 'wide-border';
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<body>
+
+
+      
+
+
+
+<h1>-orientation</h1>
+<p><img src="http://www.particularart.com/static/media/uploads/command_reference/orientation/usphere.png" title="Direction of a color" class="img_block" style="margin: 3px; border: 0px solid #808080; float: left;" height="300" width="300" />Orientation scales the color components of each pixel in an image so that the length of the color vector is one (see diagram):</p>
+<p style="text-align: center;"><img src="http://www.particularart.com/static/media/uploads/coverc.png" title="Unit vector" height="60" width="60" /></p>
+<p>In the resulting image, pixel RGB components plot points on a unit sphere centered on the origin of the RGB color space. A line passing through the origin and the corresponding plot consists of points with the same hue, differing only in luminosity. Informally, the plot itself represents the 'pure' hue, with colors tending toward the origin being shades of, and those tending away from the origin tints of the pure hue.</p>
+<p>An image transformed by -orientation is an apt dataset for a number of color selection and identification algorithms. How dark or light a pixel may be has been put to one side and only chromatic data remains.</p>
+<p>The format of the command is:</p>
+<p><code>-orientation</code></p>
+<p>which takes no parameters.</p>
+<h2 id="Theory">Theory</h2>
+<p>We can regard a color's red, green and blue components as comprising a position vector in a three dimensional <a target="_parent" href="http://en.wikipedia.org/wiki/RGB_color_space">RGB color space</a> (see <a target="_parent" href="_mix_rgb.shtml">-mix_rgb</a>), with the 'tail' rooted at the origin and the 'head' plotting the color itself.</p>
+<p><img src="http://www.particularart.com/static/media/uploads/command_reference/orientation/ccube.png" title="The RGB Color Space" class="img_block" style="float: left; margin: 3px; border: 0px solid #808080;" height="300" width="300" />Vectors express both direction and length. The RGB color space which color vectors comprise has a <a target="_parent" href="http://en.wikipedia.org/wiki/Euclidean_metric">Euclidean metric</a>. We find the length of color vectors by taking the square root of the sum of squared color components: see <a target="_parent" href="http://en.wikipedia.org/wiki/Pythagorean_theorem">Pythagorean formula</a>.</p>
+<p>There are circumstances when we'd like to consider the length, or magnitude, of a color vector quite apart from the direction in which it points. In G'MIC, <a target="_parent" href="_norm.shtml">-norm</a> extracts that information, producing a grayscale counterpart of a color image where the intensity of pixels reflect the RGB color space length of their counterparts.</p>
+<p>In contrast, -orientation extracts the RGB space orientation of a color vector quite apart from its length. This entails scaling each color component of a pixel by the length of the vector which those components define, producing a triplet of unitless numbers, also composing a vector, but one of unit length. These triplets describe the orientation of colors in RGB space. One can imagine an open-ended line starting at the the origin and passing through the plot on the unit sphere. The direction in which this line points is a shared characteristic of all the colors on that line. They share a common orientation &ndash; a common <a target="_parent" href="http://en.wikipedia.org/wiki/Hue"><em>hue</em></a> &ndash; but differ in their luminance.</p>
+<p>Unsurprisingly, -orientation produces a flat version of its original, generally unappealing, with the shadows and highlights of the original no longer present; both transit to a midlevel gray.&nbsp; The more saturated colors of the original generally become the prominent features of the processed image, which may or may not be appealing. Since the pixels in the resulting image are either zero or one, they are not directly suitable in paint programs and need to be normalized before use with such tools. See <a target="_parent" href="images-as-datasets.shtml">Images as Datasets</a>.&nbsp;</p>
+<p>-orientation almost always is a means to an end and rarely an end in itself. While it might not make pretty pictures, the catalog of unit vectors it creates underlies color search and manipulation schemes. In the following example, -orientation produces a chromatic dataset which helps us locate pixels matching a particular 'key color.' We use that in a way to focus peoples' attention upon interesting photographic things. Details follow.</p>
+<h2 id="ApplicationKeyColor">Application: Key Color</h2>
+<p><img src="http://www.particularart.com/static/media/uploads/command_reference/orientation/shoes.png" title="Shoes Mute and Otherwise" style="margin: 3px; border: 0px solid #808080; float: right;" height="286" width="200" />Images can be <em>too</em> colorful, the natural center of interest lost in a sea of saturation, such as in the bottom image of the shoe rack. All the shoes have brilliant, saturated color.</p>
+<p>In these circumstances we might look for ways to selectively desaturate less interesting parts of an image to focus attention on the more interesting parts. We might be lucky enough to find that the more interesting parts of the image share a common or a dominant set of related hues. In such circumstances, -orientation would plot these hues very close together on the unit sphere. We could set up a rule that colors very close to the center of the cluster retain their saturation &ndash; we may even increase their saturation. On the other hand, we'd like to de-emphasize colors further from the center of the cluster.</p>
+<p>The color at the center of this cluster is a <em>key color</em>; our aim is to saturate all other colors on the basis of how well,&nbsp;in RGB space, those colors align with the key color. Colors at or near to right angles with the key color would be very nearly desaturated; closely aligned colors would not. The shoe rack at the top is the same as that at the bottom; we simply picked a blue-green to emphasize, rendering red, orange and yellow shoes in shades of gray.</p>
+<h3 id="DotProductsKeyColor">Dot Products With Key Color and HSL space.</h3>
+<p>In the following, -orientation converts all the pixels of a subject image into unit vector form. We then take the <a target="_parent" title="Dot Product from Wikipedia" href="http://en.wikipedia.org/wiki/Dot_product">dot product</a> of the converted image and the key color &mdash; also in unit vector form. This gives us a grayscale image where the white pixels correspond to those in the original subject image that are exactly the key color. Grays correspond to colors more-or-less mis-aligned with the key color. How does the dot product produce this kind of image?</p>
+<p>Recall that the dot product of two unit vectors return the cosine of the angle of separation. Hues differing only in luminosity with the key color are parallel to one another in RGB space and have an angle of separation of zero degrees, a cosine of one. These render as white. Hues transverse to the key color are separated by ninety degrees, a cosine of zero and are rendered black. All other hues render in shades of gray reflecting their alignment with the key color. We might call this dot product image a 'key color map.'</p>
+<p>With this map, our way is very easy. We convert our original subject image into Hue-Saturation-Luminosity space and replace the saturation channel with our key color map. Kick it back into RGB space and we're home in time for coffee.</p>
+<p>We might like an additional knob to turn. We'd like to control the rate of desaturation as colors misalign. Perhaps only a little bit of misalignment is sufficient to wholly desaturate a color&nbsp;<em>&ndash; tight emphasis</em>. On the other hand, perhaps we're accepting of quite a lot of misalignment because we'd like the effect to be subtle, maybe just a gradual shift in the overall color climate of the image &ndash; <em>loose emphasis</em>. We can implement such a tolerance knob by post-processing the grayscale key color map. In the following, we use the exponential function to control how much the saturation of colors drop off as a function of their misalignment with the key color.</p>
+<p>Paticulars follow.</p>
+<table rules="all" class="table striped" style="border-color: #5f5f5f; border-width: 0px;" border="0">
+<tbody>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/command_reference/orientation/bowl_7.png" title="Burrowing Owl" height="283" width="200" /></td>
+<td>
+<p></p>
+<h3>1</h3>
+<p><code>gmic burrowingowl.png...</code></p>
+<p>A <a target="_parent" href="http://commons.wikimedia.org/wiki/File:Athene_cunicularia_-near_Goiania,_Goias,_Brazil-8.jpg" class="highslide" onclick="return hs.expand(this)">burrowing owl</a> (<em>Athene cunicularia</em>)&nbsp; by <a target="_parent" rel="nofollow" class="external text" href="http://www.flickr.com/people/88284858@N00">Wagner Machado Carlos Lemes</a>. This is, overall, already a remarkable photograph, but the eyes are particularly compelling. We intend to give those eyes chromatic emphasis and desaturate other colors.</p>
+</td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/command_reference/orientation/bowl_0.png" title="Orientation only" height="283" width="200" /></td>
+<td>
+<h3>2</h3>
+<p><code>...--orientation...</code></p>
+<p>Orientation gives us a dataset where all pixels encode the RGB color space orientation of the original subject image. It is more mysterious than interesting, perhaps. Dark and light - as ideas - have been divorced from the image. Some parts of the image appear very saturated because the original contained very saturated colors, but in this particular image, the reason is more likely that the original colors were very nearly black, having, at most, tiny values in a red, green or blue component. These tiny values, situated along one or another primary axis, magnify into fully saturated red blue or green unit vectors. Notice the eyes of the owl and the green in the background. These are very nearly black pixels in the original.</p>
+</td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/command_reference/orientation/bowl_1.png" title="Key color from eyes" height="283" width="200" /></td>
+<td>
+<h3>3</h3>
+<p><code>...100%,100%,100%,100% -fill_color[-1] 0.7538,0.655,0.0527...</code></p>
+<p>We <a target="_parent" href="conjuring-images.shtml">conjure a new image</a> out of the aether and fill it with the unit vector version of the yellow in the owls eyes, the key color that we would like to emphasize. We obtained this color during an earlier test run, using the color picker built into <a target="_parent" href="_display.shtml">-display</a> command. It is with this color field that we make a dot product with the previous image.</p>
+</td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/command_reference/orientation/bowl_2.png" title="key color times orientation vectors " height="283" width="200" /></td>
+<td>
+<h3>4</h3>
+<p><code>...-mul[-2,-1]...</code></p>
+<p>We make a dot product in two steps, this being the first: a pixel-by-pixel multiplication with the previous key color field. This intermediary is the product of the unit vectors of colors stored in image 2 with the key color, image <strong>3</strong>. This is not quite the key color map we wrote about in the preamble, but an intermediary where the key color map is in latent form.</p>
+</td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/command_reference/orientation/bowl_3.png" title="Normalized to -80,1" height="283" width="200" /></td>
+<td>
+<h3>5</h3>
+<p><code>...-compose_channels[-1] add -normalize[-1] -80,0...</code></p>
+<p>This is the second dot product step: performing an in-image channel addition. The resulting greyscale is literally a dataset of angle cosines which measure misalignment of the original image's pixels (1, above) and the key color (2, above). The highest value, one (white), reflects perfect alignment; darker values represent degrees of misalignment. The yellow in the owl's eyes reflect the highest values. We called this a 'cosine' map in the preamble because it is comprised of the cosines of the angle of separation between the key color vector (image 3) and the chromatic dataset (image 2)</p>
+<p>We noted in the preamble that we'd like a "knob" to control how rapidly misalignment gives rise to total desaturation. To that end, we harness the exponential function, which will appear in the next step. The exponential function, the transcendental &epsilon; raised to some power, is precisely one when that power is zero, and approaches zero as the power grows to &ndash; &infin;. The G'MIC <a target="_parent" href="http://gmic.eu/reference.shtml#exp">-exp</a> command embodies this function, replacing every pixel, i, from the input image with&nbsp;&epsilon;<sup>i</sup> in the output image. In anticipation of that, we harness the -normalize command to alter the data range of the cosine map to range from -80 to 0.</p>
+<p>Here, '-80' represents fairly <em>tight emphasis</em>; colors only slightly misaligned from the key color will be fully desaturated. We are not being subtle here, but if we wanted to be, we'd use values approaching&nbsp;&ndash; 1 for looser emphasis.</p>
+</td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/command_reference/orientation/bowl_5.png" title="Original Saturation" height="283" width="200" /></td>
+<td>
+<h3>6</h3>
+<p><code>...-exp[-1]<br /></code></p>
+<p>Here we invoke <a target="_parent" href="http://gmic.eu/reference.shtml#exp">-exp</a> to acquire an image that will be harnessed as a replacement saturation channel in an HSL version of the original image. Before we undertake that maneuver, it is worth pointing out that only the irises of the burrowing owl's will be saturated; the colors elsewhere will be wholly desaturated or nearly so.</p>
+</td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/command_reference/orientation/bowl_4.png" title="Color Key Map expotentiated" height="283" width="200" /></td>
+<td>
+<p></p>
+<h3>7</h3>
+<p><code>...-reverse[-1,-2] -rgb2hsl[-1] -split c...</code></p>
+<p>Following the exponential command, we perform a little image stack housekeeping, swapping the replacement saturation map with the pristine copy of the input image which has been whiling away its time in position zero of the image stack. We convert it to an HSL representation and then split it along the channel axis, leaving grayscale maps of hue, saturation and luminosity in positions 1, 2 and 3. Off to the left, we show the original saturation map which image 6 will replace. Simply by looking at these two maps, one can see that we are largely desaturating the entire image save the burrowing owl's golden irises. Almost home...</p>
+</td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/command_reference/orientation/bowl_6.png" title="Reassembled and back to RGB" height="283" width="200" /></td>
+<td>
+<p><code>...-reverse[-4,-2] -remove[-2] -append c -hsl2rgb</code></p>
+<p>We swap saturation maps and drop the original from the image stack, a housekeeping chore. We then -append the three gray scale maps together into one three-channel HSL image, which we move back into RGB space. Now we are home.</p>
+<p>The burrowing owl, as a field mouse would see it, seconds before going to the Great Field beyond.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h2 id="GMICCommandFile">G'MIC Command File</h2>
+<p>You can copy <a target="_parent" title=".gmic command file containing keycolor. " href="http://www.particularart.com/static/media/uploads/command_reference/orientation/keycolor.gmic">keycolor.gmic</a> into your local command file, or use it as is:</p>
+<p><code>gmic -m keycolor.gmic someimage.jpg -keycolor 255,255,0,125...</code></p>
+<p>The command file is a complete version of the walkthrough, with some sanity checking of inputs. Unlike the walkthrough, this command supports images with alpha channels.</p>
+<p><em>Garry Osgood</em></p>
+
+
+
+   
+</body></html>

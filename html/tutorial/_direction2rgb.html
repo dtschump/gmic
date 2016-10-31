@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="tutorial.css">
+<script type="text/javascript" src="highslide/highslide.js"></script>
+<link rel="stylesheet" type="text/css" href="highslide/highslide.css" />
+<script type="text/javascript">
+hs.graphicsDir = 'highslide/graphics/';
+hs.wrapperClassName = 'wide-border';
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<body>
+
+
+      
+
+
+
+<h1>-direction2rgb</h1>
+<div id="InitFigure" style="float: left; width: 325px; height: 370px; border: none; padding: 5px; background: rgb(255,255,255,0,25);"><img src="http://www.particularart.com/static/media/uploads/command_reference/direction2rgb/drgb.png" title="init-000.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="300" width="300" />
+<p style="font-size: 10pt; line-height: 100%;"><i>Figure 1: A Goudy 1911 Bookletter Ampersand in Neon Lights</i></p>
+</div>
+<p>This command visualizes <a target="_parent" href="_gradient.shtml#VectorFields">2D direction</a> fields using color. 2D direction fields have two channels, their constituent pixels are taken to be vectors in a rectangular coodinate system, and the overall image is taken to be a field of such vectors.&nbsp;</p>
+<p>The command takes no parameters, but expects the selected images to be 2D direction fields: one slice (i.e. depth of one) The command silently ignores any channels other than 0 (x components) and 1 (y components).&nbsp;</p>
+<p>Internally, the command converts vectors from rectangular (x, y) to polar form (r, &theta;), with &theta; in channel zero, in degrees and r in channel one. The command inserts an additional unity-filled channel between zero and one and, regarding the ensemble as an HSV image, invokes <a target="_parent" href="http://gmic.eu/reference.shtml#hsv2rgb">-hsv2rgb</a> to complete the new representation of the 2D direction field.</p>
+<p>In this representation, vectors pointing in the x<sup>+</sup> direction (left to right) are red, x<sup>-</sup> direction (right to left) are cyan, y<sup>+</sup>(pointing down) are blue violet and y<sup>-</sup> (pointing up) are lime green. Generally, the assignment of color to direction follows from the HSV color wheel.</p>
+<p>See <a target="_parent" href="http://gmic.eu/reference.shtml#quiver">-quiver,</a> which produces an equivalent representation of 2D direction fields by rendering small arrows.</p>
+
+
+
+   
+</body></html>

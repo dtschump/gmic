@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="tutorial.css">
+<script type="text/javascript" src="highslide/highslide.js"></script>
+<link rel="stylesheet" type="text/css" href="highslide/highslide.css" />
+<script type="text/javascript">
+hs.graphicsDir = 'highslide/graphics/';
+hs.wrapperClassName = 'wide-border';
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<body>
+
+
+      
+
+
+
+<h1>One Dimensional Functions</h1>
+<p>G'MIC has a built in spline-based plotting command, <a target="_parent" href="http://gmic.eu/reference.shtml#function1d">-function1d</a>, which furnishes a basis for ramps of arbitrary character. In isolation, the command generates images only one pixel high, which seems disappointing, until one reaches into the toolkit again and fetches out <a target="_parent" href="http://gmic.eu/reference.shtml#expand_y">-expand_y</a>, so we may grow the ramp readily in the transverse direction. <br />The command's first parameter is a 'stiffness' value, ranging from zero to one. When zero, G'MIC makes no attempt to transition values. When one, the transitions will be continuous to a high degree. The remaining parameter list may be arbitrarily long but divisible by two. These are abscissa (x) ordinate (y) pairs. The abscissa are non-negative and form a strictly ascending sequence, but need not be uniformly spaced. The ordinates may assume zero, positive or negative values of any magnitude. The difference between the first and last abscissa establishes the width of the image; the height is one pixel. <code>-expand_y h/2</code> sets the desired height, <code>h</code>. Observe the division by two. This curious step arises from -expand_y growing the image from the middle to both ends. From the command's viewpoint, it is expanding out a top and bottom edge.</p>
+<table rules="all" class="table table-striped" style="border-color: #7f7f7f; border-width: 1px; border-style: solid;" border="1" cellpadding="1" align="center">
+<tbody>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/ramps/rampfx.png" title="Arbitrary Function Ramp" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="257" width="256" /></td>
+<td><code>#First parameter sets smoothness; zero \<br />#allows sharp transitions, 1 smooths \<br />#maximally. Remaining parameters are \<br />#x,y plot pairs. The abscissa (x) need \<br />#not be uniformly spaced but should \<br />#form a strictly ascending sequence. \<br />#The difference between the last and \<br />#first abscissa set the width of the \<br />#image.\<br />gmic -function1d \<br />&nbsp;0.3,0,12,43,255,85,127,127,200,170,220,\<br />213,230,255,100 -expand_y 128 \<br />&nbsp;-normalize[-1] 0,255</code></td>
+</tr>
+</tbody>
+</table>
+<p></p>
+<table rules="all" style="border-color: #7f7f7f; border-width: 1px; background-color: #ffffff;" border="1" cellpadding="2" align="center">
+<tbody>
+<tr>
+<td><a target="_parent" href="ramps_general-ramps.shtml">General Ramps</a></td>
+<td><a target="_parent" href="ramps_applying-a-curve.shtml">Applying a Curve</a></td>
+</tr>
+</tbody>
+</table>
+
+
+
+   
+</body></html>

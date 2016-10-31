@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="tutorial.css">
+<script type="text/javascript" src="highslide/highslide.js"></script>
+<link rel="stylesheet" type="text/css" href="highslide/highslide.css" />
+<script type="text/javascript">
+hs.graphicsDir = 'highslide/graphics/';
+hs.wrapperClassName = 'wide-border';
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<body>
+
+
+      
+
+
+
+<h1>General Ramps</h1>
+<p>Some days we just wake up wanting a linear blend from chartreuse rgb(127, 255, 0) to cornflower blue rgb(100, 149, 235). Remember, there is no accounting for taste around here. Oh, and we want it at 59.127&ordm;, please, and in an image 270 by 312 pixels.</p>
+<p>David Tschumperl&eacute; furnished us with the general technique, for which we are grateful. For those of you who'd like to add a "-general_ramp" command to your local gmic command files, you can get a suitably formatted script here.</p>
+<p>A few matters of note:</p>
+<ol>
+<li>The ramp itself begins life as a grayscale image and occupies the initial position of the image list. It will serve in short order as a mask to the -image command.</li>
+<li>The starting chartreuse and ending cornflower blue colors commence as single pixel, three channel images, each conjured from variants of the <a target="_parent" href="_input.shtml">-input</a> command's image stream notation. See the <a target="_parent" href="ramps_resizing.shtml">resize gradient technique</a> in this recipe.</li>
+<li>The script harnesses the <a target="_parent" href="http://gmic.eu/reference.shtml#resize">-resize</a> command to scale these one pixel sized "color swatches"&nbsp; to match the dimensions of the gray scale ramp. This leaves the gray scale ramp at position zero ([0]) in the image list, the solid cornflower blue swatch at position one ([1]) and the solid chartreuse swatch at position two ([2]).</li>
+<li>The <a target="_parent" href="http://gmic.eu/reference.shtml#image">-image</a> command serves in this example as a compositor. Operating on the chartreuse swatch, it places the "sprite", the cornflower blue swatch, at pixel coordinate 0,0,0,0 &mdash; the northwest image corner &mdash; using full opacity (1). In this variant, the grayscale ramp is operating as a mask, gradually attenuating the cornflower blue sprite so that the underlying chartreuse shows through.</li>
+</ol>
+<table rules="all" class="table table-striped" style="border-color: #7f7f7f; border-width: 1px;" border="1">
+<tbody>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/ramps/ramp_colr.png" title="General Color Ramp" class="img_block" style="margin: 3px; border: 0px solid #808080;" width="270" height="312" /></td>
+<td><code>gmic -debug \<br />&nbsp;&nbsp; ang='pi*59.127/180' \<br />&nbsp;&nbsp; rw=270 \<br />&nbsp;&nbsp; rh=312 \<br />&nbsp;&nbsp; '$rw','$rh',1,1,'x*cos($ang)+y*sin($ang)' \<br />&nbsp;&nbsp; -normalize 0,1 \<br />&nbsp; '(100^149^235)' \<br />&nbsp; '(127^255^0)' \<br />&nbsp; -resize[-2,-1] [-3],[-3],1,3 \<br />&nbsp; -image[-1] [-2],0,0,0,0,1,[-3] \<br />&nbsp; -rm[-3,-2]</code></td>
+</tr>
+</tbody>
+</table>
+<p></p>
+<table rules="all" style="border-color: #7f7f7f; border-width: 1px; background-color: #ffffff;" align="center" border="1" cellpadding="2">
+<tbody>
+<tr>
+<td><a target="_parent" href="ramps_resizing.shtml">Resizing</a></td>
+<td><a target="_parent" href="ramps_one-dimensional-functions.shtml"><span class="internal">One Dimensional Functions</span></a></td>
+</tr>
+</tbody>
+</table>
+
+
+
+   
+</body></html>

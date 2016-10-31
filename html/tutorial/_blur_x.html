@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="tutorial.css">
+<script type="text/javascript" src="highslide/highslide.js"></script>
+<link rel="stylesheet" type="text/css" href="highslide/highslide.css" />
+<script type="text/javascript">
+hs.graphicsDir = 'highslide/graphics/';
+hs.wrapperClassName = 'wide-border';
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<body>
+
+
+      
+
+
+
+<h1>-blur_x</h1>
+<p><img src="http://www.particularart.com/static/media/uploads/command_reference/blur_x/blur_x.png" class="img_block" style="margin: 3px; float: left; border: 0px solid #808080;" height="200" width="200" />This command is a specialization of the <a target="_parent" href="_blur.shtml">-blur</a> command, one that convolves images only in the width dimension.</p>
+<p>-blur_x convolves an image along the x axis, preserving details along the other two axes. The <a target="_parent" href="_display.shtml">-display</a> of a 100,100,100,1 volumetric star field, depicted on the left, illustrates the effect. Stars are blurred in the X-Y plane and X-Z elevation, but remain sharp in the Y-Z elevation, where blur_x has no effect whatsoever.</p>
+<p>The format of the command is:</p>
+<p><code>-blur_x amplitude[%]&gt;=0,_boundary={ 0=dirichlet | 1=neumann }</code></p>
+<ul>
+<li><em>amplitude:</em> sets the spread of the Gaussian distribution kernel, informally the amount of blurring.&nbsp; One must supply this value; there is no default.</li>
+<li><em>_boundary:</em> chooses how to handle image edges; see "<a target="_parent" title="Images have edges; now what?" href="images-have-edges.shtml">Pictures have Edges. Now What?</a>" A zero flag (0, Dirichlet) assumes that off-image pixels are black. A unit flag (1, Neumann) assumes that off-image pixels have the exact same value as the nearest edge pixel. Neumann does not exhibit a black vignette, but sometimes edge values become uncommonly bright. This value may be omitted and when it is, the command uses the Neumann policy as a default.</li>
+</ul>
+<p><em>Garry Osgood</em></p>
+
+
+
+   
+</body></html>

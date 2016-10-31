@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="tutorial.css">
+<script type="text/javascript" src="highslide/highslide.js"></script>
+<link rel="stylesheet" type="text/css" href="highslide/highslide.css" />
+<script type="text/javascript">
+hs.graphicsDir = 'highslide/graphics/';
+hs.wrapperClassName = 'wide-border';
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<body>
+
+
+      
+
+
+
+<h1><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/StainedGlass/SainteChapelle.png" title="15th Century Stained Glass" class="img_left" style="margin: 5px; border: 0px solid #808080; float: left;" height="280" width="300" /></h1>
+<h1>Stained Glass</h1>
+<p>The stained glass monogram on the <a target="_parent" href="basics.shtml">Basics</a> page to which we subjected various effects does not particularly invoke the feeling of stained glass. It belies its origins: an export bitmap from a Structured Vector Graphics original, Reeking of Perfection, its lines are too clean, the colors too unvarying throughout. Compare it to an original example, the 15th Century specimen on the left from <a target="_parent" href="http://en.wikipedia.org/wiki/Chartres_Cathedral">Chartres Cathedral</a>. Color is hardly uniform. Indeed, it is deliberately otherwise. There are bits of dirt. The glass itself has uneven thickness. the soldering on the lead cames forms blobs and soft curves. Up close, there are no sharp angles.</p>
+<p>Here, we filter our CGI-clean monogram, borrowing heavily from the -<a target="_parent" href="_bandpass.shtml">bandpass</a> command as it extracts very low frequency image components. The effect is liquid-like, aping the uneven thickness of a hand-shaped viscous liquid.</p>
+<p>We harness the&nbsp;-<a target="_parent" href="_bandpass.shtml">bandpass</a> command for two purposes, one to manufacture a vector field to warp the artwork, invoking a handmade look, and another to introduce color and luminance variations. Details follow.</p>
+<h2>Pipeline</h2>
+<p>In the following, we have broken the overall command into segments and indicate continuance with ellipses (...). These markers are not operational parts of the command, so if one is copying these into command shells, the ellipses should be left behind.</p>
+<table class="table table-striped" align="left" border="1"><colgroup> <col width="260px" /> <col width="540px" /> </colgroup>
+<tbody>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/StainedGlass/sg_000000.png" title="Stained Glass from SVG" height="250" width="250" /></td>
+<td><code>$gmic example.png...</code><br />
+<p><em>The difficulty with this image is its unvarying precision, broad flat color and precise edges. Before the development of the&nbsp;<a target="_parent" href="http://en.wikipedia.org/wiki/Float_glass"><b>Pilkington process</b></a> in the 1950's, even the very highest quality window glass showed slight variations of thickness, warping just ever so slightly the light shining through it.</em></p>
+<p><em>The first phase of this recipe entails developing a vector field to warp the image. Almost any random noise derived warping pattern could do, but we prefer to derive the vector field from the image itself, so that the warping which does take place reflects something of the image itself.</em></p>
+</td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/StainedGlass/sg_000001.png" title="Lumenence for bandpass filter" height="250" width="250" /></td>
+<td><code>...--<a target="_parent" href="http://gmic.eu/reference.shtml#luminance"><span class="internal">luminance</span></a>...</code><br />
+<p><em>The luminance command derives a gray scale version of the original; there is a slight organizational advantage in running the -bandpass command over a monochrome image as we don't really need color.<br /></em></p>
+</td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/StainedGlass/sg_000002.png" title="Bandpass: Y gradient" height="250" width="250" /></td>
+<td><code>...<code>--<a target="_parent" href="_bandpass.shtml">bandpass</a>[-1] 0.00005,0.004...</code></code><br />
+<p><em>We extract very low frequency components from the image. Since it is composed of hard edges, there are lots of harmonics available in almost any passband we choose. We picked this passband because the ringing we get approximates a hand-made waviness of the lead cames, the metallic pieces which hold stained glass pieces together.</em></p>
+</td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/StainedGlass/sg_000003.png" title="Bandpass: X Gradient" height="250" width="250" /></td>
+<td><code>...-<a target="_parent" href="_gradient.shtml">gradient</a>[-1]...</code><br />
+<p><em>G'MIC's -<a target="_parent" href="_warp.shtml">warp</a> command harnesses a vector field to determine how far, and in what direction it is to move a pixel. Two channel images embody vector fields, one encodes the magnitude of deflection in the vertical direction, the other the horizontal direction.</em></p>
+<p><em>At the end of the last stage, we only had a single channel scalar field. Here, we pass that scalar field through -<a target="_parent" href="_gradient.shtml">gradient,</a> giving us partial first derivatives in the horizontal and vertical directions, these in separate, monochrome images. We declare these by fiat to be the components of a vector field.</em></p>
+<p><em>This heuristic aside, we prefer image-based vector field over one randomly generated because the warping patterns it establishes are more or less based on features in the image itself, and, hence, the distortion patterns would be akin to the image.</em></p>
+</td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/StainedGlass/sg_000004.png" height="250" width="250" /></td>
+<td><code>...--<a target="_parent" href="http://gmic.eu/reference.shtml#append">append</a>[-2,-1] c...</code><br />
+<p><em>The -<a target="_parent" href="http://gmic.eu/reference.shtml#append">append</a> command assembles the vector displacement field from the vertical and horizontal partial derivative images produced by the -<a target="_parent" href="_gradient.shtml">gradient</a> command.</em></p>
+<p><em>With this command, we have completed the first phase of our work, the creation of a vector field. Append assembles images from slices along all possible image dimensions, width, height, depth and along channels, which is what we utilized here. The two monochrome images of the previous stage became the x and y displacement channels of a vector field.<br /></em></p>
+</td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/StainedGlass/sg_000005.png" title="Warped Glass" height="250" width="250" /></td>
+<td><code>...-<a target="_parent" href="http://gmic.eu/reference.shtml#mul">mul</a>[-1] 0.4 --<a target="_parent" href="_warp.shtml">warp</a>[0] [-1],1,2,2...</code><br />
+<p><em>With the vector field complete and occupying the last slot in the pipeline, we apply it to the very first image in the pipeline. The -<a target="_parent" href="_warp.shtml">warp</a> command itself has no attenuation control. We synthesize one by downscaling the vector field. We arrived at a multiplier of 0.4 after some experimentation.</em></p>
+<p><em>Warp is notorious for uncovering ragged edges, as it can locally magnify regions by some large percentage. Note, in particular, the lowest arm of the letter 'E'. For sake of the tutorial, it is worth leaving this nasty abroad in order to point the species out, but for critical work, any project involving warping should be done at oversized scales, easily two or three times the presentation size. The warp command itself supports cubic interpolation, which diminishes, but does not eliminate, the effect of magnified ragged edges.</em></p>
+</td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/StainedGlass/sg_000005a.png" title="Bandpass Filtering on all R, G, B channels" height="250" width="250" /></td>
+<td>
+<p><code>...--<a target="_parent" href="_bandpass.shtml">bandpass</a>[-1] 0.0005,0.03...</code></p>
+<p><em>We have warped the image, relieving the eye of precisely machined edges, but have done nothing yet about the flat color. We turn to the bandpass command again, this time extracting frequencies from a higher octave: compare the arguments with those used in the third panel.</em></p>
+<p><em>In this second invocation, we did not make a luminance only image because in this pass, we are using the patterns from the bandpass command as a kind of a "delta color" image.</em></p>
+<p><em>The color arising from the bandpass command is not very saturated. To adjust this, we transform the image into a Hue, Saturation, and Luminance representation so that we may manipulate the channels directly. </em></p>
+</td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/StainedGlass/sg_000005b.png" title="Hue, Saturation, Luminance remapping &amp; Gamma Adjustment to Saturation and Luminance" height="250" width="250" /></td>
+<td>
+<p><code>...-<a target="_parent" href="http://gmic.eu/reference.shtml#rgb2hsl">rgb2hsl</a>[-1] -<a target="_parent" href="http://gmic.eu/reference.shtml#split">split</a>[-1] c -<a target="_parent" href="http://gmic.eu/reference.shtml#apply_gamma">apply_gamma</a>[-2] 3 -<a target="_parent" href="http://gmic.eu/reference.shtml#apply_gamma">apply_gamma</a>[-1] 1.7...</code></p>
+<em>Following conversion into the HSL space, we harness the split command to slice the image along its channel dimension, placing monochrome images of the hue, saturation and luminance channels in the last three slots of the pipeline. We perform gamma adjustments on the saturation and luminance channels to lighten them. This both saturates the overall color of the image and lightens it. We arrived at the two gamma adjustments, 3.6 for saturation and 1.7 for luminance, through experimentation.</em></td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/StainedGlass/sg_000006.png" title="Saturated bandpass image" height="250" width="250" /></td>
+<td>
+<p><code>...-<a target="_parent" href="http://gmic.eu/reference.shtml#append">append</a>[-3,-2,-1] c -<a target="_parent" href="http://gmic.eu/reference.shtml#hsl2rgb">hsl2rgb</a>[-1]...</code></p>
+<p><em>We repack the image and move it from HSL back into RGB space. Compared with panel seven, our color adjustment image is much more saturated and higher contrast.</em></p>
+<p><em>Functionally, this is a "delta color" image of our stained glass, the local color variations we intend to apply to the undifferentiated color masses of the original image. It is designed to be a multiplier that is to be applied to the image in panel five, and for that role, it is probably stronger than we need. The following panel will have a moderator control so we can set the degree of color modulation.</em></p>
+</td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/StainedGlass/sg_000007.png" title="Colorized Stained Glass" height="250" width="250" /></td>
+<td>
+<p><code>...-<a target="_parent" href="_normalize.shtml">normalize</a>[-1] 0.69,1 --<a target="_parent" href="http://gmic.eu/reference.shtml#mul">mul</a>[-2,-1] -<a target="_parent" href="_normalize.shtml">normal</a>ize 0,255</code></p>
+<p><em>We utilize the normalize command to scale the "delta color" image we composed in the last panel. Since it is a multiplier, we can turn it entirely off by normalizing from unity to unity so that multiplication has no effect. We can turn it on by degrees by diminishing the lower boundaries of the normalize command. With this adjustment made, we multiply the scaled copy of the "delta color" image with the warped version of the monogram.</em></p>
+<p><em>The color variations achieved hint at some outside surrounding that we can just perceive through the glass. The wavy pattern arising from the bandpass command hint at imperfections in the manufacture of the glass, echoing a hand-made quality.</em></p>
+<p><em>The original from Chantres still pales this computer generated imitation, but it is now less brutally CGI and stylistically akin to stain glass, if not convincingly like stained glass.</em></p>
+</td>
+</tr>
+</tbody>
+</table>
+<p></p>
+<h2>Command</h2>
+<p>This is the complete command, suitable for pasting into a command shell. Take care to substitute'example.png' with whatever you have in your playpen. We have also injected a number of -<a target="_parent" href="_display.shtml">display</a> commands to inspect the images on the pipeline at various intermediary stages. These are the boldface <code><strong>-d</strong></code>&nbsp; scattered throughout, and in production one would remove these.</p>
+<p><code>$gmic example.png --luminance&nbsp; --bandpass[-1] 0.00005,0.004 <strong>-d</strong> --gradient[-1] --append[-2,-1] c <strong>-d</strong> -mul[-1] 0.4 <br />--warp[0] [-1],1,2,2 <strong>-d</strong> --bandpass[-1] 0.0005,0.03 <strong>-d</strong> -rgb2hsl[-1] -split[-1] c <strong>-d</strong> -apply_gamma[-2] 3<br /> -apply_gamma[-1] 1.7 <strong>-d</strong> -append[-3,-2,-1] c -hsl2rgb[-1] -d -normalize[-1] 0.69,1 --mul[-2,-1] -normalize 0,255 <strong>-d</strong></code></p>
+
+
+
+   
+</body></html>

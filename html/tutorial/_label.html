@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="tutorial.css">
+<script type="text/javascript" src="highslide/highslide.js"></script>
+<link rel="stylesheet" type="text/css" href="highslide/highslide.css" />
+<script type="text/javascript">
+hs.graphicsDir = 'highslide/graphics/';
+hs.wrapperClassName = 'wide-border';
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<body>
+
+
+      
+
+
+
+<h1>-label</h1>
+<p><img src="http://www.particularart.com/static/media/uploads/command_reference/label/labout.png" title="Some binary regions labeled " class="img_block" style="margin: 3px; border: 0px solid black; float: left;" height="300" width="300" />This command generally surveys single channel, binary images, identifies and enumerates distinct, connected regions, assigning each region a unique shade of gray that constitutes the region's numeric label. It is not uncommon to harness <a target="_parent" href="_map.shtml">-map</a> to assign these regions color, as was done on the image on the left, so that human beings can quickly recognize regions.</p>
+<p>Label usuallly plays an early role in feature detection pipelines. Upstream logic of some sort identifies pixels having particular characteristics and makes a single channel, binary (1, 0; 'True', 'False') image identifying the pixels with those characteristics. From this binary image, -label produces a gray scale dataset that enumerates distinct, connected regions. -label tries to detect one region, the 'background', which tends to encompass all other regions. If it finds that one region serves as the background, it gives the region an enumeration of '0'. Otherwise, label assigns 'O' to the first identified region. All other regions are assigned successive numerals until all pixels have been assigned to a region. The -label command stores the region number in each pixel, giving it a shade of gray unique to the region. As the command generally works from left to right, top to bottom, regions toward the bottom of the output image appear as lighter shades of gray, since these generally have higher enumerations.</p>
+<p>Once the -label command has completed its work, the maximum intensity (i<sub>M</sub>) of the output image acquires additonal significance: It holds the count of distinct regions that the -label command has identified, this stemming from the fact that the command assigns successive levels of gray to distinct regions as it finds them; the last region found receives the highest region label, which also becomes the image's maximum intensity, i<sub>M</sub>. Downstream feature extraction logic can locate a particular region, say 18, with the snippet <code>-eq[-1] 18.</code> This will produce a binary image of region 18 pixels and only region 18 pixels, as the enumeration is unique.</p>
+<p>The format of the command is:</p>
+<p><code>-label tolerance&gt;=0,is_high_connectivity={ 0 | 1 }</code></p>
+<ul>
+<li><em>tolerance:</em> The -label command generally expects binary images but can work with gray scale input. In this setting, tolerance, as an absolute number, specifies the minimum difference necessary between two neighboring gray pixels in order for them to be considered members of different regions. So long as the differences among neighboring pixels are less than the difference specified by tolerance, they are considered the same color and form a contiguous region for labeling purposes. This can help the -label command to tolerate some noise. Care must be taken,however, not to set the tolerance too high, otherwise all pixels will collapse into one region. Blurring a grayscale image, with the hope of attenuating noise, can also cause the label command to fail, as convolution replaces sharp differences with gradual ramps so that differences among neighboring pixels are never high enough to trigger recognition of region boundaries.&nbsp; &nbsp;</li>
+<li><em>is_high_connectivity</em>: a boolean flag. Broadly, a set of pixels is connected in a particular region when they have a common color and one can traverse from any one pixel in the region to any other pixel in the region without crossing a pixel of a different color. Put another way, one may draw a path between any two pixels in a connected region that does not cross a different color. In itself, this definition does not establish if rectangular regions touching just at their corners (a 'checkerboard') constitutes one or many regions. When this flag is zero, low connectivity prevails and rectangles just touching at their corners are deemed disconnected. In this scheme, a checkerboard has sixty-four distinct regions. When this flag is set to one, high connectivity prevails and rectangles just touching at their corners are deemed connected. In this scheme, a checkerboard has two regions, the dark and light squares. &nbsp;</li>
+</ul>
+<p><em>Garry Osgood</em></p>
+
+
+
+   
+</body></html>

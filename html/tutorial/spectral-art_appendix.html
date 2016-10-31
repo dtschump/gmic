@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="tutorial.css">
+<script type="text/javascript" src="highslide/highslide.js"></script>
+<link rel="stylesheet" type="text/css" href="highslide/highslide.css" />
+<script type="text/javascript">
+hs.graphicsDir = 'highslide/graphics/';
+hs.wrapperClassName = 'wide-border';
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<body>
+
+
+      
+
+
+
+<h2 id="Appendix">Appendix</h2>
+<h3 id="TiletexScript"><tt>-tiletex</tt> Script</h3>
+<p>This follows the first version, released 29-January-2015. The version available from <tt>gmic -update</tt> is likely to be newer than this, and, who knows, maybe even better. However, if the G'MIC update mechanism isn't working for you, or you're reading this in a PDF version of some sort and have no Internet connection or access to web sites, the following version of the script will work. If you are using a Unix-like operating system, copy/paste this script into your <tt>$HOME/.gmic</tt> file, or, for recent Microsoft Windows, your <tt>%APPDATA%/gmic</tt> file. If you don't have such, then let this script become the initial content of that file.</p>
+<pre style="font-family: monospace; font-size: x-small; line-height: 100%; overflow: auto;">#@gmic tiletex : _texscale=8 autoangle=-1 _keepimag=0
+#@gmic : Renders a tilable texture on selected images, taking polar formatted
+#@gmic : (magnitude, phase angle) seed values from pairs of selected,
+#@gmic : alternating "Magnitude" and "Angle" images or, if these are constant
+#@gmic : black, then from internally generated random values. Unless
+#@gmic : 'autoangle' is positive, input images must form "Magnitude" and
+#@gmic : "Angle" pairs and each pair must have an equal number of
+#@gmic : channels. Produces "real" and "imaginary" output images (But note
+#@gmic : _keepimag, below). 'texscale' sets the size of a square window around
+#@gmic : the spectral origin where random seeds are set. Larger 'texscales'
+#@gmic : settings admit higher frequency coefficients, giving rise to finer
+#@gmic : output details. 'texscale' ranges from 1 upward and defaults to 8. It
+#@gmic : is ignored if the user has preset coefficients within the input
+#@gmic : images. Setting 'autoangle' to a positive value in the range [0, 255]
+#@gmic : eliminates the need for providing "Angle" input images. The provided
+#@gmic : argument is applied as a default phase angle to all "Magnitude" data
+#@gmic : and input images are taken to be "Magnitude" data only. 'keepimag' is
+#@gmic : a trivalued flag: 0, 1 or 2. '0' requests both "Real" and "Imaginary"
+#@gmic : output pairs and is the default. '1' requests the "Real" output image
+#@gmic : only; '2' requests the "Imaginary" output image only.
+#@gmic : Output images are unnormalized and range from negative to positive
+#@gmic : values, Normalize data accordingly for use with bitmap editors.
+tiletex : -check "${1=8}&gt;0 &amp;&amp; isval(${2=-1.0}) &amp;&amp; ${3=0}&gt;=0 &amp;&amp; ${3}&lt;3"
+-verbose -
+-if {$2&gt;=0}
+   addenda2="Common default angle: $2."
+-else
+   addenda2="Explicit angles from provided images."
+-endif
+addenda3="Real and imaginary"
+-if {$3!=0}
+   -if {$3==1}
+      addenda3="Real"
+   -else 
+      addenda3="Imaginary"
+   -endif
+-endif
+-verbose +
+-echo[^-1] "Rendering tilable texture on $? at window size $1 "$addenda2". "$addenda3" output to be provided." 
+-verbose -
+rsz={$1}
+impla={2*pi*$2/255.0}
+all={$3}
+iszed=1
+ccc={{0,s}}
+badccc="Selected images have different number of channels. Have you accidently included alpha channels in some (but not all) images?"
+-repeat $!
+  -if {round({$&gt;,a})!=0||round({$&gt;,M}-{$&gt;,m})!=0}
+    iszed=0
+    -break
+  -endif
+-done
+-if $iszed # Case 0: All images black. Generate random values
+   -repeat $!
+      -local[$&lt;]
+         -if {$ccc!={$&lt;,s}}
+            -error $badccc
+         -endif
+         -input [-1]
+         -append[-2,-1] c
+         -input {2*$rsz+1},{2*$rsz+1},1,{{s}},(2*u-1)*({w}*{h})
+         -image[-2] [-1],{({-2,w}-{w})/2},{({-2,h}-{h})/2},0,0,1
+         -remove[-1]
+      -endlocal
+   -done
+-else # Case 1: Coefficients in polar format have been set in at least one selected image.
+   -if {$impla&lt;0} # Case 1.1: $impla not set (still negative guardian value). Images must be &lt;radius&gt;, &lt;angle&gt; image pairs.
+      -if {$!%2!=0}
+         -error "Selected images contain data, but selection count is odd. Cannot determine angles for some coefficients. Consider setting an implied angle or providing an even number of images."
+      -endif
+      -repeat {$!/2}
+         -local[{2*$&lt;},{2*$&lt;+1}]
+            -if {{$ccc!={$&lt;,s}}||{$ccc!={{$&lt;+1},s}}}
+               -error $badccc
+            -endif
+            -split[-2,-1] c
+            -repeat {$!/2}
+                -local[{$&gt;},{$!/2+$&gt;}]
+                   -div[0,1] 255
+                   -mul[1] {2*pi}
+                   -polar2complex[0,1]
+                -endlocal
+            -done
+            -append[0--1] c
+         -endlocal
+      -done
+   -else # Case 1.2: Odd numbered selection permitted when $impla is not negative. Furnishes constant angle field.
+      -repeat $!
+         -local[$&lt;]
+            -if {$ccc!={$&lt;,s}}
+               -error $badccc
+            -endif
+            -input [0]
+            -split[-2,-1] c
+            -repeat {$!/2}
+               -local[{$&gt;},{$!/2+$&gt;}]
+                  -div[0,1] 255
+                  -mul[0] {cos($impla)} 
+                  -mul[1] {sin($impla)}
+               -endlocal
+            -done
+            -append[0--1] c
+         -endlocal
+      -done
+   -endif
+-endif
+-repeat $!
+   -local[$&lt;]
+      -shift[-1] -50%,-50%,0,0,2
+      -split[-1] c,2
+      -ifft[-2,-1]
+      -if {$all!=0}
+         -if {$all==1}
+            -remove[-1]
+         -else
+            -remove[-2]
+         -endif
+      -endif
+   -endlocal
+-done
+-verbose +
+</pre>
+<h3 id="ThePolarFormUsedByTileTex">The Polar Form Used By -tiletex</h3>
+<div id="FigureFourteen" style="float: left; width: 425px; height: 450px; border: none; padding: 0in;" dir="ltr"><img class="img_block" style="margin: 3px; border: 0px solid #808080;" title="Conversion Right Triangle" src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/spectral/spa-108.png" height="400" width="400" />
+<p><i> Figure 14: </i><span size="3" style="font-size: small;"><i> Conversion between polar and rectangular forms. </i></span></p>
+</div>
+<p>Since most paint programs have difficulty with negative numbers, -tiletex interprets selected image pairs as <i>&lt;radius&gt;</i>, <i>&lt;angle&gt;</i> data sets instead of <i>&lt;real&gt;</i>, <i>&lt;imaginary&gt;</i> ones. This &ldquo;polar form&rdquo; consists entirely of non-negative numbers:</p>
+<ol>
+<li>We base <i>&lt;radius&gt;</i> data on the Pythagorean theorem, which always returns a non-negative measure. It regards the <i>&lt;real&gt;</i> and <i>&lt;imaginary&gt;</i> components as the sides of a right triangle; <i>&lt;radius&gt;</i> is then the hypotenuse.</li>
+<li>We derive <i>&lt;angle&gt;</i> from the arctangent relation, using the ratio <i>&lt;imaginary&gt;:&lt;real&gt;</i>to compute the angle subtended by the imaginary side. Resulting angles range over the interval [&ndash;180&deg;, &hellip; +180&deg;], ([&ndash;&pi;, &hellip; &pi;]) but no change in meaning occurs if we offset negative angles by 360&deg; (2&pi;), an identity relation. That means we can make images fully specifying complex coefficients, but without using negative values.</li>
+</ol>
+<p>In practice, we express radial and angular data in separate images, scaling both to the range of 0 &ndash; 255, suitable for unsigned eight bit integers. Extension to color is straightforward, commonly employing a &ldquo;radius&rdquo; or &ldquo;magnitude&rdquo; image with three RGB channels, and another &ldquo;angular&rdquo; image, also with three RGB channels. The inverse Fourier transform performs independent transforms on the three channels.</p>
+<p>To &ldquo;paint&rdquo; coefficients in spectral space, we start up our favorite paint program and create a new image with separate &ldquo;Magnitude&rdquo; and &ldquo;Angle&rdquo; layers. It is straightforward to plot both components in a coordinated way by keeping one or the other layer translucent during plotting. The canonical tool for coefficient painting is the Pencil tool with a brush size of one pixel, but the Airbrush tool operating in &ldquo;Dissolve&rdquo; mode sets a nice mess of coefficients <i>en masse</i>.</p>
+<p>Setting <tt>-tiletex's</tt> second argument, &ldquo;autoangle&rdquo;, to a constant default angle eliminates the need for a custom &ldquo;Angle&rdquo; layer, albeit with some loss in flexibility. Only a &ldquo;Magnitude&rdquo; layer needs to be prepared; &ldquo;Angle&rdquo; defaults to the argument given for &ldquo;autoangle.&rdquo;</p>
+<p>When finished, save (or export) the &ldquo;Magnitude&rdquo; and (possibly) &ldquo;Angle&rdquo; layers as separate images. These become selections for <tt>-tiletex</tt>, positioned on the image list in &ldquo;Magnitude,&rdquo; &ldquo;Angle&rdquo; order. If you didn't paint an explicit &ldquo;Angle&rdquo; image, set the second parameter &ldquo;autoangle&rdquo; to some default measure in the range of 0,255. Zero works well if you have no compelling preference. Setting &ldquo;keepimag&rdquo; to 0 returns both the real and imaginary components of the resulting spatial transform, 1 limits the return to just the real image, 2 limits the return to just the imaginary image.</p>
+
+
+
+   
+</body></html>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="tutorial.css">
+<script type="text/javascript" src="highslide/highslide.js"></script>
+<link rel="stylesheet" type="text/css" href="highslide/highslide.css" />
+<script type="text/javascript">
+hs.graphicsDir = 'highslide/graphics/';
+hs.wrapperClassName = 'wide-border';
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<body>
+
+
+      
+
+
+
+<div id="Frame3" style="float: left; width: 3.25in; height: 3.25in; border: none; padding: 0in;"><img src="http://www.particularart.com/static/media/uploads/filters/init.png" title="filters.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" width="300" height="300" /></div>
+<h1 id="GMICTutorialFilters">Gimp-G'MIC Tutorial Filters</h1>
+<p>Going hand in hand with the G'MIC command line tutorials evolving at <a target="_parent" href="http://gmic.eu/tutorial/index.shtml">gmic.eu/tutorial</a>, some of the more intricate &ldquo;Beginner's Cookbook&rdquo; recipes now have corresponding Gimp-G'MIC filters.</p>
+<h2 id="GimpGMICFiltersAsInstructionalAids">Gimp-G'MIC Filters as Instructional Aids</h2>
+<p>The tutorials at the G'MIC home site are primarily for the G'MIC command line. However, the Gimp G'MIC plug in filter set has tools to examine and debug Gimp-G'MIC filters, which, providentially, are also very useful for observing the G'MIC interpreter in operation, essentially, the same interpreter that processes the command line. In light of this, the tutorial writers decided that a good way for command line students to grasp how a sequence of commands works would be to observe their execution through the Gimp-G'MIC plugin. It is a fairly straightforward matter to wrap a G'MIC command sequence into a Gimp-G'MIC filter and the effort relieves the student from entering sequences by hand, an error-prone process which can frustrate more than enlighten. The wrapping technique may be found on the G'MIC wiki: <a target="_parent" href="https://github.com/dtschump/gmic-community/wiki/How-to-create-a-custom-filter-in-the-G%E2%80%99mic-plug-in"><i>&ldquo;How to Create a Custom Filter in the G'MIC Plug-in.&rdquo; </i></a></p>
+<h2 id="InstallingGimpGMICFilters">Installing Gimp-G'MIC Filters</h2>
+<p>The installation of Gimp-G'MIC filters is semi-automatic. The primary filters are distributed from the gmic.eu server and all filters from that source can be downloaded and installed by using the refresh button (circular arrow) at the bottom of the Gimp-G'MIC plugin filter main dialog box. The filters spun off from G'MIC command line tutorials may be found in the &ldquo;Testing &rarr; GMIC Tutorials&rdquo; branch.</p>
+<p>If you have just installed the Gimp-G'MIC filter plug in, you may not see all available branches, including the Testing branch. Should that be the case, refreshing the plug in should load them:</p>
+<ol>
+<li>Make sure that you have a working Internet connection.</li>
+<li>Start Gimp and load (or start a new) image.</li>
+<li>Start the Gimp-G'MIC plug-in (Filters &rarr; G'MIC).</li>
+<li>At the top of the center pane of the dialog, make note of the number of available filters; it should be a few hundred.</li>
+<li>At the bottom of the center pane of the main dialog box check the &ldquo;Internet&rdquo; box; click on it until a tiny check mark appears (once suffices, usually).</li>
+<li>Press the button with the circular arrow icon to the left of the Internet check box.</li>
+<li>After a few seconds &ndash; perhaps a minute &ndash; or two !!! &ndash; the number of available filters should increase.</li>
+<li>If the number of available filters does increase, check for the existence of &ldquo;Testing &rarr; GMIC Tutorial&rdquo; branch.</li>
+<li>If the number doesn't change, check your Internet connection. If you have a well-established connection, choose the &ldquo;About &rarr; Filter Sources&rdquo; filter. The preview filter on the left should display a listing of filter sources.</li>
+<li>If the listing is empty, or only displays your local filter source, or does not include a URL like &ldquo;http://gmic.eu/update<i>xxxx</i>.gmic&rdquo;, where '<i>xxxx</i>' equals your Gimp-G'MIC plug-in version number, then your installation itself is not entirely standard, and it is difficult for us to say how it might not be standard without knowing how you or someone like you installed Gimp-G'MIC in the first place. In the normal course of affairs, the plug-in loads filter definitions from your local filter source file and from the gmic.eu server. The first source will not exist unless you've put it there, and presupposes that you have <a target="_parent" href="https://github.com/dtschump/gmic-community/wiki/How-to-create-a-custom-filter-in-the-G%E2%80%99mic-plug-in">written your own G'MIC filters</a>. The second source referenced in the <a target="_parent" href="http://gmic.eu/reference.shtml#update">-update</a> command, a part of the standard G'MIC installation. Possible deviations from a standard installation entail the absence of curl (/usr/bin/curl, for UNIX-like operating systems; curl.exe in the GMIC installation directories of Windows.</li>
+</ol>
+<h2>Gimp-G'MIC Filters</h2>
+<ol>
+<li><a target="_parent" href="blur-by-color-filter.shtml"><strong>Blur by Color</strong></a>. Just what you need: Another way to fuzz up a picture. Background: <a target="_parent" href="dyidiffusion_graduated-blurs.shtml">Graduated Blurs</a><br /><strong></strong></li>
+<li><strong><a target="_parent" href="the-fingerpainting-filter.shtml">Fingerpainting</a></strong>. Enjoy the physicality of paint. Background: <a target="_parent" href="fingerpainting.shtml">Fingerpainting</a><br /><strong></strong></li>
+<li><a target="_parent" href="the-hairlock-filter.shtml"><strong>Hair locks</strong></a>. Grow Hair. For you or someone you love. Background: <a target="_parent" href="dyidiffusion_tensors-for-the-tonsorially-challenged.shtml">Tensors for the Tonsorially Challenged</a></li>
+<li><a target="_parent" href="hedcut-filter.shtml"><strong>The Hedcut Filter.</strong></a> Make faces like they should be in some financial journal. Background: The <a target="_parent" href="_bandpass.shtml"><tt>-bandpass</tt></a> command. <a target="_parent" href="spectral-art.shtml">Spectral Art</a>.</li>
+</ol>
+
+
+
+   
+</body></html>

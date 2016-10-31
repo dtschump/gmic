@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="tutorial.css">
+<script type="text/javascript" src="highslide/highslide.js"></script>
+<link rel="stylesheet" type="text/css" href="highslide/highslide.css" />
+<script type="text/javascript">
+hs.graphicsDir = 'highslide/graphics/';
+hs.wrapperClassName = 'wide-border';
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<body>
+
+
+      
+
+
+
+<h1>-display_tensors</h1>
+<p><img src="http://www.particularart.com/static/media/uploads/command_reference/structuretensors/tnsr_disp.png" class="img_block" style="margin: 3px; border: 0px solid #808080; float: left;" height="640" width="512" />The -display_tensors command visualizes 2x2 tensor fields, taking such as input operands. For each pixel (tensor) in the field, the command renders an ellipse with axes that are proportional to the two eigenvalues. The semimajor axis aligns with the the steepest gradient in the locale and the eigenvector pointing along it.</p>
+<p>Especially flat or highly eccentric ellipses reflect large differences in the magnitude of the two eigenvalues. The relative discrepancy of the two eigenvalues reflects the degree of <a target="_parent" href="http://en.wikipedia.org/wiki/Isotropy">anisotropy</a> or bias toward a particular orientation. Rounder ellipses arise from eigenvalues closer together in value and reflect gradients that are not as strongly oriented in a particular direction.</p>
+<p>The overall saturation and luminance of the ellipse reflect the magnitude of the largest eigenvalue and the rapidity of change of the local gradient.</p>
+<p>As a practical matter, the command works best on relatively small images. Tensor maps with &asymp;1000 pixel dimensions can take some minutes to display and may furnish too much information for ready comprehension. It is generally easier to locate an area of interest in an earlier rendering pass, then crop the region of interest to image sizes of about 100 pixels or less, then render these excerpts with -display_tensors.</p>
+<p>The accompanying illustration visualizes the structure tensor field of the 32x32 pixel excerpt from a larger gray scale image, far upper left, here magnified 4 times. The near upper left image is a structure tensor field of that excerpt; -display_tensor produced the visualization of this field, the large bottom illustration. The two small images near and far right are the output images of <a target="_parent" href="_eigen.shtml">-eigen</a>, here for comparison.</p>
+<p>-display_tensors take the following parameters:</p>
+<ol>
+<li><em>_size_factor&gt;0:</em> A multiplier indicating how much larger the display should be rendered with respect to the original. Optional, Defaults to a factor of 16</li>
+<li><em>_ellipse_factor&gt;=0</em>: A multiplier which scales ellipses with respect to the overall display, however large or small it may be. At a factor of 1.0, the size of the ellipses stems from the eigenvalues latent in the tensors. Should there be significant overlap among ellipses, a smaller ellipse factor may make the overall presentation intelligible. Similarly, where gradients are very small, an ellipse_factor greater than one may be necessary to perceive slight variations. Optional, and defaults to 0.92.</li>
+<li><em>_colored_mode={ 0 | 1 }:</em> A boolean flag. When set, the ellipses will be colored to indicate the direction of the tensor's gradient vector. Optional, and defaults to 1.&nbsp; (True)</li>
+</ol>
+<p><em>Garry Osgood</em></p>
+
+
+
+   
+</body></html>

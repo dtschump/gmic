@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="tutorial.css">
+<script type="text/javascript" src="highslide/highslide.js"></script>
+<link rel="stylesheet" type="text/css" href="highslide/highslide.css" />
+<script type="text/javascript">
+hs.graphicsDir = 'highslide/graphics/';
+hs.wrapperClassName = 'wide-border';
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<body>
+
+
+      
+
+
+
+<h2>The Complex Number Field</h2>
+<div id="FigureOne" style="float: left; width: 350px; height: 220px; border: none; padding: 0in;" dir="ltr">
+<table>
+<tbody>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/spectral/spa-13.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="150" width="150" /></td>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/spectral/spa-14.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="150" width="150" /></td>
+</tr>
+</tbody>
+</table>
+<p><i>Figure 2: Flipped horizontally over the right edge, then flipped vertically in place</i></p>
+</div>
+<p>So, what do these images constitute, exactly?</p>
+<p>What these images constitute, exactly, is a field of <a target="_parent" href="http://en.wikipedia.org/wiki/Complex_number">complex numbers</a>. That is, each and every coefficient in the spectral domain consists of two numeric components, traditionally called <i>real</i> and <i>imaginary</i>, and takes the form <i>a + ib. </i>The factor <i>i</i>, you may recall, magically equals negative one when squared, and invests meaning in the taking of a negative number's square root, which did not have such when our numeric sensibilities were confined solely to the real number line. Because the spectral domain is a field of complex numbers, <tt>-fft</tt> makes two images. The penultimate embodies the real components &ndash; <i>a</i> &ndash; and the final the imaginary &ndash; <i>ib</i>.</p>
+<p>Of course, neither one looks much like cheese and antipasto &ndash; in fact, they don't look much like anything. They are encoded, as if in Base64, and they have all of the appearances of gobbledygook.</p>
+<p>But there is a rhyme here &ndash; a hint of organization. Observe that in each image one half is the other flipped over on one axis, then flipped in-place around the midpoint normal, making a reflection like the face cards of a <a target="_parent" href="http://en.wikipedia.org/wiki/Standard_52-card_deck">French deck</a>. When we dig deeper we find that the spectral domain is highly organized place; gobbledygook is just an aspect of our incognizance.</p>
+<p>To redress this, we run the <tt>-fft</tt> command over a<i> really tiny image</i> of our cheese, fifteen pixels to a side, yielding 15 &times; 15 = 225 coefficients, a small but sufficiently illustrative set. We also color-code the data so that like values have the same hue. Knowing about particular values is not as important as patterns, for these are the bases of our map.</p>
+<p align="center"><img style="margin: 3px; border: 0px solid #808080; text-align: center;" class="img_block" src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/spectral/spa-15.png" title="Odd-sized Spectral Space" height="600" width="600" /></p>
+<p align="center"><i>Figure 3: Symmetries of the Spectral Domain. Odd sides. Origin, a self-chiral, marked in red</i></p>
+<p>As it turns out, the face card model is not entirely correct &ndash; <i>almost,</i> but not spot on. There are, in fact, three separate regions:</p>
+<ol>
+<li>
+<p><i>The Face Card &ndash; </i>occupies most of the spectral domain, all but an almost one row strip of coefficients on the top and an almost one column strip of coefficients on the left. The Face Card region <i>does</i> behave like a face card. Every coefficient has a mirrored/flipped counterpart in the other half. Green and orange markers in <i>Figure 3</i> show two examples. The values of their coefficients are also <i>almost</i> the same; they are <i>complex conjugates</i> of one other. Where one has the value <i>a + ib, </i>the other, <i>a &ndash; ib.</i></p>
+<p>We call such coefficients <i>chiral pairs.</i> If one steps so many places from the top and left of the Face Card region to a particular coefficient, its counterpart in the chiral pair may be found through the same number of steps from the bottom and right. Ditto in stepping so many places from the top and <i>right</i> for one and bottom and <i>left</i> for the other.</p>
+</li>
+<li>
+<p><i>The Strips</i> &ndash; each occupy all but one square of the top row and left column. The left and right halves of the top strip and the top and bottom halves of the left strip mirror each other. In both regions coefficients pair off with their counterparts across the reflection axis. The blue and pink markers in <i>Figure 3 </i>illustrate two chiral pairs in each strip.</p>
+</li>
+<li>
+<p><i>The Origin</i> &ndash; The one coefficient, which seems to be its own chiral, occupies the upper left hand corner. It is the origin of the spectral domain. More on this particular coefficient is in the offing when we <a target="_parent" href="/admin/pages/richtextpage/827/htt/tools-and-toys/gmic/beginners-cookbook/spectral-art/painting-with-waves-part-one/"><i>paint with waves</i></a></p>
+</li>
+</ol>
+<p>If we make a slightly larger spectral domain map shrinking our cheese and antipasto down to an even number of pixels, say, 18 &times; 18 = 324, the map changes slightly. See <i>Figure 4:</i></p>
+<p align="center"><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/spectral/spa-16.png" class="img_block" style="margin: 3px; border: 0px solid 808080;" height="600" width="600" /></p>
+<p id="Figure4" style="text-align: center;"><em>Figure 4 Symmetries of the Spectral Domain: Even sides. Self-chirals marked in red</em></p>
+<p>Two new horizontal and vertical strips further divide the Face Card into four quadrants, but the reflections of that region are otherwise unaltered. Three new self-chirals also emerge, each reflecting the image's <i>Nyquist rate.</i></p>
+<p>The Night's Quest what?</p>
+<p>The Nyquist rate (after <a target="_parent" href="http://en.wikipedia.org/wiki/Harry_Nyquist"><i>Harry Nyquist</i></a>) is an upper sampling limit, particular to an image of a given size. This image, at 18 pixels in width and height, can capture a variation of at most nine cycles across each dimension, that being signals with just two pixel wavelengths. Any variation occurring at smaller wavelengths will alias at the<i> <a target="_parent" href="http://en.wikipedia.org/wiki/Beat_(acoustics)">beat frequency</a></i>, or difference between the frequency of the given signal and the Nyquist rate of this 18 &times; 18 image, a source of moir&eacute; patterning that <a target="_parent" href="http://en.wikipedia.org/wiki/Aliasing"><i>aliases</i></a> the much lower beat frequency signal for the much higher (but unreproducible) given signal.</p>
+<p>These three Nyquist coefficients, along with the origin, are benchmarks in the spectral domain map. They correspond to a variation of nine cycles along:</p>
+<ol>
+<li>
+<p>the width, the Nyquist coefficient situated midway on the upper edge of the map,</p>
+</li>
+<li>
+<p>the height, the Nyquist coefficient situated midway on the left edge of the map,</p>
+</li>
+<li>
+<p>both width and height, the Nyquist coefficient situated in the middle of the map.</p>
+</li>
+</ol>
+<p>It's fair to ask why the Nyquist coefficients were not visible in the 15 &times; 15 image. They fell betwixt the cracks, in a manner of speaking, as half of fifteen is seven and one half, a Nyquist rate corresponding to neither seven nor eight. So, for odd-size dimensions, the precise Nyquist rate does not have an analogous coefficient, though it will still be manifest in details too fine for the image to reproduce.</p>
+<p>This being a map, it would be useful to have something like latitude and longitude markings. Since the origin and Nyquist coefficients are remarkable points, let us label the Origin 0:0, the two colon separated numerals denoting the a count along the width and height respectively. Let the Nyquist coefficient situated midway on the upper edge of the map be labeled N:0, for some number of pixels N; similarly, let its counterpart on the left edge be labeled 0:N and the one in the middle of the map N:N. Along either width or height, when counting from the origin, we increment one or the other numerals. When counting past N, we decrement back to zero. This scheme does have its deficiencies, particularly that the label <i>q:v</i> could represent as many as four coefficients. For now, we will content ourselves with amendments &ldquo;to the left/right of&rdquo; or &ldquo;above/below&rdquo; a nearby remarkable point, akin to saying North or South latitude, or East or West longitude.</p>
+<p>Trust us; <a target="_parent" href="#2.1.2.2.Better Signage|outline"><i>better signage</i></a> will emerge that arises from an intrinsic quality of the spectral domain, but that is presently beyond our ken; we are barely out of the Mediterranean, feeling our way down the coast of Africa in our caravels.</p>
+<hr />
+<table style="border-color: #7f7f7f; border-width: 1px; background-color: #ffffff;" rules="all" align="center" border="1" cellpadding="2">
+<tbody>
+<tr>
+<td><a target="_parent" href="spectral-art_the-spectral-domain.shtml">The Spectral Domain</a></td>
+<td><a target="_parent" title="Painting With Waves Part One" href="spectral-art_painting-with-waves-part-one.shtml">Painting With Waves: Part One</a></td>
+</tr>
+</tbody>
+</table>
+
+
+
+   
+</body></html>

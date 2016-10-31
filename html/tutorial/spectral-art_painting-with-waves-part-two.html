@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="tutorial.css">
+<script type="text/javascript" src="highslide/highslide.js"></script>
+<link rel="stylesheet" type="text/css" href="highslide/highslide.css" />
+<script type="text/javascript">
+hs.graphicsDir = 'highslide/graphics/';
+hs.wrapperClassName = 'wide-border';
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<body>
+
+
+      
+
+
+
+<h2>Painting With Waves Part Two</h2>
+<p>Usually with chiral pairs, each member coefficient is a mirror of the other, each being in the same relative position in the spectral domain, counting from diagonally opposite corners.</p>
+<p>You may have also noticed that this count also determines the frequency of its analogous spatial waveform.</p>
+<p>For example, setting the coefficient situated at four columns from the left and three from the top, counting from zero, and its counterpart four columns from the right and three columns from the bottom, counting from one, gives rise to a spatial waveform that propagates at four horizontal and two vertical cycles, <a target="_parent" href="http://en.wikipedia.org/wiki/Bend_(heraldry)#Bend_sinister_and_.22bar_sinister.22"><i>bend sinister</i></a>. See the first example in the following gallery:</p>
+<table rules="all" class="table table-striped" style="border-color: #808080; border-width: 0px;" border="0">
+<tbody>
+<tr>
+<td>
+<p style="text-align: center;"><tt>-set[0] 1,4,3 -set[0] 1,196,197</tt></p>
+</td>
+<td>
+<p style="text-align: center;"><tt>-set[0] 1,12,1 -set[0] 1,188,199</tt></p>
+</td>
+</tr>
+<tr>
+<td>
+<p style="text-align: center;"><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/spectral/spa-21.png" title="spa-21.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="200" width="200" /></p>
+</td>
+<td>
+<p style="text-align: center;"><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/spectral/spa-22.png" title="spa-22.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="200" width="200" /></p>
+</td>
+</tr>
+<tr>
+<td>Coefficients 4:3. Counting from the left and top, counterpart from the right and bottom. Waveforms produced from coefficients drawn from the northwest and southeast quadrants propagate from the upper left to the lower right, the heraldic <i>bend sinister</i> orientation.</td>
+<td>Coefficients 12:1, Counting from the left and top, counterpart from the right and bottom.</td>
+</tr>
+<tr>
+<td>
+<p style="text-align: center;"><tt>-set[0] 1,4,194 -set[0] 1,196,6</tt></p>
+</td>
+<td>
+<p style="text-align: center;"><tt>-set[0] 1,8,192 -set[0] 1,192,8</tt></p>
+</td>
+</tr>
+<tr>
+<td>
+<p style="text-align: center;"><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/spectral/spa-23.png" title="spa-23.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="200" width="200" /></p>
+</td>
+<td>
+<p style="text-align: center;"><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/spectral/spa-24.png" title="spa-24.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="200" width="200" /></p>
+</td>
+</tr>
+<tr>
+<td>Coefficients 4:6, counting from the left and bottom, counterpart from the right and top. Waveforms produced from coefficients drawn from the southwest and northeast quadrants propagate from the lower left to the upper right, the heraldic bend dexter orientation.</td>
+<td>Coefficients 8:8, counting from the left and bottom, counterpart from the right and top.</td>
+</tr>
+<tr>
+<td>
+<p style="text-align: center;"><tt>-set[0] 1,100,9 -set[0] 1,100,191</tt></p>
+</td>
+<td>
+<p style="text-align: center;"><tt>-set[0] 1,1,100 -set[0] 1,199,100</tt></p>
+</td>
+</tr>
+<tr>
+<td>
+<p style="text-align: center;"><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/spectral/spa-25.png" title="spa-25.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="200" width="200" /></p>
+</td>
+<td>
+<p style="text-align: center;"><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/spectral/spa-26.png" title="spa-26.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="200" width="200" /></p>
+</td>
+</tr>
+<tr>
+<td>Coefficients 100:9, counting from the left and top, counterpart from the right and bottom. The coefficients are from the central vertical strip and exhibit no diagonal preference. The signal running along the width is at the Nyquist rate. Count the vertical cycles. Seems more than nine &ndash; seems double of nine! Is there something wrong?</td>
+<td>Coefficients 1:100, counting from left and top, counterpart from right and bottom. The coefficients are from the central horizontal strip and, like the image on the left, exhibit no diagonal preference. The signal running along the height is at the Nyquist rate. It seems that the horizontal frequency is 2, not 1 as prescribed by the rule of position. What goes on? Closer inspection reveals mischievousness. The even rows wane from a maximum to a midpoint minimum, then wax again. The odd rows wax from from a minimum to a mid-point maximum, then wane. In fact, every scan line is at a frequency of one cycle over the width of the image, but the even rows are 180&deg; out of phase with the odd. At a reading distance, there is an illusion of two cycles. The same phenomenon is at work in the image on the left, but along the height instead.</td>
+</tr>
+<tr>
+<td>
+<p style="text-align: center;"><tt>-set[0] 1,1,0 -set[0] 1,199,0</tt></p>
+</td>
+<td>
+<p style="text-align: center;"><tt>-set[1] 0,1,0 -set[1] 1,199,0</tt></p>
+</td>
+</tr>
+<tr>
+<td>
+<p style="text-align: center;"><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/spectral/spa-27.png" title="spa-27.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="200" width="200" /></p>
+</td>
+<td>
+<p style="text-align: center;"><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/spectral/spa-28.png" title="spa-28.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="200" width="200" /></p>
+</td>
+</tr>
+<tr>
+<td>Coefficients 1:0, counting from the left, counterpart from the right. The horizontal signal plots a cosine curve.</td>
+<td>Coefficients 1:0, counting from the left, counterpart from the right. The horizontal plots a sine curve. Observe the <tt>-set</tt> commands, above. We plot an imaginary component, 0 + i1 at the 1:0 coefficient to the left of the origin. You suppose <a target="_parent" href="#2.1.2.2.Managing the Imaginary|outline"><i>thereby hangs a tale</i></a>?</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<table style="border-color: #7f7f7f; border-width: 1px; background-color: #ffffff;" rules="all" align="center" border="1" cellpadding="2">
+<tbody>
+<tr>
+<td><a target="_parent" title="Painting with Waves: Part One" href="spectral-art_painting-with-waves-part-one.shtml">Painting With Waves: Part One</a></td>
+<td><a target="_parent" title="A Revised Map" href="spectral-art_a-revised-map.shtml">A Revised Map</a></td>
+</tr>
+</tbody>
+</table>
+
+
+
+   
+</body></html>

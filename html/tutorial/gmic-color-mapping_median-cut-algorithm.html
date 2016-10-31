@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="tutorial.css">
+<script type="text/javascript" src="highslide/highslide.js"></script>
+<link rel="stylesheet" type="text/css" href="highslide/highslide.css" />
+<script type="text/javascript">
+hs.graphicsDir = 'highslide/graphics/';
+hs.wrapperClassName = 'wide-border';
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<body>
+
+
+      
+
+
+
+<h1 id="MedianCut">Median-cut</h1>
+<div id="FigureOne" width="3.125in" height="4.0in" style="float: left;"><a target="_parent" class="intern" href="img/gmic-color-mapping_median-cut-algorithm_cm_015.jpg" class="highslide" onclick="return hs.expand(this)"><img style="margin: 18px; border: 0px solid #808080;" class="img_block" title="Some clusters with outliers." src="http://www.particularart.com/static/media/uploads/technotes/colormap/cm_015_s.png" width="300" height="300" /></a>
+<p style="font-size: small; line-height: 100%;"><i>Figure 1: Some clusters with outliers.</i></p>
+</div>
+<p>If the premises underlying <tt>-colormap</tt> apply to a particular image, it should exhibit distinct hue clusters: colors grouping around particular median points with a minimum <a target="_parent" href="https://en.wikipedia.org/wiki/Variance"><i>variance</i></a>, only a small spread of values around the various median points. The key idea is that <i>good clusters exhibit low variance</i>.</p>
+<p>The median-cut algorithm divides-and-conquers:</p>
+<ol>
+<li>
+<p>Let <i>n</i> represent the desired size of the palette, which is given as the first command parameter.</p>
+</li>
+<li>
+<p>Rearrange the pixels from left to right, top to bottom, into a <i>(width*height)&times;1</i> image. This image becomes the initial cluster or <i>box</i><sub><i>0</i></sub>. At the start of the algorithm, <i>box</i><sub><i>0</i></sub> is the only image on the image list.</p>
+</li>
+<li>
+<p>For the set { <i>box</i><sub><i>0</i></sub><i>, </i><i>&hellip;, box</i><sub><i>j</i></sub><i> </i>} on the image list:</p>
+<ol type="a">
+<li>
+<p>Find <i>box</i><sub><i>k</i></sub> with the largest variance. In <tt>gmic-</tt>speak, this amounts to examining <tt>iv</tt> (image variance), one of the metrics that G'MIC maintains for every image.</p>
+</li>
+<li>
+<p>Note the color channel exhibiting the largest variance and sort the pixels of <i>box</i><sub><i>k</i></sub> into dark-to-light order, using that channel as the sort key.</p>
+</li>
+<li>
+<p>Split <i>box</i><sub><i>k</i></sub> in two halves, <i>box</i><sub><i>kL </i></sub>and <i>box</i><sub><i>kR</i></sub> (the <i>median cut</i>). Implicit in this step, <tt>gmic</tt> recalculates image metrics for each half, including variance. This removes one, then adds two boxes to the list, a net gain of one.</p>
+</li>
+</ol></li>
+<li>
+<p>If there are less than <i>n</i> boxes on the list, return to step 3.</p>
+</li>
+<li>
+<p>Replace each of the <i>n</i> boxes with its average value and merge the boxes along the <i>x</i> axis to create one image. This constitutes the desired color palette of size <i>n</i>.</p>
+</li>
+</ol>
+<p>If the workings of this algorithm seem like black magic, recall that the signal characteristic of a cluster is <i>low variance</i>. That is, the pixels in a box more-or-less share the value of the median pixel. But step 3 splits boxes exhibiting <i>high variance.</i> Splitting necessarily makes child boxes less variant than parents for in sorting, dark hues go to one and light hues go to the other, and neither child ranges as widely as the parent. Since boxes with low variance aren't split the algorithm tends toward more boxes with lower variance.</p>
+<p>Are the results perfect? Almost certainly not; that's why there is the k-mean algorithm.</p>
+<p>Now with a broad appreciation of the median-cut algorithm in our kit, lets look at a few code-level features.</p>
+<h2 id="MedianCutInGmic">The Median-cut Algorithm in G'MIC</h2>
+<table style="width: 100%;"><colgroup><col width="47%" /> <col width="53%" /> </colgroup>
+<tbody>
+<tr>
+<td><a target="_parent" href="img/gmic-color-mapping_median-cut-algorithm_cm_000.jpg" class="highslide" onclick="return hs.expand(this)"><img style="margin: 3px; border: 0px solid #808080;" class="img_block" src="http://www.particularart.com/static/media/uploads/technotes/colormap/cm_000_s.png" title="Window, Haus Ostoff" width="300" height="400" /></a>
+<p style="font-size: x-small; line-height: 100%;"><i>Illustration 1: Photo: &copy; <a target="_parent" href="https://de.wikipedia.org/wiki/User:XRay">Dietmar Rabich</a>, <a target="_parent" href="http://www.rabich.de/">rabich.de</a>, License: <a target="_parent" href="http://creativecommons.org/licenses/by/4.0/legalcode">Creative Commons BY-SA 4.0</a>, Source: <a target="_parent" href="https://commons.wikimedia.org/wiki/File:D%C3%BClmen,_Haus_Osthoff_--_2012_--_2-2.jpg" class="highslide" onclick="return hs.expand(this)">Wikimedia Commons</a></i></p>
+</td>
+<td style="vertical-align: text-top;">A photograph by Dietmar Rabich of a window in <a target="_parent" href="https://de.wikipedia.org/wiki/Haus_Osthoff">Haus Ostoff</a>, D&uuml;lmen, North Rhine-Westphalia, Germany.<br /> Opinions may vary, but most will agree that reds form one or more clusters, as would dark greys and off-whites.<br /> We invoke <tt>-colormap 8,1</tt> for an eight color palette.</td>
+</tr>
+<tr>
+<td><a target="_parent" href="img/gmic-color-mapping_median-cut-algorithm_cm_001.jpg" class="highslide" onclick="return hs.expand(this)"><img src="http://www.particularart.com/static/media/uploads/technotes/colormap/cm_001_s.png" alt="Pixels as a linear array" title="cm-001-s" class="img_block" style="margin: 3px; border: 0px solid #808080; vertical-align: top;" width="300" height="30" /></a></td>
+<td style="vertical-align: text-top;">
+<pre>  -resize {w*h},1,1,100%,-1
+</pre>
+</td>
+</tr>
+</tbody>
+</table>
+<p>The first order of business is to make the initial box, realizing step 2: the pixels of the image are grouped into one row, the height here being extremely exaggerated for illustrative purposes.</p>
+<p><a target="_parent" href="http://gmic.eu/reference.shtml#resize"><tt>-resize</tt></a> generally makes images larger or smaller but can rearrange as well as resize. The '‒1' final parameter disables any pixel interpolation and ensures an in-memory rearrangement of the pixel buffer.</p>
+<table style="width: 100%;"><colgroup><col width="47%" /> <col width="53%" /> </colgroup>
+<tbody>
+<tr>
+<td>&nbsp;&ndash;&nbsp;</td>
+<td style="vertical-align: text-top;">
+<pre>  _colormap :
+</pre>
+</td>
+</tr>
+</tbody>
+</table>
+<p>The private command, <tt>-_colormap</tt>, implements the median-cut algorithm. It follows <tt>-colormap</tt> proper in the standard script library. Its leading underscore hides the command from the interpreter and is accessible only to other <tt>gmic</tt> commands.</p>
+<table style="width: 100%;"><colgroup><col width="47%" /><col width="53%" /></colgroup>
+<tbody>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/technotes/colormap/cm_002_s.png" alt="Variance Digest" title="cm-002-s" class="img_block" style="margin: 3px; border: 0px solid #808080;" width="300" height="150" /></td>
+<td style="vertical-align: text-top;">
+<pre>  
+  <span style="color: #808080;">-repeat {$1-1}</span>
+    $!,{s}
+    -repeat {$!-1}
+     n=$&gt;
+     -repeat {$n,s}
+       -sh[$n] $&gt;
+       -=.. {if(w&gt;1,iv,-1)},$n,$&gt;
+       -rm.
+     -done
+    -done
+    <em>&lt;see below&gt;</em>
+  <span style="color: #808080;">-done</span>
+</pre>
+</td>
+</tr>
+</tbody>
+</table>
+<p>As <a target="_parent" href="images-as-datasets.shtml">observed elsewhere,</a> not all images in a gmic image stack are meant to be looked at. Some are just prosaic data structures, temporary scratch pads and such.</p>
+<p><tt>_colormap</tt> keeps track of variances in the growing list of boxes with a scratch pad image which we call a <i>variance digest</i>, created at the top of the outermost repeat loop. The inner nested pair of repeat loops, written in darker text, populates this scratch pad in preparation for steps 3a &ndash; 3c.</p>
+<p>The notation <tt>$!,{s}</tt> <a target="_parent" href="conjuring-images.shtml">creates an empty digest out of the aether.</a> The width parameter <tt>$!</tt>, is one of many substitution symbols; the parser replaces this particular symbol with the current number of images on the list &ndash; a number not including the variance digest, of course, as it does not exist yet.</p>
+<p>The height parameter, <tt>'{s}'</tt>, is a preset math variable containing the channel count of the last image on the list. Altogether, this notation creates a one channel image with a width equal to the number of images on the list and a height equal to the number of channels, this particular datum taken from the last list item. In this case, the channel count is common to all boxes as each has been split off from <i>box</i><sub><i>0</i></sub>.</p>
+<p>Each column of the variance digest represents a box on the image list, here for six boxes (the median-cut algorithm had run for five complete cycles when this snapshot was taken). The left column corresponds to image [0], the right corresponds to [5] &ndash; the sixth and last box. Each row on the list represents an image channel, R corresponds to row 0, G to row 1 and B to row 2. Each of the 18 pixels in this this tiny 6 &times; 3 image represents the variance of one channel in one image.</p>
+<p>The purpose of the follow-on <a target="_parent" href="_repeat.shtml"><tt>-repeat&hellip;-done</tt></a> loop, along with its inner loop, is to read the variances of all 18 channels in 6 boxes and transfer them to the variance digest. Follow-on code then reads the variance digest to determine which channel of which box exhibits the maximum variance. </p>
+<p>The argument of the <tt>-repeat</tt> command, <tt>$!-1</tt>, sets up an iteration over all the boxes, less the variance digest itself. The inner <tt>-repeat</tt> loop constitutes a scan of the channels of the currently active box, (<tt>$n</tt>).</p>
+<p>The assignment, <tt>n=$&gt;</tt> may seem curious, but the substitution symbol <tt>$&gt;</tt> is context sensitive, referencing the count only of the most proximate enclosing <tt>-repeat&hellip;-done</tt> loop. The assignment to <tt>$n</tt> fixes the count of the outer loop so it may be referenced within the inner. The assignment <tt>n=$&gt;</tt> is a bit out of fashion. In modern releases, <tt>-repeat</tt> can take a variable label as a second argument which can be referenced within the loop to obtain the loop count. Thus <tt>-repeat {$!-1},n</tt> defines <tt>$n</tt>, the loop count, making <tt>n=$&gt;</tt> unnecessary.</p>
+<p>The assignment of a particular channel's variance to a pixel in the variance digest occurs in this inner loop. <tt>-sh[$n] $&gt;</tt> temporarily <tt><a target="_parent" href="_shared.shtml">shares</a></tt> channel <tt>$&gt;</tt> from box <tt>$n</tt> on the image list, placing it after the variance digest.</p>
+<p>The <tt>-set</tt> command (alias: <tt>-=</tt>) assigns the variance of channel <tt>$&gt;</tt> of box <tt>$n</tt>, to the variance digest pixel at column <tt>$n</tt>, row <tt>$&gt;</tt>, unless a particular exception ensues. Successive splitting may leave the current box, <tt>$n</tt>, with a width of one pixel. The fiat assignment of <tt>-1</tt>, an impossibly low variance, to the corresponding variance digest pixel ensures that this ultimately divided box cannot ever again be a candidate for splitting.</p>
+<p>The previous paragraph's narrative condenses to:</p>
+<p align="center"><tt>-=.. {if(w&gt;1,iv,-1)},$n,$&gt;</tt></p>
+<p>which may seem manifestly terse to the beginning gmic programmer, and perhaps mysterious. <tt>-=</tt> is a command shorthand for <tt><a target="_parent" href="http://gmic.eu/reference.shtml#set">-set</a></tt> and <tt>'..'</tt> is <a target="_parent" href="command-decorations.shtml#ShorthandSelectionNotation">selection shorthand</a> for <tt>[-2]</tt>. The value being set depends on a math-based if function, which resolves to one of two possible values, the variance of the current box, <tt>iv</tt>, or <tt>-1</tt>, depending on whether the width of the current box is greater than one. Once the assignment for variance has taken place, <tt>-rm.</tt> removes the <a target="_parent" href="_shared.shtml">shared channel</a> aliased by <tt>-sh[$n] $&gt;</tt>. Since it was shared, its removal does not involve the actual erasure of the channel, just the elimination of its alias on the image list.</p>
+<table style="width: 100%;"><colgroup><col width="47%" /> <col width="53%" /> </colgroup>
+<tbody>
+<tr>
+<td><a target="_parent" href="img/gmic-color-mapping_median-cut-algorithm_cm_003.jpg" class="highslide" onclick="return hs.expand(this)"><img src="http://www.particularart.com/static/media/uploads/technotes/colormap/cm_003_s.png" alt="A value has been set in the variance digest" title="cm-003-s" class="img_block" style="margin: 3px; border: 0px solid #808080;" width="300" height="150" /></a></td>
+<td>
+<pre> <span style="color: #808080;">-repeat {$1-1}</span>
+    <span style="color: #808080;"><i>&lt;see above&gt;</i></span>
+    c={C}
+    b=${-arg\ 1,$c}
+    a=${-arg\ 2,$c}
+    -rm.
+    -shift[$b] 0,0,0,{-$a},2
+    -sort[$b] +,x
+    -shift[$b] 0,0,0,$a,2
+    -split[$b] x,2
+ <span style="color: #808080;">-done</span>
+</pre>
+</td>
+</tr>
+</tbody>
+</table>
+<p>With the variance digest fully populated, <tt>_colormap</tt> can address the key step of the median-cut algorithm, <b>3a</b> &ndash; <b>3c:</b> find the box with the largest variance (a) sort its pixels by the channel exhibiting that variance (b) and then split the box into one with the dark pixels and the other with the light. (c)</p>
+<p>Piece of cake.</p>
+<p>The right hand side of the first assignment to variable <tt>c</tt> is an image feature substitution, though it bears a superficial resemblance to a math expression. The giveaway here is <tt>'C'</tt>, which is not a predefined math variable but the coordinate list of the lightest pixel in the image, a <i>feature substitution</i>. These substitutions have the form '{<i>&lt;selector&gt;</i>,<i>&lt;feature_identifier&gt;</i>}' The selector is an integer that picks a particular image on the list, counting from the beginning if zero or positive, or the end if negative. It may be omitted. In that case, the last image on the list is the implied selection. This last image is the celebrated 6 &times; 3 variance digest populated in the previously discussed block of code. The coordinate list in <tt>C, <i>x, y, z, c</i></tt> addresses, respectively, the column, row, slice and channel holding the highest value element in the variance digest. See section 1.7 of the <a target="_parent" href="http://gmic.eu/gmic_reference.pdf"><i>G'MIC Reference Guide</i></a> for the other image feature substitutions.</p>
+<p>Given the organization of the variance digest, the lightest element corresponds to the box containing the largest variance. Thus, the first assignment implements step <b>3a</b> in the median-cut algorithm.</p>
+<p>The next two assignments harness command substitution and variable substitution. Variable substitution is both simple and fundamental to G'MIC. Place the variable on the left hand side of an assignment, without the <tt>'$'</tt> signet, to set its value. Anywhere following, reference that value by applying the signet. The parser stops and throws an exception if it finds itself referencing a variable before assignment. Thus, the parser substitutes <tt>$c</tt> with the list <tt><i>x, y, z, c</i></tt>.</p>
+<p>To pick out an individual element from that list, we use the <a target="_parent" href="http://gmic.eu/reference.shtml#arg"><tt>-arg</tt></a> command. Though commonly used to dissect G'MIC command lines, these are just lists and <tt>-arg</tt> works with any list. In the initial assignment, <tt>-arg</tt> fetches the first element of list, <i>x</i>, selecting the box with the largest variance. A new variable, <tt>$b</tt> acquires this value. In the following assignment, <tt>-arg</tt> fetches the second element of list, <i>y</i>, selecting the channel in box <tt>$b</tt> with the largest variance. A new variable, <tt>$a</tt>, acquires this value. With <tt>$b</tt> and <tt>$a</tt> set, there is no further need for the variance digest; <tt>-rm.</tt> disposes it from the image list.</p>
+<p>Though we have described it as if it were so, the assignments to <tt>$a</tt> and <tt>$b</tt> are not immediate but call for an execution of the subsidiary command line embedded in the curly braces &ndash; a <i>command substitution</i>. This <i>runtime evaluation</i> of G'MIC code is necessary because the data that shapes the course of the algorithm are not available until the script evaluates a particular image. Before hand, there is no juncture where we can simply write $a = <i>&lt;what, now?&gt;</i>. We don't know anything about <i>&lt;what, now?&gt;</i> when we are composing the script. Runtime evaluation enables us to establish <i>&lt;what, now?&gt;</i> once we have the specifics of particular images. But since this acquisition requires the script to be running, and we can't stop it to write assignment snippets on the fly, our recourse is to write the snippets beforehand in the cloistered environments of command substitution. Runtime evaluation is the principle reason the command substitution construct exists and is fundamental to G'MIC. It usually escapes our attention that G'MIC routinely runs <tt>-arg</tt> in a command substitution in order to parse the command line, another case where we don't know what the particulars are until the user runs the script. In practice, when the parser encounters a sequence of G'MIC commands delimited in a pair of curly braces, it re-invokes a copy of itself. That parser works entirely within the scope of the curly braces, but its behavior differs little from its parent parser. When it parses and completes the snippet, it returns just the result of the last command in a temporary status variable. It is the value of that variable that is assigned to <tt>$b</tt> and <tt>$a</tt>.</p>
+<p class="western">Then what of that <tt>'\'</tt>? It escapes the space character from its usual meaning, to wit: a command line item delimiter. Very early in the transformation of command lines, G'MIC decomposes the whole command line into an item list; at this stage, it hasn't established which items are commands or arguments. It just needs to know where items begin and end. Space characters furnish those markers. However, care must be taken with command substitution, which embeds a command line within a command line. The interpretation of that command must be deferred, hence escape characters to ensure that a space is taken to be a space, and not a delimiter. Without that escape character, the G'MIC command parser splits the command substitution block into two items, and later will have difficulty interpreting them, throwing an exception.</p>
+<p>The <tt><a target="_parent" href="http://gmic.eu/reference.shtml#sort">-sort</a></tt> command bracketed by two <tt><a target="_parent" href="http://gmic.eu/reference.shtml#shift">-shift</a></tt> commands implement step <b>3b:</b> sort pixels by the channel exhibiting the largest variance. In pixel sorting along spatial axes <i>x, y,</i> and <i>z,</i> the primary sort key is channel zero. The values of the others follow their channel zero counterpart to their new positions. If another channel has to be the primary sort key, then one applies <tt>-shift</tt> to temporarily move it to channel zero. In this maneuver, one should remember to set the last <tt>-shift</tt> parameter to <tt>2</tt>, which selects the <a target="_parent" class="western" href="images-have-edges.shtml">cyclic boundary policy</a>. If channel zero should shift to channel one, then channel one shift to channel two and channel two cycles around to channel zero; no data are lost. The other policies lose data in interesting ways, but probably not in manners you'd like.</p>
+<p>Finally, the last line implements step <b>3c</b>, splitting box <tt>$b</tt> from dark to light in accordance to the channel identifier in <tt>$a</tt>. This obliterates the parent box from the image list, replacing it with two children, one with the darker values and the other with the lighter. In any case neither child exhibits as large a variance as the late parent. In net, the image list gains another box, and if the number equals that requested for the palette, the algorithm drops from the loop and commences its exit. Otherwise, it returns to the step <b>3a</b>, searching for the <i>next</i> box with the greatest variance&hellip;</p>
+<table style="width: 100%;"><colgroup><col width="47%" /> <col width="53%" /> </colgroup>
+<tbody>
+<tr>
+<td><a target="_parent" href="img/gmic-color-mapping_median-cut-algorithm_cm_004.jpg" class="highslide" onclick="return hs.expand(this)"><img src="http://www.particularart.com/static/media/uploads/technotes/colormap/cm_004_s.png" alt="Box Splitting Tree" title="cm-004" class="img_block" style="margin: 3px; border: 0px solid #808080;" width="300" height="121" /></a></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Before we close this walk through, it may be useful to step back and look at a schematic of how the algorithm regrouped the pixels of the Haus Ostoff window into prototype color swatches. We adopt a <i>&lt;number&gt;,&lt;letter-sequence&gt;</i> subscript which documents the cycle when the box split from its parent and a sequence of L(eft), R(ight) characters to indicate its location in the splitting tree: a kind of address which follows the branching from <i>box</i><sub><span style="font-size: x-small;" size="2"><i>0</i></span></sub> to the destination box. The number of these indicators directly shows the volatility of the box. Thus, Box<sub><span style="font-size: x-small;">7,LRRR</span></sub> and its ancestors were subjected to 4 splits, while Box<sub>2,RL</sub> led a quieter existence. It should come as no surprise that the pixel colors of Box<sub><span style="font-size: x-small;">2,RL</span></sub> closely resemble the hues of the leaves growing around the window, a large area reflecting a particular red. Less certain groupings center on the dull greens of the porcelain fruit sitting on the bench in front of the window. Those colors do not separate very clearly from the shadows or some of the darker colors of the gravel path, evidenced by the volatility of the box that contains them.</p>
+<p>The construction of the palette is trivial. The first line takes all the boxes that were on the image list at the exit of the processing loop and resizes them to one pixel, using average interpolation, so all of the various, or not so various pixels of a box blend to their median value. That constitutes the color swatches.</p>
+<p>The second line appends the separate, one pixel square images together along the <i>x</i> dimension into one image, completing the palette of colors, as required.</p>
+<table style="width: 100%;"><colgroup><col width="47%" /> <col width="53%" /> </colgroup>
+<tbody>
+<tr>
+<td><a target="_parent" href="/admin/pages/richtextpage/841/"><img src="http://www.particularart.com/static/media/uploads/technotes/colormap/cm_005_s.png" alt="Final Color Map" title="cm-005" class="img_block" style="margin: 3px; border: 0px solid #808080;" width="300" height="44" /></a></td>
+<td>
+<pre>  -resize 1,1,1,100%,2
+  -append x
+</pre>
+</td>
+</tr>
+</tbody>
+</table>
+
+
+
+   
+</body></html>

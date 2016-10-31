@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="tutorial.css">
+<script type="text/javascript" src="highslide/highslide.js"></script>
+<link rel="stylesheet" type="text/css" href="highslide/highslide.css" />
+<script type="text/javascript">
+hs.graphicsDir = 'highslide/graphics/';
+hs.wrapperClassName = 'wide-border';
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<body>
+
+
+      
+
+
+
+<div id="FigureOne" style="float: left; width: 4.375in; height: 4.5in; border: none; padding: 0in;"><img style="margin: 3px; border: 0px solid #808080;" class="img_block" src="http://www.particularart.com/static/media/uploads/filters/blurbycolor/bf-000.png" title="Ambulating Ampersand: bf-000.png" width="400" height="400" />
+<p style="font-size: x-small; line-height: 100%;"><i>Figure 1: A Goudy 1911 Bookletter Ampersand dropping from a <a target="_parent" href="http://www.apa-letterpress.com/T%20&amp;%20P%20ARTICLES/Type/California%20Job%20Case.html">California Job Case</a></i></p>
+</div>
+<h1 id="BlurByColor">Blur by Color</h1>
+<p>The Blur by Color filter grows out of the <a target="_parent" href="dyidiffusion.shtml"><i>"Do Your Own Diffusion Tensor Fields&rdquo;</i></a> series and if you're interested in coding G'MIC go read that first. In particular, the walk-throughs on <a target="_parent" href="dyidiffusion_directional-blurring.shtml">Directional Blurring</a>, and the preceding walk-throughs upon which this filter is based. We won't go into much of the theory here.</p>
+<p>We were hesitant about writing this filter. There happens to be a bazillion ways to blur images in Gimp and its various plug-ins, at least seven filters in-Gimp-G'MIC plug-in itself &ndash; and who knows how many more may have been written out there in the wild. Why another?</p>
+<p>Here's why. It is grounded on a generic, diffusion-based blurring engine &ndash; the G'MIC <a target="_parent" href="_smooth.shtml">-smooth</a> command &ndash; with a variable kernel that can be steered pixel-by-pixel with a <a target="_parent" href="_eigen2tensor.shtml#TensorFields">tensor field</a>. You don't need to worry about tensor fields: the takeaway is that you have very precise, pixel-by-pixel control over how your blur goes, and you will have a <a target="_parent" href="dyidiffusion_graduated-blurs.shtml">high quality blur</a>.</p>
+<p>The other blurring tools are <i>fast.</i> They're optimized for particular effects and if their aims fit your project run with them. However, if you want to <i>craft</i> how blurring takes place in a manner that no standard approach anticipates, then this blurring tool is the way to go. Essentially, you draw, or make some other image, into a <em>blurring map</em>. Drawing this map amounts to designing your own filter and you can specify blurring amounts and directions right down to the pixel level, should you so desire. Blur by color will never be fast. But it will be <i>precise</i>. And <i>good</i>.</p>
+<p>How you make that map is up to you. There are two and a half approaches, painting the blurring map by hand, transforming a copy of the image in some way so that some aspect of the image itself controls the blurring process, or a specialized variation of making a map by hand, the contour method, where you just paint a few lines so that the blur follows the line contour. We did the bounce path of the Goudy Ampersand using this method.</p>
+<h2 id="Installation">Installation</h2>
+<p>Installing this filter is semi-automatic. It is distributed from the gmic.eu and all filters from that source can be downloaded and installed by using the refresh button (circular arrow) at the bottom of the Gimp-G'MIC plugin main dialog box. As of this writing, September 2014, the Blur By Color filter lives in the &ldquo;Testing &rarr; Gmic Tutorials&rdquo; branch, but may wander off into the main filter tree if it behaves itself and acquires friends. If refresh doesn't seem to be working for you, try checking with <a target="_parent" href="gimp-filters.shtml#InstallingGimpGMICFilters">the usual gang of suspects</a>.</p>
+<h2 id="BlurByColorDialogBox">Blur By Color Dialog Box</h2>
+<p>Nearly everything about custom-blurring an image is encoded in the blurring map. The filter itself has just two controls:</p>
+<ol>
+<li><b>Range: </b>choice(&ldquo;XL&rdquo;, &ldquo;VL&rdquo;, &ldquo;L&rdquo;, &ldquo;N&rdquo;, &ldquo;M&rdquo;, &ldquo;VM&rdquo;, &ldquo;XM&rdquo;). Sets broad operating ranges for Amplitude, following. All ranges begin at zero. &ldquo;XL&rdquo;, extra light, sets the top end of Amplitude to 700, &ldquo;XM&rdquo;, extra maximum, sets the top end of Amplitude to 4,900; the intermediaries each add an increment of 700 to the top end of Amplitude. &ldquo;N&rdquo; (normal) ranges from 0 &rarr; 2800 and accommodates most typical work.</li>
+<li><b>Amplitude:</b> float(0.5, 0.0, 1.0) Controls the overall effect of blurring. 0.0 disables blurring. 1.0 gives rise to extreme blurring. 0.5, the default is &ldquo;just about right&rdquo;, Range scales the abstract quantity of &ldquo;extreme blurring&rdquo; into one of seven working ranges.</li>
+</ol>
+<p>Blur By Color needs to be able to find its blurring map, so in Gimp-G'MIC dialog box, under &ldquo;Input/Output&rdquo; (lower left, under the Preview pane) set the &ldquo;Input Layers&rdquo; to &ldquo;Active Above&rdquo; or &ldquo;Active Below&rdquo; &ndash; we like this latter setting because we tend to put control layers like the blurring map under the production layers. We also suggest setting &ldquo;Output mode:&rdquo; to &ldquo;New Layer(s)&rdquo; to preserve your blurring map. A lot of technique involves iterating over a &ldquo;modifying the map, making a blur&rdquo; loop as you increment your way over the finish line. And for people studying up on G'MIC code, we always suggest a &ldquo;Very Verbose&rdquo; message output, either to log or console.</p>
+<p>If you get a preview error message with the cryptic phrase &ldquo;Command 'local:' Invalid selection [-2,-1]&hellip;&rdquo; followed by more cryptic stuff, then the filter cannot find its blurring map. You need to set Input Layers, or select the right layer &ndash; or perhaps actually create a blurring map.</p>
+<p>So, how do you create a blurring map? It's just an image. It may be drawn from whole cloth, derived from your production, or a mix of the two.</p>
+<p>There are three rules, one for each <a target="_parent" href="http://en.wikipedia.org/wiki/HSL_and_HSV">Hue Saturation Lightness</a> channel, which govern how blurring goes.</p>
+<h1 id="Rules">Rules</h1>
+<ol>
+<li><b>Hue controls direction.</b><ol>
+<li>Every color has a blurring direction. The direction comes from the HSL/HSV color wheel with a &ldquo;12 hour clock&rdquo; orientation.</li>
+<li>Zero degrees is at the top (12 o'clock) and colors progress clockwise.</li>
+<li>
+<p>Red corresponds to 0&deg; and also 360&deg;. Theoretically, it blurs from bottom to top (from center outward)</p>
+</li>
+<li>Cyan corresponds to 180.&deg; Theoretically it blurs from top to bottom, but for all practical purposes, this cannot be distinguished from red's bottom to top.</li>
+<li>A kind of lime green (127, 255, 0) corresponds to 90&deg; and blurs from left to right.</li>
+<li>A kind of blue violet (127, 0, 255) corresponds to 270&deg; and blurs from right to left (can't tell these apart, either).</li>
+<li>As a general rule, if you know a color's degree angle in HSL/HSV notation, that's the direction in which it blurs. It's complement, 180&deg; removed, blurs in the opposite direction. If you can tell the two apart, you have better eyesight than we do.</li>
+</ol></li>
+<li><b>Saturation controls </b>streak width. That is, how much it looks like directional streaking and not omni-directional blurring.<ol>
+<li>Saturation sets the eccentricity of the blurring ellipse, and full saturation corresponds to an eccentricity of one. The ellipses look like lines and the blur is a streak &ndash; all blurring goes in the color's direction, and none transverse to it.</li>
+<li>No saturation corresponds to an eccentricity of zero. The ellipses look like circles and the blur is uniformly diffuse in all directions. There <i>is</i> no discernible direction to the blur, left or right, up or down.</li>
+<li>All other values corresponds to some transverse blurring and some directional blurring.</li>
+</ol></li>
+<li><b>Lightness controls the amount of blurring.</b><ol>
+<li>Light blurs a lot.</li>
+<li>
+<p>Black blurs not at all.</p>
+</li>
+<li>All other luminosities blur to some degree between black and white.</li>
+</ol></li>
+</ol>
+<h2 id="Workflow">Workflow</h2>
+<ol>
+<li>The blurring map goes into a separate layer, usually above or below the target layer, the one you are going to blur.</li>
+<li>Select your target layer, then select the Gimp-G'MIC plug-in from the Filters menu.</li>
+<li>When you bring up the Gimp-G'MIC plug-in, set the Input/Output control so that it can see the next layer above (or below) your target layer; which depends on whether you positioned your blurring layer immediately above or below your target layer.</li>
+<li>We strongly recommend setting the Output mode to create New Layer, so you can easily back out and start over.</li>
+<li>Turn off the preview until you are ready to use it. The Blur by Color filter is <i>precise</i>, <i>good</i>, but <i>not fast! </i>On this note, it is worth while to migrate your Gimp-G'MIC plug-in to at least version 1.5.9.3, better still 1.6.0.0, which has been available since mid August, 2014. Multi-core aware code is seeping throughout G'MIC and the -smooth command, upon which this filter is based, is a major benefactor of the refactoring.</li>
+<li>The Blur by Color filter lives under<i> &ldquo;Testing -&gt;Gmic Tutorials-&gt;Blur by color.&rdquo; </i> If you don't see it, try the Refresh tool at the bottom of the Gimp-G'MIC dialog box. If it refuses to show up, <a target="_parent" href="gimp-filters.shtml#InstallingGimpGMICFilters">question the usual gang of suspects</a>.</li>
+<li>Preview bits and pieces of your project, then hit OK, or bail by Canceling.</li>
+<li>If, when previewing, you get a message in the preview window worded something like &ldquo;Command 'local:' Invalid selection [-2,-1]&hellip;&rdquo; followed by cryptic stuff, then the filter cannot find its blurring map. You need to set Input Layers, locate the blurring map next to your project layer, or maybe actually make the blurring map.</li>
+</ol>
+<p>That's all you need to know. Go out and have fun.</p>
+<h2 id="YoureStillHere">You're Still Here</h2>
+<p>Perhaps the implications of these rules have yet to sink in. Like the handedness of the color wheel when you're trying to make a radial blur (it needs to be clockwise, red on top, blends through yellow to green on the right). How about blurring around a center, transverse to the radius?</p>
+<p>Read on if you don't have the answer to that on the tip of your tongue. Or even if you do.</p>
+<h2 id="BasicExamples">Basic Examples</h2>
+<table style="border-color: #808080; border-width: 1px; width: 100%; border-style: solid;" rules="all" class="table table-striped" border="1" cellpadding="0" cellspacing="0">
+<tbody>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/filters/blurbycolor/bf-001.png" title="bf-001.png" class="img_block" style="margin: 3px; border: 0px solid #88080;" width="256" height="256" /></td>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/filters/blurbycolor/bf-002.png" title="bf-002.png" class="img_block" style="margin: 3px; border: 0px solid #88080;" width="256" height="256" /></td>
+<td>
+<h3 id="DepthOfField">1. Depth of Field</h3>
+This is as simple as it gets. <a target="_parent" href="ramps_input-and-fill.shtml">A monochrome ramp</a> makes a graduated blur. No saturation, no direction &ndash; only magnitude. White blurs a lot, Black doesn't blur at all. You set the overall blurring scale from the filter's &ldquo;amplitude&rdquo; control. A common application for this kind of blur is <a target="_parent" href="dyidiffusion_fake-depth-of-field.shtml">fake depth of field.</a><br /> The marbles lived in a layer above the monochrome ramp. The monochrome ramp was the next layer down. Our designated Input layer was &ldquo;Active &amp; Below&rdquo;</td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/filters/blurbycolor/bf-003.png" title="bf-003.png" class="img_block" style="margin: 3px; border: 0px solid #88080;" width="256" height="256" /></td>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/filters/blurbycolor/bf-004.png" title="bf-004.png" class="img_block" style="margin: 3px; border: 0px solid #88080;" width="256" height="256" /></td>
+<td>
+<h3 id="SimpleDirectedBlur">2. Simple Directed Blur</h3>
+With color comes directional blurring. Color and Saturation work hand-in-hand. The greater the saturation, the greater the preference in blurring in one particular orientation.
+<p class="western">Color picks that orientation. In fact, each color and its complement always pick the same orientation. Lime green blurs from left to right, Blue violet blurs from right to left, at an orientation of 90&deg; clockwise from 12 noon. Or is it the other way around (we forget)?</p>
+</td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/filters/blurbycolor/bf-005.png" title="bf-005.png" class="img_block" style="margin: 3px; border: 0px solid #88080;" width="256" height="256" /></td>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/filters/blurbycolor/bf-006.png" title="bf-006.png" class="img_block" style="margin: 3px; border: 0px solid #88080;" width="256" height="256" /></td>
+<td>
+<h3 id="ColoredGradients">3. Colored Gradients</h3>
+You don't have to work very hard to get some very interesting kinds of blurs. This is a graduated blur that we made from what was originally a horizontal black-to-white ramp which we modified through Gimp's Color &rarr; Curve tool. The red channel curve ramped down roughly along a quadratic curve, gray to black; blue ramped up along a similar curve; both hit zero at the midpoint. Green was constant 100%. The lime green color on the left hand edge of the map runs horizontally, cyan along the right hand edge runs vertically; the ramp made the change in orientation smooth and continuous.</td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/filters/blurbycolor/bf-007.png" title="bf-007.png" class="img_block" style="margin: 3px; border: 0px solid #88080;" width="256" height="256" /></td>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/filters/blurbycolor/bf-008.png" title="bf-008.png" class="img_block" style="margin: 3px; border: 0px solid #88080;" width="256" height="256" /></td>
+<td>
+<h3 id="FollowingContours">4. Following Contours</h3>
+It is also fairly trivial to blur around arbitrarily complex contours and shapes, as in this fake map of a shoreline.<br /> One of the great things about Gimp-G'MIC filters is the help one gets from other Gimp-G'MIC filters. A big friend of Blur by Color is the Contours &rarr; Gradient RGB filter. Many folk use it for the rainbow effect it wraps around shapes, but <i>cognoscenti</i> know that these colors encode the direction of the steepest gradient in the locality of a pixel. Based on the same math, they tell Blur by Color how to blur around edges.<br /> To make the blurring map on the right, we first used the Gimp-G'MIC filter Contours &rarr; Edges Offsets to calculate a radiating series of offset edges. That intermediary image was then used with Contours &rarr; Gradient RGB. We filtered the result through one step of Gimp's native Filters &rarr; Distorts &rarr; Value Propagate, and checked off the &ldquo;More White&rdquo; radio button to close one-pixel wide black slivers here and there. A gaussian blur gave us a cheap distance function to progressively desaturate the blurring map, softening the blur further from the &ldquo;shoreline.&rdquo;</td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/filters/blurbycolor/bf-009.png" title="bf-009.png" class="img_block" style="margin: 3px; border: 0px solid #88080;" width="256" height="256" /></td>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/filters/blurbycolor/bf-010.png" title="bf-010.png" class="img_block" style="margin: 3px; border: 0px solid #88080;" width="256" height="256" /></td>
+<td>
+<h3 id="Spirals">5. Spirals</h3>
+Color wheels get a section of their own because there seems to be no limit to their versatility. When composing a blurring map, usually by positioning it over the target layer and making it semi-opaque, one can proceed to position color wheels of various sizes and orientations to achieve various effects. One orientation garners radial blurs, another angular blurs and orientations in between produce spirals. If that isn't enough, counterclockwise spinning color wheels produce hyperbolic pairs.</td>
+</tr>
+<tr valign="top">
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/filters/blurbycolor/bf-011.png" title="bf-011.png" class="img_block" style="margin: 3px; border: 0px solid #88080;" width="256" height="256" /></td>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/filters/blurbycolor/bf-011a.png" title="bf-011a.png" class="img_block" style="margin: 3px; border: 0px solid black;" width="256" height="256" /></td>
+<td>
+<h3 id="ImageBased">6. Image based</h3>
+The blurring map is an RGB Gradient filtering of a slightly Gaussian blurred street scene, with the colors of the blurring map rescaled to hues ranging from blue (240&deg;) to red (360&deg;), producing a kind of a windswept effect.</td>
+</tr>
+</tbody>
+</table>
+<div id="FigureTwo" style="float: left; width: 326px; height: 375px; border: none; padding: 3px;"><img src="http://www.particularart.com/static/media/uploads/filters/blurbycolor/bf-012.png" title="bf-012.png" class="img_block" style="margin: 3px; border: 0px solid #88080;" width="300" height="300" />
+<p style="font-size: x-small;"><i>Figure 2: A clockwise color wheel with 0/360 degrees on top</i></p>
+</div>
+<h2 id="ColorWheels">Color Wheels</h2>
+<p>Color wheels were an unexpected boon to the writer, tipping him over the edge to write Yet Another Blurring Filter. Had he done the math he would have seen it coming, but he didn't and got surprised instead. Copy and paste color wheels into your blurring map where ever you want a radial/spiral/angular blur effect.</p>
+<p>At two extremes color wheels will alternately generate radial blurs or angular blurs. These are, respectively the 0&deg; and 90&deg; orientation of the clockwise color wheel. Rotate the wheel counterclockwise at some other angle and get a counterclockwise spiral. Rotate the wheel clockwise for a clockwise spiral. Because you're composing a blurring map, you have a work flow advantage over using the dedicated radial and angular blurring filters. You can precisely position and orient as many color wheels as you want in strategic positions. You rotate color wheels not by the obvious choice, the Rotation tool, but by the Colors &rarr; Hue-Saturation tool, which doesn't actually move bits around. You isolate the color map to its own layer, the typical default case when you first load a color wheel from disk using Gimp's &ldquo;File &rarr; Load as Layers&rdquo; option.</p>
+<p>You only need to make one. From then on, you will open it as a layer, resize it, flip it horizontally or vertically, desaturated the center or edges or points in between, twirl the colors around the wheel using Gimp's Colors &rarr; Hue-Saturation tool, select subset ranges with &ldquo;Colors &rarr; Map &rarr;Rotate Colors...&rdquo; dialog box, probably warping it as well. Stupid Clich&eacute; Time: &ldquo;You are only limited by your imagination.&rdquo; (Duh!)</p>
+<p>Here we give two color wheel recipes, one based on the Gimp GUI and the other based on the G'MIC command line tool. Guess which one we prefer.</p>
+<h3 id="MakeAClockwiseColorWheelWithGimp">Make a Clockwise Color Wheel With Gimp</h3>
+<ol>
+<li>Start Gimp. New Grayscale. Make it square and pretty big. 1000 pixels and up.</li>
+<li>Make the Hue channel.<ol>
+<li>Set colors. Foreground color is white. Background color is black.</li>
+<li>Use the blend/gradient tool. Choose the Conical (asym.) style.</li>
+<li>Position the cursor on the middle pixel of the layer and mouse-down. Drag up to the top center edge. Hold down the control key with your free hand to keep the line vertical. Release when you are exactly on the top edge (<i>whew!</i>)</li>
+<li>You should see a white/left black/right transition line, straight up and down. The gradient should run from black to white in a clockwise direction.<ol>
+<li>If it is the other way around (black/left, white/right), you probably forgot to set the foreground background colors. Go up to Colors&rarr; Invert and invert.</li>
+<li>If the line isn't quite straight up or down, doesn't quite start in the center, doesn't quite reach or overshoots the edge, don't worry too much. We're kind of spastic too. See the end of this procedure.</li>
+</ol></li>
+</ol></li>
+<li>Make the Saturation Channel.<ol>
+<li>New Layer. Fill it with white.</li>
+</ol></li>
+<li>Make the Luminance Channel.<ol>
+<li>New layer. Fill it with middle gray (127 or 0x7F)</li>
+</ol></li>
+<li>Checkpoint: You should now have three layers. Let's pretend they're named Lum (the gray one), Sat (the white one) and Hue (the one that was a pain in the arse to make).</li>
+<li>Choose Colors&rarr;Components&rarr;Compose<ol>
+<li>If that choice is not available (grayed out), maybe your program is in the wrong mode. You should be working with a gray scale image. Is Gimp in RGB? Indexed?</li>
+<li>In any case, do Image &rarr; Mode &rarr; Grayscale, then continue on.</li>
+</ol></li>
+<li>In the &ldquo;Compose&rdquo; dialog box, the &ldquo;Compose Channels&rdquo; section:<ol>
+<li>Choose &ldquo;HSL&rdquo; for color model</li>
+</ol></li>
+<li>In the &ldquo;Channel Representations&rdquo; section:<ol>
+<li>Set your &ldquo;Hue&rdquo; layer to occupy the Hue slot.</li>
+<li>Set your &ldquo;Sat&rdquo; layer to occupy the Saturation slot.</li>
+<li>Set your &ldquo;Lum&rdquo; layer to occupy the Lightness slot.</li>
+</ol></li>
+<li>Check. Double check. Fix what's wrong. Hit 'OK'.</li>
+</ol>
+<p>For all that, you should have a clockwise color wheel. If it looks like the one <a target="_parent" href="#ColorWheels">starting this section</a>, red on top, cyan on bottom, colors running clockwise from red to orange to yellow to green, you're in.</p>
+<h3 id="DoItWithG'MIC">Do It In G'MIC</h3>
+<div id="ColorWheelScript" style="float: left; width: 450px; height: 330px; border: 0px solid #808080; background: #d0d0ff; padding: 3px; margin: 3px; line-height: 70%;"><tt style="font-size: small;">#@gmic #@gmic colorwheel : _size&gt;0,_cclock={ 0 | 1 },_angle<br /> #@gmic : Generates a square colorwheel in clockface orientation, with zero<br /> #@gmic : degrees on top, corresponding to red, and colors transitioning<br /> #@gmic : clockwise through green (120 degrees) and blue (240 degrees). size:<br /> #@gmic : colorwheel edges, in pixels. cclock, boolean, if true generates a<br /> #@gmic : counterclockwise colorwheel, and angle, degrees, rotates the wheel<br /> #@gmic : clockwise (negative: counterclockwise) from its reference orientation.<br /> #@gmic : Default values: _size=512, _cclock=0, _angle=0<br /> colorwheel : -check ${1=512}&gt;=1 -skip ${2=0},${3=0}<br /> -e[^-1] "Input colorwheel $1 pixels square; cclockwise=$2; oriented $3 degrees"<br /> -v -<br /> $1,$1,1,1,'x=x-w/2;y=y-h/2;((1-2*!!$2)*(atan2(y,x)*180/pi+90-$3))%360'<br /> 100%,100%,1,2,1 -a[-2,-1] c -hsv2rgb[-1] -nm[-1] [colorwheel]<br /> -v +<br /></tt></div>
+<p>Since, after all, this <em>is</em> a web document about the G'MIC command language, we have to tell you how to do it in G'MIC. You get professional results without needing much hand dexterity.</p>
+<p>If it is a decent amount of time after September 01, 2014, 5 PM UTC, (a day is more than enough) and you have an Internet connection, then typing:</p>
+<p>$&nbsp;<kbd>gmic -update -colorwheel 1024 -o[-1] myclockwisecolorwheel.png</kbd></p>
+<p>in a shell or some such will put 'myclockwisecolorwheel.png' in your local directory, a file containing a 1024 &times; 1024 pixel colorwheel.</p>
+<p>That's it. You only have to use the <a target="_parent" href="http://gmic.eu/reference.shtml#update">-update</a> command now and then, by the way. It goes out and fetches the latest G'MIC command definitions straight from the server at gmic.eu. You get the exact same results by pressing the Refresh button on the Gimp-G'MIC plugin top level dialog box; plugin or command line updates both.</p>
+<p>If you only have partial connectivity or, for some reason your operating system doesn't have either one or another helper programs called '<a target="_parent" href="http://en.wikipedia.org/wiki/CURL">curl</a>' or '<a target="_parent" href="http://en.wikipedia.org/wiki/Wget">wget</a>' then copy and paste the sidebar contents into your <tt>~/.gmic</tt> file (UNIX-like O/S) or <tt>/%APPDATA%/gmic</tt> (Windows).</p>
+<p>Henceforth, then, just type <kbd>'-colorwheel'</kbd> and up to three arguments.</p>
+<p>The first argument sets the size, in pixels, of the color wheel and is the only required one. The second argument sets whether the colors run clockwise (0, the default) or counterclockwise (1, you have to ask for it). The third, also optional, specifies a clockwise (positive) or counterclockwise (negative) twist which leaves red, normally twelve o'clock high, oriented at the offset angle you've specified.</p>
+<p>We go into why these last two parameters might matter in the next section, a tutorial dedicated wholly to the color wheel.</p>
+<h2 id="UsingColorWheels">Using Color Wheels</h2>
+<p>So you have a color wheel. Now what?</p>
+<p>First off, just by itself, the color wheel is a quick reference guide to the Blur by Color filter. Red, straight up at 0&deg; reminds you that it is the straight up and down blurring color. Cyan, 180&deg; also blurs up and down. Lime Green and Violet are the horizontal blurring colors.</p>
+<p>To get you started, the following constitutes a very basic variation on a theme. We start off with a blob of white salt-and-pepper noise on a black background. In most cases, we renormalized the result to the range of 0,255. The amplitude setting on the filter was, in all cases, maxed out at 1.00. The range was "N" (Normal) throughout.</p>
+<table style="border-color: #808080; border-width: 1px; border-style: solid;" rules="all" class="table table-striped" border="1" cellpadding="4" cellspacing="0"><colgroup><col width="214" /> <col width="413" /></colgroup>
+<tbody>
+<tr valign="top">
+<td width="256"><p><img src="http://www.particularart.com/static/media/uploads/filters/blurbycolor/bf-013.png" title="bf-013.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" width="256" height="256" /></p>
+</td>
+<td>
+<p>The globular cluster. Airbrush tool with a 600 pixel brush set in Dissolve mode. Click. Click. Done. Call it the &ldquo;Cluster&rdquo; layer.</p>
+</td>
+</tr>
+<tr valign="top">
+<td width="256"><p><img src="http://www.particularart.com/static/media/uploads/filters/blurbycolor/bf-014.png" title="bf-014.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" width="256" height="256" /></p>
+</td>
+<td>
+<p>A clockwise color wheel. See the recipes in the previous section for how to make one.</p>
+<p>This is a standard position for the color wheel. With red, at 0&deg; straight up, there is 0&deg; separation between its blurring direction and the ray connecting it to the center of the wheel. This is the case for all other colors: their blurring directions coincide with the angle of the ray connecting them to the center.</p>
+<p>The next panel shows the effect of this particular alignment: the wheel-spoke pattern of <a target="_parent" href="_blur_radial.shtml">radial blurring</a>.</p>
+</td>
+</tr>
+<tr>
+<td width="256"><p><img src="http://www.particularart.com/static/media/uploads/filters/blurbycolor/bf-015.png" title="bf-015.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" width="256" height="256" /></p>
+</td>
+<td>
+<p>Filter &rarr; G'MIC and:</p>
+<ol>
+<li>Under Input/Output: select &ldquo;Input layers...&rdquo; and change it to &ldquo;Active &amp; Below&rdquo;</li>
+<li>Also under Input/Output: select &ldquo;Output mode...&rdquo; and change it to &ldquo;New Layer(s)&rdquo;</li>
+<li>Select &ldquo;Testing&rdquo; &rarr; &ldquo;Gmic Tutorials&rdquo; &rarr; &ldquo;Blur by color&rdquo;</li>
+<li>The first time the Gimp-G'MIC filter starts, the preview check box is usually checked &ldquo;on&rdquo;, so the Blur by color will probably hem and haw for a little bit before displaying the star burst on the left. It will be darker than this.</li>
+<li>Hit &ldquo;OK&rdquo;. Should get what's on the left but darker, probably.</li>
+<li>Truth in Advertising; we re-normalized the image to 0-255 for this and following examples.</li>
+</ol>
+<p>So. Yet Another Radial Blur. But Variations On A Theme always start off in old and familiar grooves. The big observation we want to make here is the effect that arises when a color's blurring direction coincides with the angle of the radial line connecting it to the center. Pixels smear right along the radius in a classic spoke-wheel pattern.</p>
+<p>The next panel illustrates what happens when we rotate a color wheel so that colors reside at different points on the radius. It's a new game when red, with a blurring direction of zero degrees, connects to the center of the color wheel along the thirty degree radial line. &nbsp;</p>
+</td>
+</tr>
+<tr>
+<td width="256"><p><img src="http://www.particularart.com/static/media/uploads/filters/blurbycolor/bf-016.png" title="bf-016.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" width="256" height="256" /></p>
+</td>
+<td>
+<p>Take the color wheel and rotate it about 30&deg; clockwise: Color &rarr; Hue-Saturation, and pull the Hue slider ‒30&deg; to rotate the color wheel clockwise. As an aside, the dialog box happens to regard positive rotations as counterclockwise, the right-handed rule. We spend so much time with bitmaps, where positive Y points down, that the left-handed rule prevails. It's positive rotations are clockwise.</p>
+<p>Your color map should look like the one one the left, more or less, with the red region aimed at the northeast quadrant of the image.</p>
+</td>
+</tr>
+<tr valign="top">
+<td width="256"><p><img src="http://www.particularart.com/static/media/uploads/filters/blurbycolor/bf-017.png" title="bf-017.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" width="256" height="256" /></p>
+</td>
+<td>
+<p>Bring up the Gimp-G'MIC filter plug-in again and do what you did before, except for the setting-up exercises. You could probably just get by with a CTRL-F.</p>
+<p>A spiral arises because a particularly bright (or dark) pixel diffuses only a very tiny amount before the parts of it diffusing upward fall under the purview of color rays slightly to the counterclockwise, while parts diffusing downward fall under the influence of color rays slightly to clockwise.</p>
+<p>Consider a pixel under the purview of a pure red pixel in the blurring map. Red's blurring direction is zero degrees, so the pixel immediately start smearing straight up and down &ndash; but only for an infintesimal amount.</p>
+<p>In this rotated color wheel, the set of red pixels in the blurring map now run along a ray of thirty degrees, so the top parts of the smeared pixel fall under the purview of slightly magenta pixels from the map, these with blurring angles infintesimally less than zero degrees. These still push that fraction of the smearing pixel mostly up, but also slightly to the left. The direction of diffusion changes just enough so that the pixel still smears across these slightly magenta rays at an incident angle of thirty degrees.</p>
+<p>Correspondingly, the bits of the pixel smearing downward fall under the influence of slightly orange pixels from the map with blurring angles infintesimally greater than zero. These still push fractions fractions of the pixel mostly down, but also to the left. The direction of diffusion changes just enough so that the pixel still smears across these slightly orange pixels at an incident angle of thirty degrees.</p>
+<p>Over the larger run, a wedge of color rays progressively diffuses the pixel up, to the left, and down to the left. As is the wont of the increasingly magenta (and later, blue) colors along radial lines less than thirty degrees, the smearing direction is progressively less upward and more leftward. And, as is the wont of the increasingly orange (and later yellow) colors along radial lines greater than thirty degrees, the smearing direction progressively less downward and more leftward.</p>
+<p>In aggregate, the erstwhile pixel, initially a singular impulse on the thirty degree radial line of red pixels, is now diffusing along a path that intersects every color ray at a constant thirty degree incident angle, defining an arithmetic or <a target="_parent" href="http://en.wikipedia.org/wiki/Archimedean_spiral">Archemedian spiral</a>.</p>
+<p>As the incident angle increases, pixels diffuse along lines that progress at slower inward rates toward the center. Finally, When the incident reaches 90&deg; pixels diffuse along paths that are always a constant direction from the center of the color wheel; they cannot spiral inward and follow circular paths instead. Angular blurring prevails.</p>
+</td>
+</tr>
+<tr valign="top">
+<td width="256"><p><img src="http://www.particularart.com/static/media/uploads/filters/blurbycolor/bf-018.png" title="bf-018.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" width="256" height="256" /></p>
+</td>
+<td>
+<p>We use the spiraling color map from the previous experiment and limit the rotation range through Gimp's Color &rarr; Map &rarr; Rotate Colors dialog box. We mapped the entire circle, 0&deg; &rarr; 360&deg; in the top section to the subset 0&deg; &rarr; 180&deg;, red to cyan.</p>
+<p>It seems, from the color map, that we will have a terrible discontinuity, but recall that red and cyan are 180 apart in the color wheel and will blur along the same orientation.</p>
+</td>
+</tr>
+<tr valign="top">
+<td width="256"><p><img src="http://www.particularart.com/static/media/uploads/filters/blurbycolor/bf-019.png" title="bf-019.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" width="256" height="256" /></p>
+</td>
+<td>
+<p>Shock waves of a bullet passing through air? We'll keep this in mind when we need something like that.</p>
+<p>Recalling the Hue rule and studying the orientation of the streaks, everything makes sense. Indeed, the direction of the blur are vertical in the cyan-red wedge, and angle to horizontal around lime green.</p>
+</td>
+</tr>
+<tr valign="top">
+<td width="256"><p><img src="http://www.particularart.com/static/media/uploads/filters/blurbycolor/bf-020.png" title="bf-020.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" width="256" height="256" /></p>
+</td>
+<td>
+<p>Thinking of our friend, Whirl-and-Pinch, induced us to Whirl-and-Pinch on a pristine clockwise color wheel.</p>
+</td>
+</tr>
+<tr valign="top">
+<td width="256"><p><img src="http://www.particularart.com/static/media/uploads/filters/blurbycolor/bf-021.png" title="bf-021.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" width="256" height="256" /></p>
+</td>
+<td>
+<p>Another spiral, but this of a different character, as the inward movement is not constant. This seems closer in spirit to the gravitational dynamics of spiral galaxies.</p>
+</td>
+</tr>
+<tr valign="top">
+<td width="256"><p><img src="http://www.particularart.com/static/media/uploads/filters/blurbycolor/bf-022.png" title="bf-022.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" width="256" height="256" /></p>
+</td>
+<td>
+<p>Everything we've played with up to now entail just the first rule &ndash; color sets direction. Here we desaturated the middle of the spiral</p>
+</td>
+</tr>
+<tr valign="top">
+<td width="256"><p><img src="http://www.particularart.com/static/media/uploads/filters/blurbycolor/bf-023.png" title="bf-023.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" width="256" height="256" /></p>
+</td>
+<td>
+<p>With desaturation, omni-directional diffusion prevails at the center of the spiral, which becomes featureless.</p>
+</td>
+</tr>
+<tr valign="top">
+<td width="256"><p><img src="http://www.particularart.com/static/media/uploads/filters/blurbycolor/bf-024.png" title="bf-024.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" width="256" height="256" /></p>
+</td>
+<td>
+<p>We mirror flip a pristine color wheel. The progression from red to orange to yellow, and so on, is now counter-clockwise.</p>
+</td>
+</tr>
+<tr valign="top">
+<td width="256"><p><img src="http://www.particularart.com/static/media/uploads/filters/blurbycolor/bf-025.png" title="bf-025.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" width="256" height="256" /></p>
+</td>
+<td>
+<p>Instead of a circle, we plot a pair of hyperbolae. The progression of colors is reversed and as we proceed around the circle in either a clockwise or counterclockwise direction, the progression of hues exhibit a change in blurring direction in the opposite sense, turning counterclockwise as we proceed clockwise.</p>
+<p>A particularly bright (or dark) pixel will, unless exactly aligned with the vertical or horizontal axes, be swept along directions which turn away from, rather than turn upon, the center point; a hyperbolic trajectory results.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h2 id="AnExtendedExample">An Extended Example</h2>
+<div id="FigureThree" style="float: left; width: 410px; height: 430px; border: none; padding: 3px;" dir="ltr"><img src="http://www.particularart.com/static/media/uploads/filters/blurbycolor/bf-026.png" title="bf-026.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" width="400" height="400" />
+<p><i>Figure 3: Blurred by Color Crepuscular Rays Behind Diamond-Square Clouds</i></p>
+</div>
+<p>This walk through stems from <a target="_parent" href="#FollowingContours"><i>4. Following Contours</i></a> a topic among the basic examples. That example is a particular case of harnessing the G'MIC filter Contours &rarr; Gradient RGB to translate geometry into blurring maps.</p>
+<p>Gradient RGB's remit is to find edges (i.e. really, really steep gradients), and report their magnitude and orientation. For the latter, it uses a color coding scheme grounded on the HSL/HSV color wheel. That is, Gradient RGB uses red and cyan for vertically oriented edges, Lime Green and violet for horizontal edges and so forth. This is also how Blur by Color maps direction to color, so the marking done by Gradient RGB may, in principle, be harnessed by Blur by Color to produce a blurring map. The map mimics the edge orientations initially present in the drawing.</p>
+<p>The plan, then, is to use some high contrast lines oriented in directions along which we'd like to blur, then run Gradient RGB to get a colorful blurring map that encodes these orientations. This becomes food for Blur by Color which will smear Diamond Cross clouds into crepuscular rays.</p>
+<table style="border-color: #808080; border-width: 1px; width: 100%; border-style: solid;" rules="all" class="table table-striped" border="1" cellpadding="4" cellspacing="0"><colgroup><col width="214" /> <col width="413" /></colgroup>
+<tbody>
+<tr valign="top">
+<td width="256"><p><img src="http://www.particularart.com/static/media/uploads/filters/blurbycolor/bf-027.png" title="bf-027.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" width="256" height="256" /></p>
+</td>
+<td>
+<p>The faint crepusculars rays behind the <a target="_parent" href="_plasma.shtml">Diamond-Square clouds</a> begin life as a pair of B&egrave;zier curves. They set the envelope of a family of curves which will ultimately shape the blurring map.</p>
+<p>The rays themselves are nothing more than faint, semitransparent versions of the clouds. With a certain finesse, the variations among the rays can match those of the clouds &ndash; being more or less one and the same &ndash; and foster the illusion that the rays are shining through the clouds.</p>
+<p>The curves set how the rays flare out from a center point and follow slightly curved tracks. This curving of rays has no basis in physical reality but it suits our fancy.</p>
+</td>
+</tr>
+<tr valign="top">
+<td width="256"><p><img src="http://www.particularart.com/static/media/uploads/filters/blurbycolor/bf-028.png" title="bf-028.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" width="256" height="256" /></p>
+</td>
+<td>
+<p><a target="_parent" href="http://inkscape.org/">Inkscape</a>'s Path Effects Editor <a target="_parent" href="http://tavmjong.free.fr/INKSCAPE/MANUAL/html/Paths-LivePathEffects-InterpolateSubPaths.html">interpolates the inital paths</a> into a graduated series of twenty five curves. There is nothing magical about twenty five. It could be ten or fifty. It should be enough to get a gradient without abrupt transitions, and no harm comes from overestimates.</p>
+<p>To multiplex the pair of curves, we aggregate the initial pair into sub-paths of a single curve. Inkscape's &ldquo;Path &rarr; Combine&rdquo; menu operation does this for us.</p>
+<p>This SVG image now becomes our template for the blurring map, which we create in Gimp using Gimp-G'MIC's &ldquo;Contours &rarr; Gradient RGB&rdquo; filter. We invoke &ldquo;File &rarr; Save&rdquo; using some memorable name, then depart Inkscape.</p>
+</td>
+</tr>
+<tr valign="top">
+<td width="256"><p><img src="http://www.particularart.com/static/media/uploads/filters/blurbycolor/bf-029.png" title="bf-029.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" width="256" height="256" /></p>
+</td>
+<td>
+<p>We open our work-in-progress illustration in Gimp.</p>
+<p>With that partially built image in Gimp's current view, we then import the SVG file as a Layer, via &ldquo;Files &rarr; Import as Layer&rdquo;.</p>
+<p>Gimp will put up a preview dialog box and furnish layer dimensions, based on the dot-per-inch ratio encoded within the SVG file. Inkscape's default of 90 dots-per-inch prevails unless told otherwise. You will probably want to adjust the proposed size of the layer to fit your project, then click on &ldquo;OK&rdquo; to complete the process.</p>
+<p>Unless an SVG document background had been defined, the template lines will be black on a transparent background, convenient for positioning.</p>
+</td>
+</tr>
+<tr valign="top">
+<td width="256"><p><img src="http://www.particularart.com/static/media/uploads/filters/blurbycolor/bf-030.png" title="bf-030.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" width="256" height="256" /></p>
+</td>
+<td>
+<p>We generate the proto-blurring map with the Gimp-G'MIC plug-in</p>
+<ol>
+<li>
+<p>Bring up the Gimp-G'MIC plug-in: Filters--&gt;G'MIC</p>
+</li>
+<li>
+<p>Within the plug-in choose &ldquo;Contours &rarr; Gradient RGB&rdquo;</p>
+</li>
+<li>
+<p>Preview gives a trial rendering.</p>
+</li>
+<li>
+<p>Check the &ldquo;Orientation Only&rdquo; box</p>
+</li>
+<li>
+<p>Increase &ldquo;Smoothness&rdquo; until the black regions between the lines disappear.</p>
+</li>
+<li>
+<p>Hit &ldquo;OK&rdquo;</p>
+</li>
+</ol></td>
+</tr>
+<tr valign="top">
+<td width="256"><p><img src="http://www.particularart.com/static/media/uploads/filters/blurbycolor/bf-031.png" title="bf-031.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" width="256" height="256" /></p>
+</td>
+<td>Upon seeing the stripes, one could easily jump to the conclusion that this prototype blurring map would blur images in two distinct directions.<br /> Technically, that is correct, but the two directions share the same orientation, as they are 180&deg; apart.<br /> If you still find alternating colors unsettling, you may, optionally, use one of the custom command filters situated under the &ldquo;Various&rdquo; branch to write this snippet of G'MIC:<br /> <tt>-remove_opacity<br /> -rgb2hsl[-1]<br /> -split[-1] c <br /> -mod[-3] 180 <br /> -append[-3--1] c <br /> -hsl2rgb<br /></tt></td>
+</tr>
+<tr valign="top">
+<td width="256"><p><img src="http://www.particularart.com/static/media/uploads/filters/blurbycolor/bf-032.png" title="bf-032.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" width="256" height="256" /></p>
+</td>
+<td>This snippet applies the modulus function to the data in the Hue channel so that values greater than 180&deg; wrap around. Now, similarly oriented data share similar directions, making the blurring map easier to understand.<br /> This is solely for our benefit, however. Blur by Color behaves the same with either style of map.</td>
+</tr>
+<tr valign="top">
+<td width="256"><p><img src="http://www.particularart.com/static/media/uploads/filters/blurbycolor/bf-033.png" title="bf-033.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" width="256" height="256" /></p>
+</td>
+<td>We desaturate and whiten a copy of the clouds layer, so they look like the fluffy stuff that inhabits mid day skies in the late spring or early summer of the Northern hemisphere.</td>
+</tr>
+<tr valign="top">
+<td width="256"><p><img src="http://www.particularart.com/static/media/uploads/filters/blurbycolor/bf-034.png" title="bf-034.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" width="256" height="256" /></p>
+</td>
+<td>The Blur by Color filter is grounded on the <a target="_parent" href="_smooth.shtml">-smooth</a> command and is very scale dependent. Since we intend to blur the clouds a lot, and likely beyond the maximum strength of the filter, we scale the layers of both the cloud artwork and the blurring map to one half of the image side.<br /> With the artwork and map reduced in size, we:<br /><ol>
+<li>Make sure the clouds and the map occupy adjacent positions in Gimp's layer stack. Our habit is to stack the blurring map underneath the target layer that we are going to blur.</li>
+<li>Start the Gimp-G'MIC filter (&ldquo;Filters &rarr; G'MIC&rdquo;</li>
+<li>Under :Input/Output, select for Input layers: &ldquo;Active &amp; Below&rdquo; (or Above, depending on the relative location of the map to the target layer)</li>
+<li>For Output mode: select &ldquo;New layer(s)&rdquo;</li>
+<li>Turn off Preview</li>
+<li>Set Range to &ldquo;XM&rdquo; &ndash; Maxed out!</li>
+<li>Set Amplitude to 1.0 &ndash; Maxed out</li>
+<li>Turn on Preview, and review. Adjust if needed then hit &ldquo;OK&rdquo;</li>
+</ol></td>
+</tr>
+<tr valign="top">
+<td width="256"><p><img src="http://www.particularart.com/static/media/uploads/filters/blurbycolor/bf-035.png" title="bf-035.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" width="256" height="256" /></p>
+</td>
+<td>We return the now-blurred, erstwhile cloud layer to the full size of the image and compare it against the Inkscape paths which initially set the direction.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="PreAndPost">Pre and Post</h2>
+<p>Before and after an insertion of crepuscular rays.</p>
+<table style="border-color: #808080; border-width: 1px; width: 100%; border-style: solid;" rules="all" class="table table-striped" border="1" cellpadding="0" cellspacing="0"><colgroup><col width="512" /> <col width="138" /></colgroup>
+<tbody>
+<tr valign="top">
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/filters/blurbycolor/bf-036.png" title="bf-036.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" width="512" height="512" /></td>
+<td>&nbsp;Clouds and no rays.</td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/filters/blurbycolor/bf-037.png" title="bf-037.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" width="512" height="512" /></td>
+<td>Note how the rays wax in regions of fat clouds and thin out where clouds are thin, apropos of simply using the clouds themselves as a source of rays. We could have flipped the relationship by using a negative cloud image, have lots of rays where there are few clouds, or even more complex relationships.&nbsp;</td>
+</tr>
+</tbody>
+</table>
+<h2>Blurring and Warping</h2>
+<table rules="all" class="table" style="border-color: #808080; border-width: 1px;" border="1">
+<tbody>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/filters/blurbycolor/bf-040.png" title="bf-040.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" width="400" height="400" /></td>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/filters/blurbycolor/bf-045.png" title="bf-045.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" width="400" height="400" /></td>
+</tr>
+<tr>
+<td>A G'MIC volunteer who exhibits somewhat imperfect enthusiams&hellip;</td>
+<td>&hellip;is both warped and blown away by demonic tutorial editors, using the same underlying geometry to blur, warp and color the image.</td>
+</tr>
+</tbody>
+</table>
+<p>A casual study of the Gimp-G'MIC Contour&rarr;GradientRGB reminds us that the manufacture of blurring maps for the Blur by Color filter has a close relationship to orientation and directional fields. Indeed, GradientRGB makes a rather routine <a target="_parent" href="http://en.wikipedia.org/wiki/Baseball%27s_Sad_Lexicon">Tinker to Evers to Chance</a> play where <a target="_parent" href="_gradient.shtml">-gradient</a> characterizes intensity changes along an image's width and height, contained in two scalar fields (gray scale images). <a target="_parent" href="http://gmic.eu/reference.shtml#append">-append</a> folds these into a 2D direction field, and <a target="_parent" href="_direction2rgb.shtml">-direction2rgb</a> produces a color RGB representation of the same. This last element furnishes a blurring map based on the gradients found in the original image.</p>
+<p>Of note is the intermediary product, the 2D direction field. Quite apart from being an intermediary in the production of a blurring map, it may&nbsp; be harnessed by <a target="_parent" href="_warp.shtml">-warp</a> to shift the geometry of an image. With the 2D direction field and the blurring map developed from it, one may then blur and warp an image in a coordinated way. Perhaps a stiff breeze can motion-blur a tree and bend it at the same time. Particulars follow; where we dissect the stiff breeze we used in our capacity as demonic tutorial editors.</p>
+<table rules="all" class="table table-striped" style="border-color: #808080; border-width: 1px;" border="1">
+<tbody>
+<tr>
+<td colspan="2">
+<h3 id="Inkscape">Inkscape &mdash; Creating the Contour Lines</h3>
+</td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/filters/blurbycolor/bf-041.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" width="300" height="300" /></td>
+<td>As in the Extended Example, we set up a template in Inkscape. These high contrast lines furnish detectable contours that sets the&nbsp; blurring orientation. This particular set of lines describe the strong breeze manifest in the right hand panel, above.</td>
+</tr>
+<tr>
+<td colspan="2">
+<h3 id="MakingThePrototypeBlurMap">Making the Prototype Blur Map &mdash; Gimp-G'MIC Filter: Contours&nbsp;&rarr; GradientRGB</h3>
+<ol>
+<li>Smoothness: 1.5</li>
+<li>Min. Threshold: 0</li>
+<li>Max. Threshold: 100</li>
+<li>Checked "Orientation only"</li>
+<li>Preview Type: Full</li>
+</ol></td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/filters/blurbycolor/bf-042.png" title="bf-041.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" width="300" height="300" /></td>
+<td>
+<p>Gainfully employed for making neon-light ribbons, Contours-&gt;Gradient RGB does have the technical remit to visualize, through color, the orientation and steepness of gradients.</p>
+<p>To GradientRGB, most images look like assemblies of stretched, somewhat cut-up colorwheels and arcs of the same. For example, a horizontal line looks like a colorwheel rotated a quarter turn clockwise, stretched and snapped around the line. Blue violet dominates the top, lime green the bottom, and the remaining portions of the colorwheel are crowded to the ends.</p>
+<p>As in the extended example, above, we're mainly interested in orientation, not degree of steepness, so we check the "orientation only" checkbox. With an emulation of an inconstant wind blast dominating our thinking, we do not smooth much either, leaving large black gaps representing calm eddies between fast-moving air streams. This is in contrast with the Extended Example. There were seeking a constant blurring field without intervening eddies and arranged our template geometry to lead to a solid mass of color.</p>
+</td>
+</tr>
+<tr>
+<td colspan="2">
+<h3 id="FinishingTheBlurMap">Finishing the Blur Map &mdash; Gimp-GMIC Filter: Various &nbsp;&rarr; Custom Code (global)</h3>
+<tt>-if {s&gt;3}<br /> &nbsp;&nbsp;&nbsp;-remove_opacity[-1]<br /> -endif<br /> -rgb2hsv[-1]<br /> -split[-1] c<br /> -mod[-3] 180<br /> -append[-3--1] c<br /> -hsv2rgb<br /> -blur 10,1,0</tt></td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/filters/blurbycolor/bf-043.png" title="Blurring Map: bf-043.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" width="300" height="300" /></td>
+<td>
+<p>This is the blurmap. We made use of the custom code filter to modify angular measure so that all blurring at a given orientation is specified by angles pointing in the same direction. That is the idea behind converting the image to the HSV color space and finding modulo 180&deg; of the color angular measures; two colors that have the same blurring orientation are separated by exactly 180&deg; and, after the modulo 180&deg; operation, all colors with the same orientation will also have the same angular measure.</p>
+<p>The Blur by color filter does not care about this issue, but our aim is to recreate/restore the 2D direction map allied with our blurring map. That recovery is simpler when we eliminate two angular measures for the same orientation.</p>
+<p>We also blurred the blur map. This is to serve our artistic aims; we wished to have the streams of wind to have soft edges.</p>
+</td>
+</tr>
+<tr>
+<td colspan="2">
+<h3 id="TheBlurApplied">The Blur Applied &mdash; Testing &rarr; G'MIC Tutor Blur by Color</h3>
+<ol>
+<li>Range: "N" (Normal)</li>
+<li>Amplitude: 30</li>
+</ol></td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/filters/blurbycolor/bf-046.png" title="bf-046.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" width="300" height="300" /></td>
+<td>
+<p>This is the blurmap applied; the mainly lime green regions in the blurmap streak the art horizontally; variations between red and cyan give rise to an undulation.</p>
+<p>Streaks alone do not offer all the hinting of strong wind; we shall warp the subect as well, but in a coordinated manner with blurring. To obtain that coordination, we convert the color blurring map into a two dimensional vector field, suitable for consumption by <a target="_parent" href="_warp.shtml">-warp</a>.</p>
+</td>
+</tr>
+<tr>
+<td colspan="2">
+<h3 id="ComputingTheVectorField">Computing the Vector Field &mdash; Gimp-GMIC Filter: Various &nbsp;&rarr; Custom Code (global)</h3>
+<tt>-if {s&gt;3}<br /> &nbsp;-remove_opacity[-1]<br /> -endif<br /> -rgb2hsv[-1] <br /> -split[-1] c # H[0],S[1],V[2] <br /> -reverse[0,-1] <br /> -rm[-2]<br /> -fill[-1] 2*pi*(((i-90)%360)/360)<br /> --cos[-1] <br /> -sin[-2] <br />-mul[-2] [-3] <br /> -mul[-1,-3] <br /> -append[-2,-1] c <br /> -mul[-1] 60</tt></td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/filters/blurbycolor/bf-044.png" title="Direction Field: bf-044.png" width="300" height="300" /></td>
+<td>
+<p>The custom G'MIC code finds a directional vector field which warps in directions similar to the orientations of the colors in the blurring map.</p>
+<p>A ninety degree counterclockwise rotation converts from one to the other. In particular, we move to the HSV colorspace to obtain measures of Hue in angular degree notation. We rotate these measures -90&deg;, convert to radian measure, then convert the Hue field into horizontal and vertical vector components by way of the cosine and sine trigonometric functions. Out of the box, these are components of unit vectors, expressing only orientation. We introduce wind strength by multiplying these vector components by the Value field.</p>
+<p>The idea of saturation does not carry over into the 2D direction field, so we simply delete it.</p>
+<p>We scale the directional vector field by 60, a heuristic which we determined experimentally.&nbsp;</p>
+</td>
+</tr>
+<tr>
+<td colspan="2">
+<h3 id="TheWarpApplied">The Warp Applied &mdash; Gimp-GMIC Filter: Various &nbsp;&rarr; Custom Code (global)</h3>
+<tt>-warp[-2] [-1],1</tt></td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/filters/blurbycolor/bf-047.png" width="300" height="300" /></td>
+<td>
+<p>It is the nature of the 2D directional field to warp strongly toward the right just in the areas where the "wind" (blur) is strongest, but not warp much at all where the wind is weak. The direction of warping is also coincident with the direction of blurring, as desired.</p>
+<p>What is missing, however, is a visual cue of where the wind is strongest. We utilize the original Inkscape template, this time as a blending color for slightly opaque air.</p>
+</td>
+</tr>
+<tr>
+<td colspan="2">
+<h3>Rendering Atmospherics &mdash; File &rarr; Open As Layers</h3>
+<ul>
+<li>template.svg (or whatever you have named the initial Structured Vector Graphics file used in the first panel)</li>
+<li>Render Scaleable Vector Graphics: Accept defaults (should be your image size)</li>
+</ul>
+<h3>Rendering Atmospherics &mdash; Color &rarr; Colorize:</h3>
+<ul>
+<li>Hue: 200</li>
+<li>Saturation:: 60</li>
+<li>Value: 80</li>
+</ul>
+<h3 id="MakingThePrototypeBlurMap">Rendering Atmospherics &mdash; Filter &rarr; Blur &rarr; Gaussian Blur:</h3>
+<ul>
+<li>Horizontal: 40</li>
+<li>Vertical: 40</li>
+<li>Blur Method: RLE (Run length encoding)</li>
+</ul>
+<h3 id="MakingThePrototypeBlurMap">Rendering Atmospherics &mdash; Colors &rarr; Curves</h3>
+<ul>
+<li>Channel: Alpha &mdash; Map x:32 to y: 255 (A steep, almost vertical slope)</li>
+<li>Curve Type: Smooth</li>
+<li>Preview: Checked</li>
+</ul>
+<h3 id="MakingThePrototypeBlurMap">Rendering Atmospherics &mdash; Layers &rarr; Merge Down</h3>
+</td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/filters/blurbycolor/bf-048.png" title="bf-048.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" width="300" height="300" /></td>
+<td>Adding a slight atmospheric opacity is standard Gimp fare - we can't imagine having to explain that in detail to the gentle readers out there, who could probably pick a better way, and certainly a different way. The parameters we used above stem primarily from our sense of taste - or tastelessness, as the case may be - and can be varied for different effects.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="PostScript">Postscript</h2>
+<p>We could go on and on, there is no end in sight, but we have to call it a day somewhere. We'll close shop with a gallery of odds and ends, tips and techniques, more or less centered on Blur by color, as they strike our fancy. Go out and play now, but stop by from time to time to see what might be added.</p>
+<table rules="all" class="table table-striped" style="border-color: #808080; border-width: 1px;" border="1">
+<tbody>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/filters/blurbycolor/bf-038.png" title="bf-038.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" width="400" height="300" /></td>
+<td><a target="_parent" href="img/blur-by-color-filter_bf-039.jpg" class="highslide" onclick="return hs.expand(this)"><img src="http://www.particularart.com/static/media/uploads/filters/blurbycolor/bf-039-sm.png" title="bf-039-sm.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" width="400" height="400" /></a></td>
+</tr>
+<tr>
+<td>Rain. Salt &amp; pepper noise and a a blurring map that is a solid, reddish color. Not exactly red. Not fully saturated. Iterate two or three times with pristine S&amp;P noise and the red hue of the blurring map shifted five or ten degrees this way and that on each loop, so that you get two or three courses of rain, just off vertical, criss-crossing. Range: "N" (normal) Amplitude: 0.25-0.45. Compose over a noir-ish image with "Lighten Only." For particular drear, as was done here, take one of the rain courses and make it the blurring map, colorizing it reddish, perhaps using the old blurring map, so that you have red streaks on a dark background. Use that to blur the noir-ish image. It makes streaks of blur that seem to catch the light from street lamps, as real rain would when falling past these illuminants.&nbsp;</td>
+<td>
+<p>This arises from a two-pass workflow, based the basic example&nbsp;<a target="_parent" href="#ImageBased"> 6. Image based</a>. We turned Gradient RGB loose on a slightly blurred original, (10 pixel radius), making an "Orientation Only" edge detection image. We used Colors &rarr; Map &rarr; Rotate Colors to map the full rotation range into the subset running from 60 to -300 degrees &ndash; generally vertical blurring but with many side-to-side sweeps. That, in essence, is the workflow of the basic example.</p>
+<p>Then we looped again, turning Gradient RGB loose on the already blurred results. This time, however, we left "Orientation Only" unchecked for complete edge detection and stretched the contrast of the resulting map from 0 to 255. We remapped its colors from the full rotation range into the subset running from 60 to -300 degrees, as before. As before, we obtained generally vertical blurring with side-to-side sweeps, but now the blurring map had many dark places where edges were not particularly strong in the intermediary image. We turned this second-generation blurring map loose on a pristine copy of the original photograph. We find the selective blurring enchanting and somewhat mysterious. Vast areas are unchanged, but a single dead branch induces a sudden fury of directional blurring.</p>
+<p>The following credit contains a link to the original image, and clicking on the image above will bring up a larger version.</p>
+<p><a target="_parent" href="http://commons.wikimedia.org/wiki/File:Dead_tree,_Old_South_Road,_Breadalbane,_NSW.jpg" class="highslide" onclick="return hs.expand(this)">Dead tree</a>, Breadalbane, New South Wales. Image by <a target="_parent" href="http://commons.wikimedia.org/wiki/User_talk:CephasOz">CephasOz</a>,<a target="_parent" href="http://commons.wikimedia.org/wiki/Main_Page"> Wikimedia Commons</a></p>
+</td>
+</tr>
+<tr>
+<td>
+<p>&nbsp;<img src="http://www.particularart.com/static/media/uploads/filters/blurbycolor/bf-049.png" title="bf-049.png FranklinWessonHouse" class="img_block" style="margin: 3px; border: 0px solid #808080;" width="400" height="533" /></p>
+<p><a target="_parent" href="http://commons.wikimedia.org/wiki/File:FranklinWessonHouse.JPG" class="highslide" onclick="return hs.expand(this)">Franklin Wesson House</a>, Worcester, MA, United States &mdash;&nbsp; <a target="_parent" href="http://en.wikipedia.org/wiki/User:Namiba">Namiba</a>, Wikimedia Commons</p>
+</td>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/filters/blurbycolor/bf-050.png" title="bf-050.png - modified color wheel" class="img_block" style="margin: 3px; border: 0px solid #808080;" width="400" height="533" /></td>
+</tr>
+<tr>
+<td colspan="2">&nbsp;A short while ago, I was looking at early twentieth century photographs taken by a Kodak Brownie Model 2A which had a single element meniscus lens that made photographs that were pretty sharp in the middle but progressively less focussed toward the corners. At $3.00 (1907, effectively <a target="_parent" href="http://www.usinflationcalculator.com/">$70 USD</a> now), it made photography accessible to the middle class and so the snapshot was born. Two G'MIC-Gimp filters emulate this old camera. <a target="_parent" href="https://www.flickr.com/photos/tomkeil/">Tom Keil's</a> "Vintage Style" filter, in the "Colors" branch, puts a contemporary image of the Wesson House into a kind of a photographic wayback machine, recoloring as if it was a century old sepia print&nbsp;&mdash; or a print that had turned sepia with age. The blurring map I used to emulate the center-to-edge drop-off in focus was a colorwheel multiplied with a black-to-white radial ramp. To pull it off fully, I had to desaturate the colorwheel by 30-40 so that there would be some transverse blurring as well as radially oriented blurring.&nbsp; The blur-by-color global settings were Range: VL and Amplitude 21. The "Vintage Style" settings were left at default except for two: Saturation was set to zero, and Strength midtone was set to 0.66. The 1870-vintage Victorian Gothic style of the Frank Wesson House certainly helps; applying these effects to a big box store in a twentifirst century mall just wouldn't seem the same.</td>
+</tr>
+</tbody>
+</table>
+
+
+
+   
+</body></html>

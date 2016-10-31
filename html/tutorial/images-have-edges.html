@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="tutorial.css">
+<script type="text/javascript" src="highslide/highslide.js"></script>
+<link rel="stylesheet" type="text/css" href="highslide/highslide.css" />
+<script type="text/javascript">
+hs.graphicsDir = 'highslide/graphics/';
+hs.wrapperClassName = 'wide-border';
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<body>
+
+
+      
+
+
+
+<h1>Images Have Edges: Now What?</h1>
+<p><img src="http://www.particularart.com/static/media/uploads/images/image_edge.png" title="In Flight on a Magic Image" class="img_block" style="margin: 3px; border: 0px solid #808080; float: left;" height="480" width="640" />Many G'MIC commands decide how to write an output pixel by accessing a neighborhood of input pixels, usually centered around the pixel in question. (See <a target="_parent" href="_convolve.shtml">-convolve</a>, <a target="_parent" href="_blur.shtml">-blur</a>, <a target="_parent" href="_deriche.shtml">-deriche</a>). In principle, the neighborhood may be arbitrarily large, in practice it is a ball or sphere just a few pixels across.</p>
+<p>All this is well and good so long as we deal with images of infinite extent, but computer manufacturers behave badly when asked to provide such capacity, so as a practical matter, images have both finite extent and, therefore, edges. Difficulties arise with edges. At some point, a part of a neigborhood won't exist because the pixels are off an edge. How does one access a pixel that is not there?</p>
+<p>In the absence of data, one often reaches for policy. G'MIC commands which need to worry about boundaries generally sport a boundary parameter which specifies up to three possible policies:</p>
+<table rules="all" style="border-color: #808080; border-width: 0px; border-style: solid;" class="table table-striped" align="center" border="0" cellpadding="1" cellspacing="0">
+<tbody>
+<tr><th>Flag</th><th>Name</th><th>Condition</th></tr>
+<tr>
+<td>0</td>
+<td>dirichlet</td>
+<td>Off-border pixels are considered a constant black. <a target="_parent" href="http://en.wikipedia.org/wiki/Peter_Gustav_Lejeune_Dirichlet">Named for Peter Gustav Lejeune Dirichlet</a>. In particular, see <a target="_parent" href="http://en.wikipedia.org/wiki/Dirichlet_boundary_condition">Dirichlet Boundary Condition</a>.</td>
+</tr>
+<tr>
+<td>1</td>
+<td>neumann</td>
+<td>The values of border pixels are presumed to extend infinity. Named for <a target="_parent" href="http://en.wikipedia.org/wiki/Carl_Neumann">Carl Gottfried Neumann</a>. In particular, see <a target="_parent" href="http://en.wikipedia.org/wiki/Neumann_boundary_condition">Neumann Boundary Condition</a>.</td>
+</tr>
+<tr>
+<td>2</td>
+<td>cyclic</td>
+<td>The right hand border wraps to the left, the top to the bottom, so that pixels on the opposite edge neighbor each other. The image is a torus. See <a target="_parent" href="http://en.wikipedia.org/wiki/Periodic_boundary_conditions">Periodic Boundary Conditions</a>.&nbsp;</td>
+</tr>
+</tbody>
+</table>
+<p>The flags 0, dirichlet, 1, neumann, and 2 cyclic are used consistently throughout G'MIC where the command in question performs some sort of operation entailing moving a kernel (a pixel and its neighborhood) over a surface, where it must, perforce eventually deal with edges and corners. These policies work well in some circumstances and poorly in others. There is no one 'right' approach; the choice usually depends on which set of limitations one can best live with. Many commands which operate on neighborhoods around input pixels do not fully implement the three policies; often the cyclic case is omitted.</p>
+
+
+
+   
+</body></html>

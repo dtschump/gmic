@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="tutorial.css">
+<script type="text/javascript" src="highslide/highslide.js"></script>
+<link rel="stylesheet" type="text/css" href="highslide/highslide.css" />
+<script type="text/javascript">
+hs.graphicsDir = 'highslide/graphics/';
+hs.wrapperClassName = 'wide-border';
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<body>
+
+
+      
+
+
+
+<div id="FigureOne" style="float: left; width: 4.3125in; height: 4.75in; border: none; padding: 0in;"><a target="_parent" href="img/the-hairlock-filter_girlport.jpg" class="highslide" onclick="return hs.expand(this)"><img style="margin: 3px; border: 0px solid #808080;" class="img_block" src="http://www.particularart.com/static/media/uploads/filters/hairlock/init-000.png" title="Pixel Dust Burning Midnight Oil" height="400" width="400" /></a>
+<p style="font-size: 10pt; line-height: 100%;"><i>Figure 1: Pixel Dust appears to be reading up on G'MIC lore in the wee morning hours. What might emerge from such midnight lucubrations, one does wonder.</i></p>
+</div>
+<h1 id="HairlockFilter">The Hair lock Filter</h1>
+<p>The Hair lock filter grows out of the &ldquo;<a target="_parent" href="dyidiffusion.shtml"><i>&ldquo;Do Your Own Diffusion Tensor Fields&rdquo;</i></a>&nbsp; series, in particular <a target="_parent" href="dyidiffusion_tensors-for-the-tonsorially-challenged.shtml"><i>&ldquo;Tensors for the Tonsorially Challenged.&rdquo;</i></a> The command line walk through in that tutorial discusses how the filter diffuses noise into a simulation of hair strands. Visit those pages for the theory behind this filter, which will not be discussed much here.</p>
+<p>This filter renders hair locks as they might appear at about &frac12; to 2 meters from the viewer, roughly, head-and-shoulders portraiture scale. The filter supposes that the digital artist will compose a complete head of hair from a number of hair locks, and that each lock, in turn, consists of two or three plies of hair.</p>
+<p>By default, the filter renders hair semi-transparently and, in practice, has been designed around the idea that the skeletal image, which provides a model for the hair lock, has been drawn at about 1&nbsp;⅓ to 2&nbsp;&frac12; times over sized, anticipating that hair locks may be sheared, rotated or reduced before final placement in the image (See <a target="_parent" href="#Figure2"><i>Figure 2</i></a>). Out of the box, the hair rendered by this filter is too fat, by design.</p>
+<p>Before using the filter, an artist should have a fairly advanced sketch of their work, or a fairly well worked out game plan (much the same thing). Two things which need to be settled before using the filter successfully are the geometry of the hair locks, that is, how many and how do they drape off the head, and how the hair is lit.</p>
+<p>The artist expresses the geometry of the hair locks by drawing a skeleton of a few representative hair strands (See <a target="_parent" href="#Figure2"><i>Figure 2</i></a>). These can be B&eacute;zier curves, a series of straight lines warped into shape, high contrast images of existing hair or free hand curves. The example in <a target="_parent" href="#Figure2"><i>Figure 2</i></a>. was first prepared in Inkscape. The artist used the Interpolate Sub-Paths effect in the Path Effects editor, developing the body of the skeleton with a seven-step interpolation of two initial curves. A few extra &ldquo;dangling strands&rdquo; in the lower right portion of the skeleton completed the art.</p>
+<p>The artist passed the exported bitmap through G'MIC's -<a target="_parent" href="_smooth.shtml">smooth</a> command with a very high anisotropy setting. This last step affects how hair strands distribute themselves at the ends of the hair lock, which, without the smoothing step, can space themselves in a manner too uniform to seem natural. We go into this matter with greater detail in the walk through.</p>
+<p>The artist expresses the direction of incoming light, hair coloring, and a number geometric properties in the Hair lock filter dialog box, which we describe in the next section.</p>
+<h2 id="HairlockDialogBox">Hair Lock Dialog Box</h2>
+<p>The Hair lock filter needs three chunks of information, each having some particulars. In most cases, one expresses these with relative amounts that vary from zero ('not at all') to one ('a lot'), with the default calibrated so that the most typical input corresponds to &frac12;, 0.5 ('just right, usually'). Some particulars represent angles &ndash; light direction and hue &ndash; and these vary from 0 to 360&deg;. The base hair color is set by the standard color chooser dialog box common to all G'MIC-Gimp filters; the scalar controls run from 0 - 255 instead of 0 - 1.</p>
+<div id="Figure2" style="float: left; width: 3.5in; height: 3.5in; border: none; padding: 0in;"><img src="http://www.particularart.com/static/media/uploads/filters/hairlock/p_002.png" title="A Skeleton Image" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="300" width="300" />
+<p style="line-height: 100%; font-size: 10pt;"><i>Figure 2: A Skeleton image</i></p>
+</div>
+<h3 id="Geometry">Geometry</h3>
+<p>You tell the filter about the <i>Geometry</i> of your hair lock by providing a skeleton image depicting a few representative strands. This image should be your active layer when you choose the filter from the Gimp-G'MIC filter menus. Apart from that, the filter needs some guidance about the hair itself, how much hair may spread from skeletal lines, how dense is hair growth, and the average length of a hair strand.</p>
+<ol>
+<li><b>Spread </b> = float(0.5,0,1). The filter learns how to position hair strands from the orientation of skeletal lines. This control tells the plug-in how far it may position strands from the centerline of these skeletal lines. Close to zero, and hair strands will orient along skeletal lines and stay out of the regions between them. This extreme is useful for distributing hair unevenly. Think of the vanity locks that balding men (in denial) comb across their bare pates. Close to one, and the hair radiates out from skeletal lines and forms a uniform hair lock.</li>
+<li><b>Thickness</b> = float(0.5,0,1). This control sets the density of distribution. Close to zero, the filter will draw only a few strands, a quite straggly effect. Close to one, the filter draws a lot of hair, giving rise to the &ldquo;helmet hair&rdquo; effect &ndash; the hair mass seems to look like a hat sitting on the head. The middle setting of 0.5 is sufficiently sparse to allow lower hair plies to be (somewhat) seen through upper hair plies.</li>
+<li><b>Length</b> = float(0.5,0,1). This control establishes the length of hair strands. Near zero, these are very short, but lengthen for settings near one. Small values do <i>not </i>render short hair! The skeleton sets hair length, so when this setting is near zero, the filter renders hair strands at lengths set by the skeleton, but as series of dashes. This changes the visual texture of the hair, affecting the length of specular highlights and color variations, which tend to be more saturated. Behind the scenes, the filter starts with a series of colored dots. These diffuse along curves to an extent controlled by this setting, which, toward larger values, begin to coalesce. Colors merge, tending toward means that are often less saturated than the original dots.</li>
+</ol>
+<h3 id="Color">Color</h3>
+<p>These settings establish<i> basic </i>hair colorwith an added control for variance.&nbsp; In any case, you can &ndash; and probably will &ndash; further adjust the hair color in Gimp.</p>
+<ol>
+<li><strong>Color</strong> (dialog box) Sets a base hair color around which Variance (below) perturbs base color. Since you will more than likely build up your hair lock from two, three, or four plies, you should set the opacity to about 100 - 200. See the walkthrough, below, for further details.</li>
+<li><b>Variance </b>= float(0.5, 0, 1) Variance perturbs the base color on a strand-by-strand basis. The amount of this perturbation increases until&nbsp; variance dominates and the base hair color is subsumed. The most useful settings for &ldquo;normal&rdquo; hair reside around 0.1 to 0.3; no two strands are identically colored, nor do they vary from one another all that much.</li>
+</ol>
+<h3 id="Lighting">Lighting</h3>
+<p>Unless somebody turns on the light, setting hair color is for naught. Three controls, Azimuth, Highlight, and Specular, manage a simple kind of infinite-distance light source. The lighting model is the same as the Finger paint plug-in and its technical basis is a part of the <a target="_parent" href="fingerpainting.shtml#Lighting">Finger painting walk though</a>. We won't repeat those details here.</p>
+<ol>
+<li><b>Azimuth</b> = float(45,0,360) Set the direction from which the infinite-distance light streams. Ranges from zero to 360&deg; and defaults to 45.&deg; The default value lights up hair strands running transverse to the northwest; zero degrees lights from the left, 180&deg; lights from the right.</li>
+<li><b>Highlight</b> = float(0.5,0,1). Ranges from zero to one and defaults to 0.5. Larger numbers engender brighter highlights but less saturated and darker mid-tones.</li>
+<li><b>Specular</b> = float(0.5,0,1) Ranges from zero to one and defaults to 0.5. Unlike highlights, which project brighter, more saturated hair color, the specular glints are white.</li>
+</ol>
+<h2 id="HairlockWalkThrough">Hair lock Walk Through</h2>
+<p>Roughly, the hair lock filter hijacks the the smoothing geometry of one image to modify another.</p>
+<p>In the present case, we generate and modify a smoothing geometry of some line strokes to modify salt-and-pepper noise. Under processing by the <a target="_parent" href="_smooth.shtml">-smooth</a> command and given the smoothing geometry produced from our skeletal drawing, the impulses composing the salt-and-pepper noise elongate under diffusion into string-like structures, a serviceable emulation of hair. Details may be found at &ldquo;<a target="_parent" href="http://gmic.eu/tutorial/tensors-for-the-tonsorially-challenged.shtml"><i>Tensors for the Tonsorially Challenged.</i></a>&rdquo;</p>
+<p>There are few constraints on the skeletal drawing; it should have high contrast and consist of sharp edges. Conventionally, we use black on white gray scale images but white on black works too, as well as red on cyan.</p>
+<p>There are many ways to compose the skeletal drawing. Inkscape's Interpolate Sub-paths feature in its path editor is pretty popular with us because we can quickly compose a series of coordinated curves. We have also drawn straight lines in Gimp and then used the &ldquo;Distort &rarr; IWarp&rdquo; filter to sweep these into various curves. Freehand works as well, and photographs of real hair, a threshold set to capture hair strands, obtaining a black and white images with sharp edges.</p>
+<p>One can become quite creative with particulars and to good effect: the quality of the edges has a direct impact on hair appearance. Smooth lines, such as those depicted in <a target="_parent" href="#Figure2"><i><i>Figure 2</i></i></a>, give rise to a laminar flow. However, if we should subject this skeleton to some spread noise, the smooth flow becomes turbulent, the hair now wavy. In the following walk through, we will modify an initial skeleton a few times as we ply hair lock samples together.</p>
+<p>There are a couple of constructs in a skeletal drawing which do not work as expected. First, crossing lines will not result in crossed hair strands. The present implementation has no concept of depth and cannot interpret crossed lines as some strands of hair going under, or over, other strands. In contrast, one skeletal strand &ldquo;wins&rdquo; and cuts the other in two, producing a wholly different effect.</p>
+<p>Second, truly curly hair, the kind that forms ringlets, is not easy to emulate. This is also related to the matter of depth, as a ringlet is a spiraling hair lock with cross-over and depth. With practice, we can come close, but the present hair lock filter shows preferences for straight hair &ndash; even wavy hair &ndash; but hair with over-crossing curls and ringlets requires a certain finesse.</p>
+<p>Because the filter has no concept of depth, we almost always render a series of skeletons to different layers &ndash; emulating depth with a series of <i>hair plies</i>. This approach actually has considerable benefit, because we can modify the skeletal drawing and settings from layer to layer so that the arrangement of the hair changes from ply to ply. This gives rise to a heightened sense of realism, because, in actuality, the hair on our own heads varies with depth.</p>
+<p>We harness the drawing in <a target="_parent" href="#Figure2"><i>Figure 2,</i></a> which, no doubt you recognize, is a skeleton used in the front piece; it corresponds to the lock of hair that flows from the top of the young woman's head, behind her ear and around the back of her neck. We will not use the settings here that we used there, mainly so that we can illustrate the various ends that one can reach from a common start, though the work flow that we use here is the one used for the front piece.</p>
+<table id="Walkthrough" rules="all" class="table table-striped" style="border-color: #808080; border-width: 1px;" border="1">
+<tbody>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/filters/hairlock/p_003.png" title="p_003.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="300" width="300" /></td>
+<td>
+<h3 id="Preliminaries">Preliminaries</h3>
+<ol>
+<li>Start Gimp and load something which looks like it belongs to the class of the image on the left: high contrast lines. If you're just exploring, start with a single, opaque white layer, draw a few lines with the pencil tool, about 7 to 10 pixels around, and, optionally, swirl your strokes with a large setting &ldquo;Clock/Counterclockwise effect in Gimp's Distort &rarr; IWarp filter (200 or so).</li>
+<li>Start the Gimp-G'MIC plug-in. Check the filter inventory (middle pane). You should have a &ldquo;Rendering &rarr; Hair lock&rdquo; item. If not, work your way through the <a target="_parent" href="#1.2.Installing Gimp-G'MIC Filters|outline">installation guide</a>. You probably only need to refresh your filters.</li>
+<li>We want to use this skeleton for a number of plies, so we set the Gimp-G'MIC plug in to output to a &ldquo;New Layer&rdquo;, which preserves the skeleton for later use. The setting to adjust your output is on the left hand side, beneath the preview window, the second spinner from the top in the &ldquo;Input/Output:&rdquo; widget group. Adjust it to read &ldquo;New Layers(s)&rdquo;</li>
+<li>For educational benefit, you could set &ldquo;Output Messages&rdquo; to &ldquo;Very Verbose (console)&rdquo; or &ldquo;Very Verbose (logfile)&rdquo; and compare the (eventual) output to the <a target="_parent" href="dyidiffusion_tensors-for-the-tonsorially-challenged.shtml">Hair lock tutorial</a>. Just a hint, mind you.</li>
+<li>We suggest you uncheck the preview box. The filter can take a few seconds to render, and you don't want to waste time with uninteresting settings. Turn it on after you've made your initial settings.</li>
+<li>Before moving on, ensure that the preview window shows your skeleton very near to a 100% scale (the default, but it may have been readjusted). Under the covers, Hair lock employs anisotropic smoothing, which is very scale-dependent. If your preview image is smaller or larger than your actual artwork, it will not give a very representative preview when you eventually check the box back on again. </li>
+<li>Choose &ldquo;Rendering &rarr; Hair lock&rdquo; and review your options by reading &ldquo;<a target="_parent" href="#2.1.Hair Lock Dialog Box|outline">Hair Lock Dialog Box</a>.&rdquo; If you can't think of anything better, Try <strong>Our Settings</strong>.</li>
+</ol></td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/filters/hairlock/p_004.png" title="p_004.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="300" width="300" /></td>
+<td>&nbsp;
+<h3 class="western">Our Settings</h3>
+<p>Our settings are for a blondish, light brunette shade:</p>
+<ol>
+<li>Spread: 0.7 Thickness: 0.6 Length: 0.7 Hue: 40 Saturation: 127 Lightness: 127 Opacity: 175 Variation: 0.1 Azimuth: 90 Highlight: 0.5 Specular: 0.7</li>
+<li>We then hit &ldquo;O.K.&rdquo; However, if you'd like to see where you're driving, Try checking the preview box (is it close to 100%? See step 6 in the previous box). Play with settings if you like.</li>
+<li>Once you have hit &ldquo;O. K.&rdquo; wait about a minute. After such time, the Gimp main window should be similar to the image on the left, a partially transparent hair lock layer over the skeleton layer.</li>
+<li>The hair looks ghostlike, of course, because its opacity is 50%, and that is handy: you get a quick read on your rendered hair and the skeleton that structured it.</li>
+</ol></td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/filters/hairlock/p_005.png" title="p_005.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="300" width="300" /></td>
+<td>
+<h3 id="PlyOneReview">Ply One Review</h3>
+After we have contemplated our hair over the skeleton, we grow interested in a few more viewing contexts. One of our favorites is to lay a black layer beneath the transparent layer so that we can study the hair itself.<br /> Once studying the hair, our general conclusion, of course, is that it is too perfectly aligned for any human setting, save, perhaps, Junior Prom in an American high school, circa 1957. There's a solution to that; it is called making other plies. We also check light direction to ensure that it is consistent &ndash; or interestingly inconsistent &ndash; with whatever else may be in a larger illustration context.</td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/filters/hairlock/p_006.png" title="p_006.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="300" width="300" /></td>
+<td>
+<h3 class="western">Ply Two</h3>
+<p class="western">Once we've decided that this is a take, we go on to create s second ply, mainly to add variations to the hair structure. We do that by modifying the skeleton image.</p>
+<ol>
+<li>
+<p class="western">To kick that off make a copy of the skeleton layer (<i><span style="text-decoration: underline;">important</span></i>)! By duplicating the layer we have an easy recovery option, should we discover we don't like our modifications.</p>
+</li>
+<li>We then modify the skeleton copy. A favorite for us stems from the &ldquo;Distorts -&gt;IWarp tool. We criss-cross the skeleton with a low radius (&asymp; 10), low strength (&asymp; 0.1), Clock/Counterclockwise effect. See our modified skeleton on the left.</li>
+<li>We do the Hair lock filter again, same settings, but with this modified skeleton.</li>
+</ol></td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/filters/hairlock/p_007.png" title="p_007.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="300" width="300" /></td>
+<td>
+<h3 id="PlyTwoReview">Ply Two Review</h3>
+The modifications we performed on the skeleton manifest themselves in a somewhat wavier ply.<br /> We decide we like the modifications so far. We turn on visibility of the first ply and compare how they look together.</td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/filters/hairlock/p_008.png" title="p_008.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="300" width="300" /></td>
+<td>
+<h3 id="BothPliesTogether">Both Plies Together</h3>
+Because our plies are semi-transparent, the under ply shows through the over ply somewhat, and in this case it has sufficient presence that the wavy under ply breaks up the too-laminar appearance of the over ply, to good effect, or so we judge.<br /> We're not quite ready to call it a day. Usually, stray hair strands fly out from a body of hair; there is not so much of that in evidence here. To address the matter, We set out to make a third ply, sparse in character and with a slightly different hue, to overlay the first two plies. The shift in Hue will furnish accent color, breaking up the hair lock's somewhat monotone blond color.</td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/filters/hairlock/p_009.png" title="p_009.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="300" width="300" /></td>
+<td>
+<h3 id="PlyThree">Ply Three</h3>
+We return to the original skeleton layer and duplicate it again &ndash; always, in our work, keeping an unaltered version of the skeleton image handy in case we need to back out.<br /> We harness the IWarp tool again. We set the Move effect to a radius of 40 or so with a deformation amount of about 0.3, and shift the skeleton about thirty pixels this way and that. This amounts to a modest wave. We also used the Counterclockwise effect and a small radius of 8 and a strength of 0.1 to locally perturb hair strands.<br /> To make a sparse ply of hair, we change some settings. Thickness: 0.25 (from 0.6), Length: 0.20 (from 0.70), Redder color:&nbsp; Hue 20, (from 40), Saturation 204 (from 175) and Opacity 204&nbsp; (from 175)</td>
+</tr>
+<tr>
+<td width="256"><img class="img_block" src="http://www.particularart.com/static/media/uploads/filters/hairlock/p_010.png" title="p_010.png" style="margin: 3px; border: 0px solid #808080;" height="300" width="300" /></td>
+<td>
+<h3 id="PlyThreeReview">Ply Three Review</h3>
+The change in Hue from 40&deg; to 20&deg; shifted the hair color to a reddish auburn; it is more saturated as well, in keeping with our aim of having accent color. Less obvious is that the distribution of hair is much sparser than in the previous runs. If we compose this as the top ply, the bottom two will still mainly show through.</td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/filters/hairlock/p_011.png" title="p_011.png" class="img_right_nospacetop" style="margin: 3px; border: 0px solid #808080;" height="300" width="300" /></td>
+<td>
+<h3 id="AllPliesCombined">All Plies combined</h3>
+<p>With all three plies in place, we have a hair lock that suggests something of the vagaries of real hair. We don't think additional plies are in order. When ply opacity is around the default value of 127, three plies is about at the practical limit, as the combined opacity of the three layers theoretically exceeds 100% opacity.</p>
+<p>When evaluating the results of your efforts, consider rearranging the order of hair plies. Also consider shifting their opacities and color using Gimp's native tools. You may save yourself extra rendering.</p>
+<p>You might also consider making a second or third ply by simple layer copying and judicious Distorts &rarr;IWarp use. The key word is 'judicious.' IWarp unavoidably softens (blurs) pixels as it smears them around. This filter renders hair somewhat oversize so that you could get away with some of that; it all heals, mostly, when you reduce your image to its presentation size. However, there are limits. Also, when unwarped hair is plied over warped hair, the mix of soft focus / hard focus hair strands starts getting weird. For quality work, prefer oversized scales, though rendering takes longer, and adjusting the skeleton and rendering from that. </p>
+</td>
+</tr>
+</tbody>
+</table>
+<h2 id="Postscript">Postscript</h2>
+<p>We close out shop with interesting directions and some out-of-the-box notions.</p>
+<table rules="all" class="table table-striped" style="border-color: #808080; border-width: 1px;" border="1">
+<tbody>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/filters/hairlock/p_012.png" title="p_012.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="300" width="300" /></td>
+<td>&nbsp;
+<h4 class="AnisotropicSmoothingOfTheSkeleton">Anisotropic Smoothing of the Skeleton</h4>
+<p class="western">The one object that drives the Hairlock filter more than anything else is the skeleton image, which is capable of subtleties that even we don't fully appreciate. Interesting effects emerge when passing the skeleton image through the -<a target="_parent" href="_smooth.shtml">smooth</a> command, or, alternatively, Arto Huotari's Dream Smoothing filter. One goes for the extreme, setting anisotropy to one, sharpness to zero and large amplitudes (1000+) The thread-like artifacts which flow out from the ends of skeletal lines cause additional variation in the length of individual hair strands.</p>
+</td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/filters/hairlock/p_013.png" title="p_013.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="300" width="300" /></td>
+<td>
+<h4 id="RepetitivePatternsItsNotJustHair">Repetitive Patterns: It's Not Just Hair</h4>
+Using something like Inkscape's airbrush, which sprays an object with slight variations among scale and rotation transforms quickly generates skeletons for variational textures.<br /> It helps to remember that &ldquo;Hair lock&rdquo; is just a filter name; we need not abide by the somewhat arbitrary limits imposed by such names. Hair can be grass. It can be spaghetti. Or a mop head.<br /> We grew the grass in pretty much the same way that we grow hair; three plies, distorting the skeleton slightly with each pass, and varying hue, saturation, lightness, thickness and length.</td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/filters/hairlock/p_016.png" title="p_016.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="300" width="300" /></td>
+<td>
+<h4>Multiplying colored skeletons</h4>
+<p>When varying skeletons by warping or other means during the course of rendering individual hair plies, it is often useful to colorize the skeletons and set the composition operator of the layer to "Multiply" so that all skeletons are visible in an aggregate composition. This gives you a quick read on how the varying plies will interact with one another. The color of the skeleton has no bearing on the color of the hair, and so long as there is sufficient contrast, the filter will be able to detect edges in the skeleton and shape the hairlock.</p>
+</td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/filters/hairlock/p_015.png" title="p_015.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="300" width="300" /></td>
+<td>
+<h4 id="APinchWillDoYa">A Pinch Will Do Ya</h4>
+<p>From time to time, you may wish to draw a strand of clustered hair to a point. There is no easy way to express this dynamic in the skeletal image. Fortunately the Distorts &rarr; IWarp filter helps, though a certain amount of care needs to be taken.</p>
+<p>The game is to select a region around the ends of the hair strand you wish to adjust and then choose the IWarp filter. When in that filter, choose the Shrink tool and set a small Deform Radius (&asymp;15) and a low Deform Amount (&asymp;0.05) Stroke the strand, following its natural curl, so that it contracts toward the path of the tool's travel. To draw the hairstrands to a point, pull the Shrink tool slightly past the forming point. Just do one or two strokes, and then evaluate your results. It is easy to go overboard here and make a mess.</p>
+<p>The issue with the shrink tool is that it is necessarily also a stretch tool, and this stretching induces a slightly blurry region around your work area. Notice the sharp spectral glints of two hair strands to the right of the path, near the arrow head. Note that as they were drawn toward the point they also softened, reducing the amount of the glint. In this case, the glint was just a little too harsh in the first place and softening it helped, but this is not a general rule.</p>
+<p>The key is to work deftly and sparingly. If you have to work over too large an area, consider adjusting your skeleton instead.</p>
+</td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/filters/hairlock/p_014.png" title="p_014.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="300" width="300" /></td>
+<td>
+<h4 id="SpreadVSkeleton">Spread v. Skeleton</h4>
+How much spread? How close should skeletal elements be spaced? Trick questions, these, because they're interrelated. These questions hinge on resolution.<br /> If you just need a mass of hair and don't have much reason to worry about the intricacies of twisting and turning, then set spread to 0.7 or above and space skeletal elements as far apart as you can get away with. This is a very coarse resolution setting.<br /> Sometimes, a wide spread away from a skeletal stroke gets in the way of other pictorial elements. Perhaps you need hair locks to curl j<i>ust so</i> and <i>right there!</i> These considerations all point you to a higher resolution setting. In this trend, you need to cut spread back and have more and more closely spaced skeletal elements.<br /> Then there is the texture of the hair. If you need lanky, stringy hair, such as what afflicts some balding G'MIC documentation writers, naturally cut back on the spread regardless of the spacing of skeletal elements.<br /> Spread seems to naturally decrease with age, at least with hair, and that is curious because with buttocks there appears to be an inverse relationship &ndash; but we're digressing, aren't we?</td>
+</tr>
+</tbody>
+</table>
+<p><em>Garry Osgood</em></p>
+
+
+
+   
+</body></html>

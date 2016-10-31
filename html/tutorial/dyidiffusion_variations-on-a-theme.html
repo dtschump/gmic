@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="tutorial.css">
+<script type="text/javascript" src="highslide/highslide.js"></script>
+<link rel="stylesheet" type="text/css" href="highslide/highslide.css" />
+<script type="text/javascript">
+hs.graphicsDir = 'highslide/graphics/';
+hs.wrapperClassName = 'wide-border';
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<body>
+
+
+      
+
+
+
+<h2><a target="_parent" name="1.2.Variations On a Theme|outline"></a>Variations On a Theme</h2>
+<p>We won't give you blow-by-blow walk throughs in the following as most of the steps are the same as what you have already seen in the previous receipe. Changes are in red. Also, we've fetched Marek Ślusarczyk's lovely street scene into a local file called 'street.png,' just to cut the verbiage.</p>
+<h3>Variation One: Blur Horizontally.</h3>
+<p>Same graduated blur, but we want the direction to be left-to-right, not up-and-down.</p>
+<table style="border-color: #808080; border-width: 1px; border-style: solid;" rules="all" class="table table-striped" border="1">
+<tbody>
+<tr>
+<td colspan="2"><tt>gmic <span style="color: #9a3000;">-input street.png</span> \<br /> 100%,100%,1,1,'h-y' -normalize[-1] 0,1 \<br /> <span style="color: #9a3000;">'(0^1^0)'</span> \<br /> -resize[-1] [-3],[-3],[-1],[-1],1 \<br /> -split[-1] c \<br /> -append[-4,-3] c \<br /> -append[-2,-1] c \<br /> -eigen2tensor[-2,-1] \<br /> -repeat 3 \<br /> -smooth[-2] [-1],50 \<br /> -done -rm[-1] </tt></td>
+</tr>
+<tr>
+<td width="256"><p><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/dyidiffusion/dyid-08.png" title="dyid-08.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="283" width="400" /></p>
+</td>
+<td>Here&lsquo;s the Big Change: we made <b>Cosine</b> constant one and <b>Sine</b> constant zero, instead of the other way around. Recall that the sine of 90&deg; is one, and its cosine is zero. 90&deg; points from top to bottom. Or if you want, bottom to top. With that we blurred in a vertical orientation. Here, cosine is one and sine is zero, which corresponds to 0&deg; and we blurred in a horizontal direction.<br /> <br /> Do you see an emerging pattern? You betcha.</td>
+</tr>
+</tbody>
+</table>
+<h3>Variation Two: Blur in Any Direction</h3>
+<p>Same graduated blur, but we want to choose any direction.</p>
+<table style="border-color: #808080; border-width: 1px; border-style: solid;" rules="all" class="table table-striped" cols="2" border="1">
+<tbody>
+<tr>
+<td colspan="2"><tt>gmic <span style="color: #9a3000;">angle=38.629</span> \<br /> -input street.png \<br /> 100%,100%,1,1,'h-y' \<br /> -normalize[-1] 0,1 \<br /> <span style="color: #9a3000;">'(0^{cos(pi*$angle/180)}^{sin(pi*$angle/180)})'</span> \<br /> -resize[-1] [-3],[-3],[-1],[-1],1 \<br /> -split[-1] c \<br /> -append[-4,-3] c \<br /> -append[-2,-1] c \<br /> -eigen2tensor[-2,-1] \<br /> -repeat 3 \<br /> -smooth[-2] [-1],50 \<br /> -done \<br /> -rm[-1]</tt></td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/dyidiffusion/dyid-09.png" title="dyid-09.png" style="margin: 3px; border: 0px solid #808080;" height="283" width="400" /></td>
+<td>G'MIC lets us declare variables (<code>angle=38.629</code>) and reference the values later: <code>$angle</code>. The '<code>$</code>' signet tells G'MIC to look up the value of 'angle' and substitute the expression with its value. That's exactly what we did later in the expression <code>pi*$angle/180</code>. That expression converts degrees into radians, as there happens to be one <code>pi</code>&rsquo;s worth of radians for every one hundred eighty degrees and radian measure is what G'MIC expects.<br /><br /> In the Greater Scheme Of Things, we're now setting <b>Cosine</b> and <b>Sine</b> to the angle by which we want to blur. Play with this yourself. Go put bunches of different angles in there.</td>
+</tr>
+</tbody>
+</table>
+<h3>Variation Three: Blur From Bottom To Top</h3>
+<p>We want to do everything we've learned up to now, but vary the blur in the opposite direction.</p>
+<table style="border-color: #808080; border-width: 1px; border-style: solid;" rules="all" class="table table-striped" border="1">
+<tbody>
+<tr>
+<td colspan="2"><tt>gmic angle=<span style="color: #9a3000;">62.754</span> \<br /> street.png \<br /> 100%,100%,1,1,'<span style="color: #9a3000;">y</span>' \<br /> -normalize[-1] 0,1 \<br /> '(0^{cos(pi*$angle/180)}^{sin(pi*$angle/180)})' \<br /> -resize[-1] [-3],[-3],[-1],[-1],1 \<br /> -split[-1] c \<br /> -append[-4,-3] c \<br /> -append[-2,-1] c \<br /> -eigen2tensor[-2,-1] \<br /> -repeat 3 \<br /> -smooth[-2] [-1],50 \<br /> -done \<br /> -rm[-1]</tt></td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/dyidiffusion/dyid-10.png" title="dyid-10.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="283" width="400" /></td>
+<td>No big deal blurring backwards. We changed the angle just for variation, giving you an example of how it's done, and we changed the ramp formula from<code>'h-y'</code>to <code>'y'</code> so that the ramp runs from zero to one instead of the other way around. In case you've missed it, you should spend some time with our <a target="_parent" href="ramps.shtml">Ramp Recipes</a>. Every gray scale ramp you have There can be used Here. You can make a bazillion ramps and never repeat yourself. Now think of all the different ways you can make a ramp: <b><i>Every single way can make a blur!</i></b> Open road off to far horizons;<br /> we've hardly even taken the first steps. And yet there's more.</td>
+</tr>
+</tbody>
+</table>
+<h3>Variation Four: Blur With Any Ramp Orientation</h3>
+<p>Really. We don't <i>have</i> to go straight up and down all the time, do we?</p>
+<table style="border-color: #808080; border-width: 1px; border-style: solid;" rules="all" class="table table-striped" cols="2" border="1">
+<tbody>
+<tr>
+<td colspan="2"><tt>gmic <span style="color: #9a3000;">ang1=7.438 ang2=17.513</span> \<br /> street.png \<br /> 100%,100%,1,1,'x*cos(pi*<span style="color: #9a3000;">$ang1</span>/180)+y*sin(pi*<span style="color: #9a3000;">$ang1</span>/180)' \<br /> -normalize[-1] 0,1 \<br /> <span style="color: #9a3000;">'(0^{cos(pi*$ang2/180)}^{sin(pi*$ang2/180)})'</span> \<br /> -resize[-1] [-3],[-3],[-1],[-1],1 \<br /> -split[-1] c \<br /> -append[-4,-3] c \<br /> -append[-2,-1] c \<br /> -eigen2tensor[-2,-1] \<br /> -repeat 3 \<br /> -smooth[-2] [-1],50 \<br /> -done \<br /> -rm[-1]</tt></td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/dyidiffusion/dyid-11.png" title="dyid-11.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="283" width="400" /></td>
+<td>The Big Thing here is the introduction of another variable and a formula which lets us run a <a target="_parent" href="ramps_input-and-fill.shtml">ramp at any angle</a>, which is something you have may have noticed if you went through the Ramp Recipes. So rather than run a ramp from top to bottom, or left to right, we run it at an angle of 7.48&deg;, which is almost a horizontal ramp at a slight tilt. We introduced another angle variable just so that we could set the blur direction independently of the ramp direction.</td>
+</tr>
+</tbody>
+</table>
+<h3>Variation Five: Introducing <b>EigenTwo</b></h3>
+<p>You may have noticed that we haven't done anything with the <b>EigenTwo</b> image yet. It has been zero all the while. So what happens when we give that knob a twirl?</p>
+<table style="border-color: #808080; border-width: 1px; border-style: solid;" rules="all" class="table table-striped" cols="2" border="1">
+<tbody>
+<tr>
+<td colspan="2"><tt>gmic street.png \<br /><span style="color: #9a3000;">100%,100%,1,1,'h-y' \<br /> 100%,100%,1,1,'y' \</span><br /> -normalize[<span style="color: #9a3000;">-2,-1</span>] 0,1 \<br /> <span style="color: #9a3000;">'(0^1)'</span> \<br /> -resize[-1] [<span style="color: #9a3000;">-4</span>],[<span style="color: #9a3000;">-4</span>],[-1],[-1],1 \<br /> -split[-1] c \<br /> -append[-4,-3] c \<br /> -append[-2,-1] c \<br /> -eigen2tensor[-2,-1] \<br /> -repeat 3 \<br /> -smooth[-2] [-1],50 \<br /> -done \<br /> -rm[-1]</tt></td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/dyidiffusion/dyid-12.png" title="dyid-12.png" height="283" width="400" /></td>
+<td>
+<p>Wuff.<br /> <br /> OK, a minor bit. We changed the image reference to -4 because we separated out the <b>EigenTwo</b> image from the one-pixel proto-image, making our image list longer by one. We then set up <b>EigenTwo</b> as a ramp running from zero to one, with <b>EigenOne</b> running from one to zero. We also put the business of running things at angles to one side to make the effect straightforward.<br /> <br /> But what exactly <i>is</i> the effect?<br /> <br /> It seems that we are ramping from a horizontal blur on the bottom to a vertical blur on the top, with a kind of neutral blurring in the middle.<br /> <br /> Well, it is time to put the G'MIC toy to one side because we now have some Explaining to do.</p>
+<p>See you on the next page.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<table rules="all" style="border-color: #7f7f7f; border-width: 1px; background-color: #ffffff;" align="center" border="1" cellpadding="2">
+<tbody>
+<tr>
+<td><a target="_parent" href="dyidiffusion_graduated-blurs.shtml"><span class="internal"><span class="internal">Graduated Blurs</span></span></a></td>
+<td><a target="_parent" href="dyidiffusion_eigenvalues-and-eigenvectors.shtml"><span class="internal"><span class="internal">Eigenvalues and Eigenvectors</span></span></a></td>
+</tr>
+</tbody>
+</table>
+<p>&lt;</p>
+
+
+
+   
+</body></html>

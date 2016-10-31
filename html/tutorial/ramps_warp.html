@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="tutorial.css">
+<script type="text/javascript" src="highslide/highslide.js"></script>
+<link rel="stylesheet" type="text/css" href="highslide/highslide.css" />
+<script type="text/javascript">
+hs.graphicsDir = 'highslide/graphics/';
+hs.wrapperClassName = 'wide-border';
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<body>
+
+
+      
+
+
+
+<h1>Warp</h1>
+<p>We can use <a target="_parent" href="_warp.shtml">-warp</a> to shear any ramp into a different orientation:</p>
+<center>
+<table rules="all" style="border-color: #7f7f7f; border-width: 1px;" border="1">
+<tbody>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/ramps/ramp100.png" title="Ramp sheared by 100 pixels" style="margin: 3px; border: 0px solid #808080;" height="256" width="256" /></td>
+<td><code>gmic 256,256,1,1,'x' \<br />&nbsp;256,256,1,1,'y' \<br />&nbsp;-normalize[-1] -100,100 \<br />&nbsp;100%,100% \<br />&nbsp;-append[-2,-1] c \<br />&nbsp;-warp[-2] [-1],1,2,1 \<br />&nbsp;-rm[-1]<br />&nbsp;-normalize 0,255</code></td>
+</tr>
+</tbody>
+</table>
+</center>
+<p>Notice, at the outset, that we have made three images: two ramps and a black image. With the help of <a target="_parent" href="http://gmic.eu/reference.shtml#append">-append</a>, we turn the second and third images into a two channel displacement field. We use that to shear the first image, the horizontal ramp.</p>
+<p>The parameters to -normalize (3<sup>rd</sup> line) control the warp. The first parameter -100, shears the top edge 100 pixels to the left and the second parameter, 100, shears the bottom edge to the right, a kind of push-pull (pull-push?). Some people find this approach more intuitive than the trigonometric snippet, though that approach makes the better ramp. Note that the shear has left constant white and black regions at the northeast and southwest corners. These regions increase in size with the magnitude of the shear and should that be a problem, avoid shears.</p>
+<table rules="all" style="border-color: #7f7f7f; border-width: 1px; background-color: #ffffff;" border="1" cellpadding="2" align="center">
+<tbody>
+<tr>
+<td><a target="_parent" href="ramps_input-and-fill.shtml">Input and Fill</a></td>
+<td><a target="_parent" href="ramps_blurring.shtml"><span class="internal">Blurring</span></a></td>
+</tr>
+</tbody>
+</table>
+
+
+
+   
+</body></html>

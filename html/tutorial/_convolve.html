@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="tutorial.css">
+<script type="text/javascript" src="highslide/highslide.js"></script>
+<link rel="stylesheet" type="text/css" href="highslide/highslide.css" />
+<script type="text/javascript">
+hs.graphicsDir = 'highslide/graphics/';
+hs.wrapperClassName = 'wide-border';
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<body>
+
+
+      
+
+
+
+<h1>-convolve</h1>
+<p><img src="http://www.particularart.com/static/media/uploads/command_reference/convolve/kernel.png" title="Aggregation of one pixel in the convolution image" style="margin: 3px; border: 0px solid #808080; float: left;" height="250" width="250" />A convolution of a <em>kernel (</em>or<em> mask)</em> and an <em>input image</em> arises from the traversal of the kernel over the image. At each step, the kernel's origin coincides with a select image pixel, with the kernel establishing a neigborhood over which the convolution takes place. The command multiplies kernel pixels with their image counterparts, giving rise to an array of intermediary products. The sum of these products sets the intensity of a pixel in the convolution image corresponding to the select image pixel. The shape of the kernel establishes the neighborhood and the pixel values comprising the kernel determine a particular kind of convolution.</p>
+<p>Kernels are commonly small in relation to the input image, though they need not be. They have a local origin, which, in the G'MIC command, is at or near the center of the kernel and this aligns with the input pixel during each aggregation. Masks may consist of positive and negative values, so, in principle, any number of convolution effects are possible, though in practice there are a small number of standard masks that give rise to particular applications. Blurring, edge detection, image sharpening, simulated <a target="_parent" href="http://en.wikipedia.org/wiki/Bokeh">photographic bokeh</a> and detail amplification are some of the more common ones.</p>
+<p>The format of the command is:</p>
+<p><code>-convolve [mask],_boundary,_is_normalized={ 0 | 1 }</code></p>
+<p><em>mask:</em> A (typically small) image, serving as the convolution kernel. In the absence of a <a target="_parent" href="command-decorations.shtml">limiting selection</a> decorating the right hand side, the command will apply the mask to all images on the stack.</p>
+<p><em>boundary policy:</em> Near edges, the neighborhood may encompass 'off-image' pixels; this flag defines a default value for such. '0' (zero: 'dirichlet' ) regards these as zero-valued (black). '1' (unity: 'neumann') extends the values of edge pixels out to infinity so that the value of an off-image pixel is taken to be that of the nearest edge pixel.</p>
+<p><em>normalize:</em> Kernels typically have attendant image gain, so that the dynamic range of the convolution differs from the input image. This flag normalizes the convolution to have a dynamic range approximately from negative to positive one.</p>
+<h2>Application: Uniform Spline Basis Functions</h2>
+<p><video id="cnvlv" width="720" height="480" style="float:left;margin:7px;" poster="http://www.particularart.com/static/media/uploads/command_reference/convolve/cnvlv_poster.png" preload="metadata" controls="controls"><source src="http://www.particularart.com/static/media/uploads/command_reference/convolve/cnvlv.mp4" type="video/mp4" /><source src="http://www.particularart.com/static/media/uploads/command_reference/convolve/cnvlv.webm" type="video/webm" /><source src="http://www.particularart.com/static/media/uploads/command_reference/convolve/cnvlv.ogv" type="video/ogg" /><source src="http://www.particularart.com/static/media/uploads/command_reference/convolve/cnvlv.avi" type="video/avi" /><object id="cnvlv" width="720" height="480" data="/static/grappelli/tinymce/jscripts/tiny_mce/plugins/media/moxieplayer.swf" type="application/x-shockwave-flash"><param name="src" value="/static/grappelli/tinymce/jscripts/tiny_mce/plugins/media/moxieplayer.swf" /><param name="flashvars" value="url=/static/media/uploads/command_reference/convolve/cnvlv.mp4&amp;poster=/static/media/uploads/command_reference/convolve/cnvlv_poster.png" /><param name="allowfullscreen" value="true" /><param name="allowscriptaccess" value="true" /></object> </video> The animation on the left illustrates the successive effects of a <em>box filter</em> on a one dimensional image 512 pixels wide. The top image is black but for a single intensity one pixel &mdash; an <em>impulse</em>&nbsp;&mdash; in the middle of the interval (red). The kernel, a so-called <em>box filter</em> of 64 constant, intensity one pixels, moves from left to right, evaluating each image pixel in turn (the box filter is blue).</p>
+<p>The bottom image depicts the convolution of the box filter and the image with its single impulse: its pixels are successively set with the evaluation of the neighborhoods formed by the box filter as it moves from left to right. At the outset, with the filter situated wholly on black pixels, the sixty four intermediary products, each zero, aggregate to a sum of zero, so the corresponding pixels of the convolution are black.</p>
+<p>When some part of the box filter coincides with the impulse, a non-zero result occurs among the intermediary products. At unity, the box filter pixel coincident with the impulse forms the only non-zero product in the intermediary, as, at unity, the impulse is the only non-zero pixel in the image, The aggregation of the entire neighborhood is therefore unity, a circumstance that necessarily prevails so long as the impulse is in the neighborhood of the box filter. When the kernel and impulse are again disjoint, the intermediary product array reverts to being entirely zero and, concomittantly, convolution pixels, as sums of the intermediary array, are again black. Thus, the convolution reflects all pixels that are within the box filter's width of the impulse, consequently forming an image of the box filter in the convolution. It is a quality of impulses to capture images of convolution kernels.</p>
+<p>The animation goes on to illustrate successive convolution rounds using the same box filter, with the convolution arising from one stage serving as input to the next. In the second round, the box filter convolves with itself, giving rise to a <em>hat function</em>, a spline comprised of two linear segments. The convolution arising from the third stage is a three segment quadratic spline, each piece a degree two polynomial. The convolution arising from the fourth stage is a four segment cubic spline, each piece being a degree three polynomial. The degree elevation of these polynomial segments stems from the convolution of the box filter and the image, which, in its summing of areas under curves, finds the integral of the intensity function, the variation of luminance of the image. Suitably normalized, these polynomial splines serve as basis functions for splines that are defined over uniformly spaced knot sequences, <a target="_parent" href="http://www2.maths.ox.ac.uk/chebfun/examples/approx/html/BSplineConv.shtml">establishing a connection</a> between spline curves and convolutions.</p>
+<h2>Examples</h2>
+<table rules="all" class="table table-striped" align="left" border="0">
+<tbody>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/command_reference/convolve/cnvlv_trgt.png" title="Red Green and Blue Pulses" style="margin: 3px; border: 0px solid #808080;" height="200" width="200" /></td>
+<td><a target="_parent" href="img/_convolve_figure_1.jpg" class="highslide" onclick="return hs.expand(this)"><img src="http://www.particularart.com/static/media/uploads/command_reference/convolve/figure_1_thm.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="150" width="200" /></a></td>
+<td>The image on the far left contains three single pixel impulses on the middle row, one red, one green (in the middle of the image) and one blue. The chart just to the left graphs the middle row values, showing the three single pixels.&nbsp;</td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/command_reference/convolve/cnvlv_out_000000.png" style="margin: 3px; border: 0px solid #808080;" title="Convolved with a Goudy ampersand." height="200" width="200" /></td>
+<td><a target="_parent" href="img/_convolve_figure_2.jpg" class="highslide" onclick="return hs.expand(this)"><img src="http://www.particularart.com/static/media/uploads/command_reference/convolve/figure_2_thm.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="150" width="200" /></a></td>
+<td>We invoke the -convolve command on the previous image, employing a Goudy ampersand for a kernel, to which we are inordinately partial. Impulses echo kernels in the resulting convolution, producing here red, green and blue Goudy ampersands. Impulses by nature are not easily discerned in images; this convolution application is one that makes such features easily visible.</td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/command_reference/convolve/cnvlv_out_000001.png" style="margin: 3px; border: 0px solid #808080;" title="Convolved with a Goudy ampersand again." height="200" width="200" /></td>
+<td><a target="_parent" href="img/_convolve_figure_3.jpg" class="highslide" onclick="return hs.expand(this)"><img src="http://www.particularart.com/static/media/uploads/command_reference/convolve/figure_3_thm.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="150" width="200" /></a></td>
+<td>
+<p>We pass the Goudy Ampersand kernel over the previous convolution, producing a second convolution. The graph on the left illustrates a complex and nuanced effect, a kind of a vibration of Goudy Ampersands.</p>
+<p></p>
+</td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/command_reference/convolve/g3.png" style="margin: 3px; border: 0px solid #808080;" title="Anisotropic Ciao Bella and Gaussian Kernel." height="200" width="200" /></td>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/command_reference/convolve/cb_g3.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" anisotropic="" ciao="" bella="" slightly="" blurred="" height="200" width="200" /></td>
+<td>An 8x8 <a target="_parent" href="_gaussian.shtml">Gaussian kernel</a> blurs images uniformly. It is not uncommon to form an elliptic Gaussian kernel and rotate it, giving rise to a kind of "motion blur" similar to that made by a moving camera with a slow shutter.&nbsp; &nbsp;</td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/command_reference/convolve/g2.png" style="margin: 3px; border: 0px solid #808080;" title="Anisotropic Ciao Bella and an Embossing Kernel." height="200" width="200" /></td>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/command_reference/convolve/cb_g2.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" title="Embossed Ciao Bella with Pseudo Light from the Upper Right" height="200" width="200" /></td>
+<td>Taking a <a target="_parent" href="_gradient.shtml">gradient</a> of an eliptical Gaussian kernel produces a positive/negative pulse pair, an approximation of a <a target="_parent" href="http://en.wikipedia.org/wiki/Gabor_filter">Gabor filter</a>. This filter reacts to edges oriented at the same angle as the ellipse. When tracing from upper right to lower left, the filter produces strong positive signals in dark-to-light transitions, and strong negative signals in light-to-dark transitions&nbsp;&mdash; an embossing effect.</td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/command_reference/convolve/g1.png" style="margin: 3px; border: 0px solid #808080;" title="Anisotropic Ciao Bella and a Fancy Double Edging Kernel" height="200" width="200" /></td>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/command_reference/convolve/cb_g1.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" title="Double-edged Ciao Bella as a kind of pencil sketch." height="200" width="200" /></td>
+<td>An<a target="_parent" href="http://en.wikipedia.org/wiki/Airy_disk"> approximate Airy Disc</a> with a positive central spike surrounded by a ring of negative values serves as an edge detector.&nbsp; This particular kernel is somewhat removed from an ideal Airy disk, giving rise to some distortions which mimic a pencil. The convolution was inverted to give a semblance of dark marks on a white background.</td>
+</tr>
+</tbody>
+</table>
+<p></p>
+<p><em>Garry Osgood</em></p>
+
+
+
+   
+</body></html>

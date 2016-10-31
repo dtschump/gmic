@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="tutorial.css">
+<script type="text/javascript" src="highslide/highslide.js"></script>
+<link rel="stylesheet" type="text/css" href="highslide/highslide.css" />
+<script type="text/javascript">
+hs.graphicsDir = 'highslide/graphics/';
+hs.wrapperClassName = 'wide-border';
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<body>
+
+
+      
+
+
+
+<h1>-blur_selective</h1>
+<p><img src="http://www.particularart.com/static/media/uploads/command_reference/blur_selective/fm_b4naftr.png" title="Before and after: selective blur noise removal. " class="img_block" style="margin: 3px; border: 0px solid #808080; float: left;" height="200" width="200" />Selective blur preserves edges while reducing noise. Both phenomena exhibit very high rates of change, but noise tends to random, mutually cancelling impulses while edges exhibit a degree of coherency. This command tends to agressively blur noise in locales where the average rate of change is relatively low, impulses notwithstanding, while avoiding the softening of edges.</p>
+<p>The command has the following format:</p>
+<p><code>-blur_selective: sigma&gt;=0,_edges&gt;0,_nb_scales&gt;0</code></p>
+<ul>
+<li><em>sigma:</em> sets the standard variation, or spread of a gaussian kernel for blurring in regions of locally constant color and luminosity. a non-negative number. One must supply a value; there are no defaults. The actual blurring in a particular locale will be less, or even zero, in the proximity of edges. See <em>_nb_scales</em>, below.</li>
+<li><em>_edges:</em> sets edge sensitivity. Higher numbers (greater than unity) tends toward preserving edges, but also noise. Lower numbers (0.01 - 0.4) permits more aggressive blurring, but can cause edges to disappear. The optimal value depends on the particularities of an image; 0.5 is a good starting point. The parameter is optional and defaults to 0.5.</li>
+<li><em>_nb_scales:</em> sets the number of steps in degree of blurring from the maximum established by <em>sigma</em>, above, and zero (no blurring whatsoever). The actual standard variation applied to a particular locale depends on the average rate of change of color or luminosity in that locale, tending to zero as the local rate of change in color or luminosity increases. Higher values divide the range between zero and sigma into a greater number of smaller steps and tends to eliminate mach banding, but the command runs longer. This parameter is optional and defaults to 5 steps.</li>
+</ul>
+<h2>Selective Gaussian Scaling</h2>
+<p><img style="float: left; margin: 3px; border: 0px solid #808080;" class="img_block" src="http://www.particularart.com/static/media/uploads/command_reference/blur_selective/fm.png" height="750" width="450" />-blur_selective has two goals: preserve edges and smooth noise out of regions which, on average, do not change much, such as the blue background of the happy face or the yellow areas of the face. The second goal favors blurring, but this is not conducive to the first: preserving edges.</p>
+<p>To resolve this, -blur_selective employs -<a target="_parent" href="_gradient_norm.shtml">gradient_norm</a> as an edge detector. -gradient_norm produces a gray scale image where regions of rapid luminance or chromatic change in the subject image translate to light regions in the gradient norm, which are otherwise dark. It is sensitive to noise, but even more sensitive to the abutting of dissimilar regions in the original, producing a stronger signal &mdash; an edge &mdash; than noise pixels in isolation.&nbsp;</p>
+<p>The command generates extraction masks from a <a target="_parent" href="http://gmic.eu/reference.shtml#quantize">-quantize</a>d version of the gradient norm, one for each scale specified by <em>nb_scales</em>. The masks stemming from the lighter portions of the gradient norm isolate edges in the original, those stemming from darker regions isolate constant color and luminance regions. Masks on each end of this 'detail' spectrum can work in tandem to serve both goals. The less 'edgy' masks isolate regions in which noise may be aggressively smoothed. Those on the other end can isolate and copy off edges before any sort of blurring of the original takes place.</p>
+<p>In operation, blur_selective derives extraction masks as needed from the quantized version of the gradient norm, starting with those on the edgy end of the detail spectrum. At each iteration, the command first uses the extraction mask to copy a region and then blurs the subject image a fraction &mdash; in particular, the fraction of<em> sigma</em> over the number of scales, less one. The quantized version of the gradient norm also serves as a save buffer, since the region reflecting a particular degree of edginess coincides with the shape of the mask and the region copied from the subject image; at each iteration, a portion of the output replaces the used part of the quantized gradient norm.</p>
+<p>The first iteration copies off edges from an unblurred&nbsp; subject image. Then, as the iteration proceeds, the extraction masks select from progressively blurred versions of the subject image, reducing noise somewhat in an inverse relation to the 'edginess' associated with the extraction mask. The last iterations mainly extract regions of largely constant luminance and chrominance.</p>
+<p>When the iteration completes, the output image completely replaces the gradient norm and is a mosaic of the original subject image at different degrees of blurring, with edges preserved, but with noise reduced in more constant regions.</p>
+<p>An optimal combination of parameters is image dependent and requires some experimentaton. If possible, one should find a relatively constant region, such as the sky in an outdoor photograph, and choose a <em>sigma</em> that just blurs out the noise. Too high a value of <em>sigma</em> tends to create halos around edges. The choice of <em>_edges</em> should be just high enough to preserve edges without an undue amount of noise also being preserved. <em>_nb_scales</em> should be just enough to render indistinguishable edges between regions with differing levels blurring.</p>
+<p><em>Garry Osgood</em></p>
+
+
+
+   
+</body></html>

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="tutorial.css">
+<script type="text/javascript" src="highslide/highslide.js"></script>
+<link rel="stylesheet" type="text/css" href="highslide/highslide.css" />
+<script type="text/javascript">
+hs.graphicsDir = 'highslide/graphics/';
+hs.wrapperClassName = 'wide-border';
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<body>
+
+
+      
+
+
+
+<h1>-eigen2tensor</h1>
+<p><img src="http://www.particularart.com/static/media/uploads/command_reference/eigen2tensor/frntswrl.png" title="Pattern made by a conjured diffusion tensor field" class="img_block" style="margin: 3px; border: 0px solid #808080; float: left;" height="300" width="300" />The -eigen2tensor command computes <em>tensor fields</em> for client commands like <a target="_parent" href="_smooth.shtml">-smooth</a>, given an ordered pair of input datasets representing vector lengths and orientations (<a target="_parent" href="dyidiffusion_eigenvalues-and-eigenvectors.shtml"> eigenvalues and eigenvectors</a> ). Elements of these fields correspond with pixels of some initial operand image and typically quantify various dynamics in the locales of those pixels.</p>
+<p>A related G'MIC command, <a target="_parent" href="_eigen.shtml">-eigen</a>, performs the&nbsp;complementary operation of extracting eigenvalue - eigenvector pairs from tensor fields. -eigen and -eigen2tensor essentially switch between two representations of an image's intensity dynamics: tensors on the one hand and eigenvalue - eigenvector datasets on the other.</p>
+<p>The command takes no parameters but requires that the selected images form ordered datasets of eigenvalue - eigenvector pairs.</p>
+<h2 info="TensorFields">Tensor Fields</h2>
+<p>A<em> tensor field</em> is a specialized G'MIC dataset associated with a companion image. Elements of the tensor field are in a one-to-one correspondence with pixels of the companion image and form 2x2 or 3x3 matrices ( <em>tensors</em> ) that characterize particular aspects of the pixels' locales. Commonly those aspects include intensity gradients in a pixel's immediate neighborhood.</p>
+<p>Tensor fields arise from an analysis undertaken by some other G'MIC command, such as <a target="_parent" href="_structuretensors.shtml">-structuretensors</a> or <a target="_parent" href="_diffusiontensors.shtml">-diffusiontensors</a>. The former detects image features, especially edges, and packages information about the strength and orientation of those features in a tensor field. The latter finds a<em> smoothing geometry</em> for an image which becomes an input to the <a target="_parent" href="_smooth.shtml">-smooth</a> command.</p>
+<p>For single slice images, with depths equal to one, associated tensor fields consist of 2x2 matrices, which are sufficient to characterize local pixel dynamics along the x and y axes. Tensor fields comprised of 3x3 matrices are necessary for companion images with greater depth, as dynamics can be measured along the z axis as well.</p>
+<p>The data encoded in a tensor field may be "unfolded" by -eigen into a less compact, but &mdash; for some types of computations&nbsp;&mdash;&nbsp; more accessible form consisting of a set of eigenvalue fields together with a set of affiliated eigenvectors, altogether two separate datasets. For example, it is possible to compose a tensor field by hand where the separated eigenvalue-eigenvector form is an intermediary. When one is finished with such a pair, -eigen2tensor can compact the intermediary into a single tensor field suitable for other G'MIC commands.</p>
+<p>&nbsp;The particular organization of these unfolded datasets depend on whether the companion image is a single (depth == 1) or multiple (depth &gt; 1) sliced image.</p>
+<h3>&nbsp; Single:</h3>
+<ol>
+<li>Each dataset has two channels.</li>
+<li>The eigenvalue dataset is non-negative. (a) channel zero holds the first eigenvalue for each pixel in the companion image, channel one holds the second eigenvalue</li>
+<li>Each channel in the eigenvector dataset holds one component of the gradient vector, (a) channel zero contains the 'x' component, (b) channel 1 conains the 'y' component. These are scaled to form unit length vectors. That is, squaring the two channel values and adding them produces one, plus or minus a vanishingly small amount accounting for rounding error (on the order of 1&times;10<sup>-15</sup>). The contour eigenvector is inferred, as it is always orthogonal to the gradient eigenvector.</li>
+</ol>
+<h3>Multiple:</h3>
+<ol>
+<li>Both eigenvalue and eigenvector datasets have the same number of slices as the operand image. Each slice has the same structure</li>
+<li>Each eigenvalue slice has three channels; each eigenvector slice has six.</li>
+<li>Each eigenvalue slice is non-negative and, for each pixel,&nbsp; the three channels hold, respectively, the first, second and third eigenvalues.</li>
+<li>For each eigenvector slice, the six channels hold the x, y, and z components for two of the three eigenvectors. We can infer the third as it is orthogonal to the plane formed by the other two. These vectors have unit length.</li>
+</ol>
+<h2>Application: Depicting a Tensor Field</h2>
+<p>We can conjure tensor fields from the Aether and pretend that whatever dynamics they encode pertain to some noise image. The noise image is unrelated to the tensor field and that is atypical. Commonly, a tensor field relates to a corresponding image through the action of some analytic G'MIC command like -structuretensors or -diffusiontensors, but in this application we're pursuing Art. Perhaps, more precisely, we are using noise to visualize a tensor field. The results can be quite pretty.</p>
+<p>In any case, we will first conjure from the Aether the eigenvalue and eigenvector components. We will conjure up four gray scale images which we will call <strong>EigenOne</strong>, <strong>EigenTwo</strong>, <strong>Cosine</strong>, and <strong>Sine</strong>. This terminology comes from "<a target="_parent" href="dyidiffusion.shtml">Do Your Own Diffusion Tensor Fields</a>" which (we think) might be worth your while to read.</p>
+<table rules="all" class="table table-striped" style="border-color: #808080; border-width: 1px;" cols="2" border="1">
+<tbody>
+<tr>
+<td colspan="2"><tt>gmic -srand 35195 \<br /> -repeat 2 \<br />&nbsp;&nbsp; 6,6,1,1,'2*u-1' \<br />&nbsp;&nbsp; -resize2dx[-1] 300,5 \<br />&nbsp;&nbsp; -cut[-1] -0.75,0.75 \<br />&nbsp;&nbsp; -normalize 0,1 \<br /> -done \<br /></tt></td>
+</tr>
+<tr>
+<td width="256"><p><img src="http://www.particularart.com/static/media/uploads/command_reference/eigen2tensor/ette-000.png" alt="Random EigenOne" title="ette-000.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="300" width="300" /> <strong>1a.&nbsp;EigenOne</strong></p>
+<p><img src="http://www.particularart.com/static/media/uploads/command_reference/eigen2tensor/ette-001.png" alt="Random EigenTwo" title="ette-001.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="300" width="300" /><strong>1b.&nbsp;EigenTwo</strong></p>
+<p></p>
+</td>
+<td>
+<p>We hereby declare that these two images are, respectively, <strong>EigenOne</strong> and <strong>EigenTwo</strong>, datasets describing pixel-level intensity dynamics for some yet-to-be conjured <strong>PrettyPicture</strong>. Normally one computes such from pre-existing pretty pictures, but we are in contrary moods and prefer putting carts before horses. Or, perhaps, computing the intensity dynamics of an image before the image even exists.</p>
+<p>The datasets started out as 6 &times; 6 noise fields; note the '2*u-1' generator attached to the image specification. We resize with a cubic interpolator, truncate to the middle 75% of the range, and then normalize to the range [0, &hellip; 1] so that usually one or the other eigenvalue dominates for each pixel of the <strong>PrettyPicture</strong> that doesn't exist yet. These are all heuristic decisions, made in the name of Art</p>
+</td>
+</tr>
+<tr>
+<td colspan="2"><tt>8,8,1,1,'2*u-1' \<br /> -resize2dx[-1] 300,5 \<br /> -normalize[-1] -1,1 \<br /></tt></td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/command_reference/eigen2tensor/ette-002.png" alt="Random Sine Dataset" title="ette-002.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="300" width="300" /><br /> <strong>2.&nbsp;Cosine</strong></td>
+<td>Next we conjure <strong>Cosine</strong> from a similarly randomized field, but we're working at the slightly finer resolution of 8 &times; 8., another heuristic. The range of orientations that are available to us run from zero to &pi;, correspondingly <strong>Cosine</strong> runs from -1 to 1. If you are wondering about the half-circle range, we'll confess at this juncture that we are making a fake diffusion tensor field, one that we will feed to -smooth. Diffusing an image from northeast to southwest is pretty much the same as diffusing an image from southwest to northeast. The scrub marks are parallel, no matter which end the arrow head sits, so there'is no call for the complete circular range.</td>
+</tr>
+<tr>
+<td colspan="2"><tt>--sqr[-1] \<br /> -sub[-1] 1 \<br /> -mul[-1] -1 \<br /> -sqrt[-1] \<br /></tt></td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/command_reference/eigen2tensor/ette-003.png" title="ette-003.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="300" width="300" /><br /><strong>3.&nbsp;Sine</strong></td>
+<td>
+<p>We derive <b>Sine</b> from <b>Cosine</b> via eveyrone's favorite trigometric identity: cos<sup>2</sup><em>u</em> + sin<sup>2</sup><em>u</em> = 1; though the computation represented in the pipeline looks more like this: sin u =&nbsp;&radic;(1 - cos<sup style="font-size: x-small;">2</sup>u) The<strong> Sine</strong> of all possible orientations of eigenvectors range from 0 to 1, corresponding to the angular range of the half circle: 0&nbsp;&hellip; &pi;.</p>
+<p>We now have<strong> EigenOne, EigenTwo, Cosine</strong> and<strong> Sine</strong> conjured out of the Aether, image dynamics which correspond to no image we know about. <strong><br /></strong></p>
+</td>
+</tr>
+<tr>
+<td colspan="2"><tt>-append[-4,-3] c \<br />-append[-2,-1] c \<br /></tt></td>
+</tr>
+<tr>
+<td width="256"><p><img src="http://www.particularart.com/static/media/uploads/command_reference/eigen2tensor/ette-004.png" alt="EigenOne + EigenTwo" title="ette-004.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="300" width="300" /><strong>4a.&nbsp;EigenOne (channel 0: Red) + EigenTwo (Channel 1: Green)</strong></p>
+<p><img src="http://www.particularart.com/static/media/uploads/command_reference/eigen2tensor/ette-005.png" alt="Cosine (Channel 0: Red) + Sine (Channel 1: Green)" title="ette-005.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="300" width="300" /> <strong>4b.&nbsp;Cosine (Channel 0: Red) + Sine (Channel 1: Green)</strong></p>
+</td>
+<td>
+<p>Here we assemble our randomly derived tensor field. We append <strong>EigenOne</strong> and <strong>EigenTwo</strong> along the spectral image dimension, ditto <strong>Cosine</strong> and <strong>Sine</strong>. This leaves the eigenvalue/eigenvector dataset pair that -eigen2tensor expects to find on the image list.</p>
+</td>
+</tr>
+<tr>
+<td colspan="2"><tt>-eigen2tensor[-2,-1] \<br />100%,100%,1,3 \<br />-noise[-1] 8,2 \<br />-dilate_circ 3 \<br />-rgb2hsl[-1] \<br />-split[-1] c \<br />-mul[-3] 0.5 \<br />-add[-3] 135.0 \<br />-append[-3,-2,-1] c \<br />-hsl2rgb[-1] \<br />-normalize[-1] 0,255 </tt>\</td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/command_reference/eigen2tensor/ette-006.png" alt="Tensor Field" title="ette-006.png" class="img_block" height="300" width="300" /><br />5a.&nbsp;Tensor field produced from<strong> EigenOne,</strong> <strong>EigenTwo</strong>, <strong>Cosine</strong> and <strong>Sine</strong>.<br /> <img src="http://www.particularart.com/static/media/uploads/command_reference/eigen2tensor/ette-007.png" title="ette-007.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="300" width="300" /><br />5b.&nbsp;Emergence of <strong>PrettyPicture</strong> a. k. a. Noise</td>
+<td>
+<p>Following the invocation of -eigen2tensor, we have a tensor field dataset that represents a smoothing geometry.</p>
+<p>We have no idea what image the smoothing geometry is for, but, when in pursuit of a Higher Art, We don't sweat the details. No picture? Well, heck, there is always noise.</p>
+<p>There is a serious side to this whimsy. Noise is a good way to gauge the behavior of smoothing tensor fields.</p>
+<p>We use the salt and pepper variety of noise, which fills all channels uniformly with unit-sized impulses. Here, it is scattershot over a three channel image and dilated somewhat.</p>
+<p><strong></strong>The noise becomes our ersatz <strong>PrettyPicture</strong>. Being a uniform random pattern of points, this noise is especially sensitive to the aggregate behavior of the smoothing geometry encoded in the tensor field. We can imagine this field as being comprised of small ellipses, at various sizes, eccentricities and orientations, with each ellipse centered on a pixel. Some will blur isotropically &ndash; rather the same way in all directions. Other ellipses, the more eccentric ones, will be distinctly anisotropic in character and smooth only in particular directions.&nbsp;</p>
+<p>&nbsp;</p>
+</td>
+</tr>
+<tr>
+<td colspan="2"><tt>-repeat 3 \<br /> -smooth[-1] [-2],100 \<br /> -done \<br /> -rm[0] \<br /> -normalize[-1] 0,255 \<br /> -apply_gamma 3.5 \<br /> -o[-1] ppict.png</tt></td>
+</tr>
+<tr>
+<td>
+<p><span class="internal"><img src="http://www.particularart.com/static/media/uploads/command_reference/eigen2tensor/ette-008.png" title="ette-008.png" class="img_block" style="margin: 3px; border: 0px solid 808080;" height="300" width="300" /><strong>6.&nbsp;PrettyPicture</strong>, now smoothed.</span></p>
+</td>
+<td>
+<p>Our <strong>PrettyPicture</strong> after three passes using -smooth.</p>
+<p>With practice, one can read the behavior of the tensor field from the faux color display. Saturated blue and red regions both correspond to very elliptic tensors; blue has a very strong vertical bias, red a horizontal one. These colors engender very anisotropic blurring. The noise pattern elongates into hairlike patterns.</p>
+<p>Other areas exhibit less strongly oriented blurring and correspond to areas of less saturated hue.</p>
+<p>Finally, gray areas have little or no directional bias whatsoever. These areas behave very much like conventional isotropic blurring kernels.</p>
+<p>Apart from orientation, the magnitude of the major and minor axes of the blurring ellipses dictate how much 'smearing' prevails in the locality of the pixel. Our concocted tensor field has one 'dead spot' in the upper left hand corner where the noise is unaltered. The corresponding region in the tensor field is a very dark gray. The discrete noise grains have been smeared into uniform colors in other areas.</p>
+<p></p>
+</td>
+</tr>
+</tbody>
+</table>
+
+
+
+   
+</body></html>

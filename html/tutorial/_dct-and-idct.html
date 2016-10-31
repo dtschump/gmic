@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="tutorial.css">
+<script type="text/javascript" src="highslide/highslide.js"></script>
+<link rel="stylesheet" type="text/css" href="highslide/highslide.css" />
+<script type="text/javascript">
+hs.graphicsDir = 'highslide/graphics/';
+hs.wrapperClassName = 'wide-border';
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<body>
+
+
+      
+
+
+
+<h1>-dct and -idct</h1>
+<div id="Frame1" style="float: left; width: 4.5in; height: 4.75in; border: none; padding: 0in;"><img title="dct-00.png" src="http://www.particularart.com/static/media/uploads/command_reference/dct/dct-00.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="400" width="400" />
+<p style="font-size: small; line-spacing: 100%; margin-right: 5px;"><em>Figure 1: In that fleeting instant before the analysis transform, the Integer Kid glared at his mirrored, odd columns straight in their eye.</em></p>
+</div>
+<p>The Discrete Cosine Transform and Inverse Discrete Cosine Transform are functional work-a-likes of the Discrete Fourier Transform (<a target="_parent" href="_fft.shtml"><tt>-fft</tt></a>) and Inverse Discrete Fourier Transform (<a target="_parent" href="_fft.shtml"><tt>-ifft</tt></a>).</p>
+<p>The format of the commands are identical to <tt>-fft</tt> and <tt>-ifft</tt>:</p>
+<p><code>-dct { x | y | z }..{ x | y | z } |</code></p>
+<p>The commands take a single string consisting of combinations of the letters 'x', 'y' and 'z.'&nbsp; If present, this string argument restricts the transform to just those cited axes.</p>
+<p>A dataset nominally of a particular dimension may be evaluated as a collection of lower-dimensioned datasets. For example, with the argument 'xy', a pair of single channel images with dimensions 256,256,256,1, nominally a three dimensional field, may be viewed as a sequence of 256 two dimensional fields. Each z-increment indexes a two dimensional 'xy' dataset which is transformed independently of the others.</p>
+<p>Similarly a pair of 256,256,1,1 single channel images on the image list can be processed as 256 one dimensional datasets. 'x' indicates a row-by-row organization, 'y' indicates column-by-column.</p>
+<p>The practical advantage of this pair of commands over <tt>-fft</tt> and <tt>-ifft</tt> may be found in images, which commonly do not consist of complex number data sets. The Discrete Cosine Transform operate on real data and produce real data, so a fiat imaginary is unnessary.</p>
+<h2 id="DataReflection">Data Reflection</h2>
+<p>The command exploits a property of images which are symmetrical across an axis, exhibiting mirror symmetry, such as a wine glass across the vertical axis. The Fourier Analysis Transform of such images have a zero imaginary component, which can be then disregarded.</p>
+<p>Images do not typically exhibit symmetry across any axis, however. That said, the necessary condition can be approximated by separating an image into odd and even columns (or rows), mirroring one set and then appending the sets together as in Figure 1.</p>
+<p>Reflecting an image upon itself is not difficult with G'MIC; the technique illustrates the versatility of the language's <a target="_parent" href="command-decorations.shtml">selection syntax</a> in conjunction with creating a local environment:</p>
+<table rules="all" class="table table-striped" style="border-color: #808080; border-width: 0px;" align="center" border="0"><colgroup> <col width="30%" /> <col width="70%" /> </colgroup>
+<tbody>
+<tr>
+<td><tt>gmic -input integerkid.jpg</tt></td>
+<td>&nbsp;#&nbsp;Fetch any sort of image. \</td>
+</tr>
+<tr>
+<td><tt>&nbsp;-split[-1] x</tt></td>
+<td>&nbsp;#&nbsp;turns one image into a large series of one column images\</td>
+</tr>
+<tr>
+<td><tt><a target="_parent" href="_local.shtml">&nbsp;-local</a>[1--1:2]</tt></td>
+<td>&nbsp;#&nbsp;The selection pulls into a local environment only the odd-numbered columns \</td>
+</tr>
+<tr>
+<td><tt>&nbsp;&nbsp;-append x</tt></td>
+<td>&nbsp;#&nbsp;Only the odd-numbered single column images are visible in the local environment. The local environment now has one image of only the odd numbered columns. \</td>
+</tr>
+<tr>
+<td><tt>&nbsp;&nbsp;-mirror x</tt></td>
+<td>&nbsp;#&nbsp;Mirrors the odd-column-only image about the x axis. \</td>
+</tr>
+<tr>
+<td><tt>&nbsp;-endlocal</tt></td>
+<td>&nbsp;#&nbsp;Releases the local environment back into the overall image list. \</td>
+</tr>
+<tr>
+<td><tt>&nbsp;-mv[1] [-1]<br /></tt></td>
+<td>&nbsp;#&nbsp;Shifts the odd-columns-only image to the end of the image list. \</td>
+</tr>
+<tr>
+<td><tt>&nbsp;-append x<br /></tt></td>
+<td>&nbsp;#&nbsp;Appends the even-columns-only into the left half of the image; appends the odd-columns-only image into the right half. \</td>
+</tr>
+</tbody>
+</table>
+<p>The one dimensional transforms along rows will give rise to imaginary data that will be very nearly zero. The same separation and mirroring process then takes place along columns and the one dimensional transform along columns also gives rise to imaginary data very near zero. One may ignore these very nearly zero imaginary data and spectrally edit just the real components.</p>
+<p><em> Garry Osgood</em></p>
+
+
+
+   
+</body></html>

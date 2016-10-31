@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="tutorial.css">
+<script type="text/javascript" src="highslide/highslide.js"></script>
+<link rel="stylesheet" type="text/css" href="highslide/highslide.css" />
+<script type="text/javascript">
+hs.graphicsDir = 'highslide/graphics/';
+hs.wrapperClassName = 'wide-border';
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<body>
+
+
+      
+
+
+
+<h1>Ramps &ndash; a.k.a. &ldquo;Gradients&rdquo;</h1>
+<p><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/ramps/ramprs.png" title="gmic -function1d 1.0,0,160,127,255,255,232,383,200,511,30 -expand_y[-1] 256 -function1d 0.3,0,250,127,225,255,92,383,160,511,40 -expand_y[-1] 256 -function1d 0.5,0,100,127,230,255,132,383,27,511,120 -expand_y[-1] 256 -a c -polar2euclidean[-1] 0.5,0.5,2.0,2 -d -resize2dx 300,5 -normalize 0,255" class="img_block" style="float: left; margin: 3px; border: 0px solid #808080;" height="301" width="300" />In common with many paint programs, Gimp has a <a target="_parent" href="http://docs.gimp.org/en/gimp-concepts-gradients.html">gradient tool</a>, which makes a field of pixels that change at a constant rate from one color to another. They run along a piece of geometry such as a line segment (linear gradients), but variants along circles (radial) and other flavors are common.</p>
+<p>G'MIC employs &ldquo;gradient&rdquo; for a related command which finds tonal variations in an image and generates difference maps. (see <a target="_parent" href="_gradient.shtml">-gradient</a>). This usually sends new folk off to find the &ldquo;real&rdquo; G'MIC gradient command, which, in so many words, they won't find.</p>
+<p>That's because there is More Than One Way To Do Gradients in G'MIC and the various methods employ a variety of commands. We'll call these gradient-like things <strong>ramps</strong>, however, to avoid confusion with G'MIC's notion of a gradient, borrowing the term from procedural texturing which use such as pattern parameters.</p>
+<p>Some common ramp recipes are on the following pages, these more or less equivalent to Gimp's linear offerings. Visualizations are on the left and the pertinent G'MIC commands (<a target="_parent" href="http://en.wiktionary.org/wiki/snippet">snippets</a>) are on the right. These snippets are meant to be copied and pasted into a UNIX <a target="_parent" href="http://en.wikipedia.org/wiki/Bash_shell">Bourne or Bash shell</a> or similar, a trick that (probably) won't work with a Windows command shell. For the Redmond bereft, the Gimp-G'MIC plugin furnishes access to the G'MIC command line. Look for the &ldquo;Custom Code&rdquo; filters in the &ldquo;Various&rdquo; set. If you do use the Custom Code filter in Gimp-G'MIC, you don't have to transcribe the '\' character at the end of the lines in our examples; they were put there so that the UNIX shell received what appeared to be one long line.</p>
+<p>If you are going to use these examples with a paint program like Gimp or Krita, be sure to finish up with a <a target="_parent" href="_normalize.shtml">-normalize</a> command (-normalize 0,255 for eight bit, -normalize 0,65535 for sixteen bit channels).</p>
+<ol>
+<li><a target="_parent" href="ramps_input-and-fill.shtml">Input and Fill</a></li>
+<li><a target="_parent" href="ramps_warp.shtml">Warp</a></li>
+<li><a target="_parent" href="ramps_blurring.shtml">Blurring</a></li>
+<li><a target="_parent" href="ramps_resizing.shtml">Resizing</a></li>
+<li><a target="_parent" href="http://tools-and-toys/gmic/beginners-cookbook/ramps/general-ramps/">General Ramps</a></li>
+<li><a target="_parent" href="ramps_one-dimensional-functions.shtml">One Dimensional Functions</a></li>
+<li><a target="_parent" href="ramps_applying-a-curve.shtml">Applying a Curve</a></li>
+<li><a target="_parent" href="ramps_remapping-space.shtml">Remapping Space</a></li>
+</ol>
+<table rules="all" style="border-color: #7f7f7f; border-width: 1px; background-color: #ffffff;" cellpadding="2" align="center" border="1">
+<tbody>
+<tr>
+<td><span style="color: #7f7f7f;">Nothing Preceding</span></td>
+<td><a target="_parent" href="ramps_input-and-fill.shtml">Input and Fill</a></td>
+</tr>
+</tbody>
+</table>
+
+
+
+   
+</body></html>

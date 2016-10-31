@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="tutorial.css">
+<script type="text/javascript" src="highslide/highslide.js"></script>
+<link rel="stylesheet" type="text/css" href="highslide/highslide.css" />
+<script type="text/javascript">
+hs.graphicsDir = 'highslide/graphics/';
+hs.wrapperClassName = 'wide-border';
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<body>
+
+
+      
+
+
+
+<h1>-threshold</h1>
+<p><img src="http://www.particularart.com/static/media/uploads/command_reference/threshold/sidopera.png" title="Sidney Opera House, middle: -threshold 127,1, right: -threshold 127,0" class="img_block" style="margin: 3px; border: 0px solid black; float: left;" height="240" width="320" />Threshold sets pixels with intensities less than a given cutoff value to zero. Two variants determine how the remaining pixels are treated.</p>
+<p>In the 'soft' command variant (middle slice, left), threshold subtracts the cutoff intensity, <em>c</em>, from the image and then sets pixels with negative intensities to zero. In the middle slice, the cutoff intensity was 127, which -threshold subtracted from the image, then set all pixels with intensities less than zero to zero, in essence using the <a target="_parent" href="http://gmic.eu/reference.shtml#cut">-cut</a> command. The operation put the middle slice maximum intensity at 127 from an original value of 254.</p>
+<p>In the 'hard' variant of the command (righthand slice), threshold sets all intensities less than the cutoff to zero (127 again) and intensities equal to or greater than the cutoff to one. It converts the channel to a binary dataset with 0 or 1 values. The hard variant of threshold often prepares masks, but for use in other paint programs, it is prudent to normalize the output of the hard variant to a range compatible with the paint program, typically 0,255 for 8 bit programs such as Gimp 2.8.</p>
+<p>It is possible to use -threshold without parameters. This brings up the display window (see <a target="_parent" href="_display.shtml">-display</a>). One may press left mouse button down in the display window and drag the pointer to the left and right to interactively set the threshold. Releasing the left mouse button sets the threshold at the last value derived from mouse movements.</p>
+<p><a target="_parent" href="img/_threshold_graph.jpg" class="highslide" onclick="return hs.expand(this)"><img src="http://www.particularart.com/static/media/uploads/command_reference/threshold/graph_small.png" title="Soft and Hard Thresholding" class="img_block" style="margin: 3px; border: 0px solid black; float: right;" height="270" width="360" /></a>Threshold may operate on multi-channel (multi-spectral) images in both soft and hard modes. In this case, the command operates independently on each channel. Threshold also works along the depth dimension, supporting multi-slice images.</p>
+<p>The format of the command is:</p>
+<p><code>-threshold: value[%],_is_soft | (no args)</code></p>
+<ul>
+<li><em>value</em>: Specifies the cutoff intensity below which image pixels are set to zero. May be expressed as an absolute intensity, or in percentage terms, where it expresses the fractional part of the interval, i<sub>M</sub> &minus; i<sub>m</sub>, between an image's maximum value i<sub>M</sub> and minimum value i<sub>m</sub>.</li>
+<li><em>_is_soft</em>: an optional boolean flag. When zero, the default, -threshold produces binary images where input pixels at or exceeding the threshold value are set to logical one ('True') in the output channel, and are otherwise set to zero ('False'). When one, -threshold produces grayscale images with new intensities reduced from the old by a difference equal to the cutoff and with negative values set to zero. In this mode, the new maximum intensity relates to the old in the following way: i'<sub>M</sub> = i<sub>M</sub> &minus; <em>c</em>, for <em>c</em>, the cutoff value.</li>
+</ul>
+<p style="font-size: small;"><em>Image: <a target="_parent" href="http://en.wikipedia.org/wiki/Sydney_Opera_House">Sydney Opera House</a> from Dawes Point, Sydney, Australia. <a target="_parent" href="http://commons.wikimedia.org/wiki/User:Gobeirne">Greg O'Beirne</a>, <a target="_parent" href="http://commons.wikimedia.org/wiki/File:SydneyOperaHouse9_gobeirne.jpg" class="highslide" onclick="return hs.expand(this)">Wikimedia Commons</a>.</em></p>
+<p><em>Garry Osgood</em></p>
+
+
+
+   
+</body></html>

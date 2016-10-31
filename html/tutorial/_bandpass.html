@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="tutorial.css">
+<script type="text/javascript" src="highslide/highslide.js"></script>
+<link rel="stylesheet" type="text/css" href="highslide/highslide.css" />
+<script type="text/javascript">
+hs.graphicsDir = 'highslide/graphics/';
+hs.wrapperClassName = 'wide-border';
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<body>
+
+
+      
+
+
+
+<h1>-bandpass</h1>
+<p><img src="http://www.particularart.com/static/media/uploads/command_reference/bandpass/wnb.png" title="Bandpass example" class="img_block" style="margin: 3px; border: 0px solid #808080; float: left;" height="200" width="200" />This command isolates a band of frequencies in an image's <em>spectral representation</em> and then re-renders it spatially.&nbsp; The details of the new image are just those attuned with frequencies included in the chosen band. These images typically have negative minimum values and average values very near zero, so often need to be<a target="_parent" href="images-as-datasets.shtml"> adjusted for display</a>.</p>
+<p>The format of the bandpass command is:</p>
+<p><code>-bandpass f<sub>cl</sub>[%],f<sub>cu</sub>[%]</code></p>
+<p>Defaults: f<sub>cl</sub> = 0 f<sub>cu</sub> = 20%</p>
+<p>Two parameters, each <em>relative frequencies</em>, set the lower and upper boundaries of the passband, the chosen spectral region. <em></em>A relative frequency of 1.0 (100%) corresponds to a pixel wavelength equal to the square root of 2.0, approximately 1.4142136. On the low end of the spectrum, the average value of an image, a constant bias level over the entire image, may be thought of as having an infinite wavelength and a relative frequency of zero (0%).</p>
+<p><em>Cutoff wavelengths</em>, &lambda;, measured in pixels, establish the smallest and largest wave lengths in a bandpass-filtered image. These equate to relative frequency, &omega;<sub>r</sub>, through:</p>
+<p><img src="http://www.particularart.com/static/media/uploads/command_reference/bandpass/bandpass.png" title="Wavelength (in pixels) to relative frequency" class="img_block" style="vertical-align: baseline; margin: 3px; text-align: center;" height="48" width="150" /></p>
+<p>when the pixel depth of the image is one. If the wavelengths in a filtered image need to fall within the range of four to ten pixels, then the lower cutoff wavelength is ten pixels and corresponds to a frequency of&nbsp; 0.027053. Concurrently, the upper cutoff wavelength is four pixels and the corresponding frequency is 0.161237; the following command establishes the requested passband:</p>
+<p><code>-bandpass 0.027053,0.161237</code></p>
+<p>The "W&amp;B" monograph at the beginning of this article shows the command's effect.</p>
+<h2>Theory</h2>
+<p>Images have representation in both spatial and spectral domains. The <a target="_parent" href="http://en.wikipedia.org/wiki/Discrete_Fourier_transform">Fourier Transform</a> ('Fourier analysis') translates images from their spatial to spectral representations, the domain where the -bandpass command operates. The -bandpass command performs spectral filtering, preserving certain spectral coefficients and zeroing others out, The inverse Fourier Transform ('Fourier synthesis') returns the spectrally modified image to the spatial domain, where the effects of the spectral filtering are realized.</p>
+<p>The spatial representation is closely allied with how we see objects in space. A pixel constitutes a definite space point, offset with respect to an origin by length, height and depth coordinates, and marked with a particular hue. One could regard a large rectangular array of such pixels, in aggregate, 'painting' the image one point at a time.</p>
+<p>From such a collection of regularly spaced samples, Fourier analysis finds analogous spectral coefficients. These correspond to spatial domain sine curve wave forms of various frequencies, scalings, orientations, and phases that, in aggregate, also 'paints' the image, though not by one point at a time, but through constructive reinforcement and destructive interference of aptly chosen waveforms. The inverse transform, Fourier synthesis, finds such an apt set of waveforms in the spatial domain when given a set of coefficients in the spectral domain.</p>
+<p>A large class of filtering schemes may be effected by manipulating spectral coefficients. -bandpass is one such, serving as a front-end to <a target="_parent" href="_fft.shtml">-fft</a> and <a target="_parent" href="http://gmic.eu/reference.shtml#ifft">-ifft</a>, respectively G'MIC's Fourier analysis and synthesis commands. In operation, the -bandpass command composes a boolean mask; those coefficients falling into the pass part of the mask are preserved, and are set to zero otherwise. These masks appear as rings around the spectral origin, the lower and upper boundary frequencies of the passband command corresponding to the inner and outer radii of the rings. Spectral coefficients falling within such rings are preserved, those falling outside are set to zero. Since these radii are measured off from the origin of the spectral domain, their lengths correspond to lower and upper cutoff frequencies.</p>
+<p>The spatial waveforms arising out of such elided sets of coefficients only partially paint the image, the collection of wave forms corresponding to those spectral coefficients preserved by the mask. The effects of this depend primarily on the chosen lower and upper cutoff frequencies and the magnitude of their differences.</p>
+<h2>Examples</h2>
+<p>The following gallery shows how a canonical image changes though various -bandpass spectral filters. The red horizontal line marks a particular pixel row. The graphs below depict the row in both the spatial (top) and spectral (bottom) domains.</p>
+<table frame="border" rules="all" class="table table-striped" style="border-color: #808080; border-width: 1px;" align="center" border="1">
+<tbody>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/command_reference/bandpass/tgr.png" title="Unfiltered Tiger" class="img_block" style="border: 0px solid #808080; margin: 3px;" height="248" width="248" /></td>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/command_reference/bandpass/tgr_0-0-001547.png" title="Lowpass: Cutoff wavelength: 42 px" class="img_block" style="border: 0px solid #808080; margin: 3px;" height="248" width="248" />&nbsp;</td>
+</tr>
+<tr>
+<td><a target="_parent" href="img/_bandpass_tgrgrph_lrge.jpg" class="highslide" onclick="return hs.expand(this)"><img src="http://www.particularart.com/static/media/uploads/command_reference/bandpass/tgrgrph.png" title="Unfiltered spatial/spectral graphs, row 153" class="img_block" style="border: 0px solid #808080; margin: 3px;" height="120" width="240" /></a></td>
+<td><a target="_parent" href="img/_bandpass_tgrgrph_0-0-001547_lrge.jpg" class="highslide" onclick="return hs.expand(this)"><img src="http://www.particularart.com/static/media/uploads/command_reference/bandpass/tgrgrph_0-0-001547.png" title="Lowpass: Cutoff wavelength: 42 px spatial/spectral graphs, row 153" class="img_block" style="border: 0px solid #808080; margin: 3px;" height="120" width="240" /></a></td>
+</tr>
+<tr>
+<td><em>Unfiltered image</em></td>
+<td>
+<p><em>Low pass (infinite to 42 pixel wavelength)</em></p>
+<p><code>...-bandpass 0,0.001547...</code></p>
+</td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/command_reference/bandpass/tgr_0-054662-1.png" title="High Pass" class="img_block" style="border: 0px solid #808080; margin: 3px;" height="248" width="248" /></td>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/command_reference/bandpass/tgr_0-000501-0-5.png" title="Wide Band" class="img_block" style="border: 0px solid #808080; margin: 3px;" height="248" width="248" /></td>
+</tr>
+<tr>
+<td><a target="_parent" href="img/_bandpass_tgrgrph_0-054662-1_lrge.jpg" class="highslide" onclick="return hs.expand(this)"><img src="http://www.particularart.com/static/media/uploads/command_reference/bandpass/tgrgrph_0-054662-1.png" class="img_block" style="border: 0px solid #808080; margin: 3px;" height="120" width="240" /></a></td>
+<td><a target="_parent" href="img/_bandpass_tgrgrph_0-000501-0-5_lrge.jpg" class="highslide" onclick="return hs.expand(this)"><img src="http://www.particularart.com/static/media/uploads/command_reference/bandpass/tgrgrph_0-000501-0-5.png" title="Wide_band" class="img_block" style="border: 0px solid #808080; margin: 3px;" height="120" width="240" /></a></td>
+</tr>
+<tr>
+<td>
+<p><em>High pass (7 to 1.4142 pixel wavelengths)</em></p>
+<p><code>...-bandpass 0.054662,1...</code></p>
+</td>
+<td>
+<p><em>Wide band (74 to 2.149 pixel wavelength)</em></p>
+<p><code>...-bandpass 0.0005,0.5...</code></p>
+</td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/command_reference/bandpass/tgr_0-00266-0-00631.png" title="Low Octave Notch" class="img_block" style="border: 0px solid #808080; margin: 3px;" height="248" width="248" /></td>
+<td width="256"><img style="margin: 3px; border: 0px solid #808080;" class="img_block" src="http://www.particularart.com/static/media/uploads/command_reference/bandpass/tgr_0-0-1612370-0-565826.png" title="High Octave Notch" height="248" width="248" /></td>
+</tr>
+<tr>
+<td><a target="_parent" href="img/_bandpass_tgrgrph_0-00266-0-00631_lrge.jpg" class="highslide" onclick="return hs.expand(this)"><img src="http://www.particularart.com/static/media/uploads/command_reference/bandpass/tgrgrph_0-00266-0-00631.png" title="Low pass notch " class="img_block" style="border: 0px solid #808080; margin: 3px;" height="120" width="240" /></a></td>
+<td><a target="_parent" href="img/_bandpass_tgrgrph_0-0-1612370-0-565826_lrge.jpg" class="highslide" onclick="return hs.expand(this)"><img class="img_block" src="http://www.particularart.com/static/media/uploads/command_reference/bandpass/tgrgrph_0-0-1612370-0-565826.png" title="High Pass Notch" style="border: 0px solid #808080; margin: 3px;" height="120" width="240" />&nbsp;</a></td>
+</tr>
+<tr>
+<td>
+<p><em>Low pass notch (32 to 20.78 pixel wavelength)</em></p>
+<p><code>...-bandpass 0.00266,0.00631...</code></p>
+</td>
+<td>
+<p><em>High pass notch (4.0 to 2.0 pixel wavelength)</em></p>
+<p><code>...-bandpass 0.161237,0.565826...</code></p>
+</td>
+</tr>
+</tbody>
+</table>
+<h2>Application</h2>
+<table border="0">
+<tbody>
+<tr>
+<td width="256"><p><img src="http://www.particularart.com/static/media/uploads/command_reference/bandpass/Bay_of_Burgas.jpg" title="Bay of Burgess 1856" class="img_left" style="margin: 3px; border: 0px solid #808080; vertical-align: baseline;" height="203" width="321" /></p>
+</td>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/command_reference/bandpass/fakebay.png" class="img_block" style="margin: 3px; border: 0px solid #808080; vertical-align: baseline;" height="203" width="321" /></td>
+</tr>
+</tbody>
+</table>
+<p>It was customary in old maps to indicate water by a series of caustic lines radiating out from the shoreline, growing finer and more widely spaced further from the shore. It was labor intensive, but in the absence of color, a necessary sacrifice of time to indicate where the bodies of water were. The practice faded with the arrival of colored inks.</p>
+<p>With the bandpass command, such lines arise as a matter of course, and effect that can be seen in many of the examples, above. The following command produced the effect on the right, an excerpt from a much larger image (4096x4096).&nbsp;</p>
+<p><code>gmic lm.png --bandpass[-1] 0.07,0.3 [0] -n[-1] 0,1<br /> -mul[-2,-1] --gradient_norm[-1] --unsharp_octave[-1] 7,30,20 <br /> --lt[-1] 15 -normalize[-1] 0,255 -o[-1] lmc.png</code></p>
+<p>The starting artwork (lm.png) is a bivalue black (0x00) and white (0xFF) image of curvy blobs &ndash; presumptive "landmasses."</p>
+<table rules="all" class="table table-striped" border="1">
+<tbody>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/command_reference/bandpass/lmex_000000.png" title="Old Head at Kinsdale" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="200" width="200" /></td>
+<td>
+<p>The initial Image: "Old Head at Kinsdale"</p>
+</td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/command_reference/bandpass/lmex_000001.png" title="bandpass applied" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="200" width="200" /></td>
+<td>
+<p><code>--bandpass[-1] 0.07,0.3...</code></p>
+<p>This command translates the image into the spectral domain and supresses all coefficients save those within a ring around the origin between a lower radius of 0.07 and an upper radius of 0.3, a passband which admits wavelengths from&nbsp; 6 to 2.86 pixels. The result is a ringing pattern around black/white transitions.&nbsp;</p>
+</td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/command_reference/bandpass/lmex_000003.png" title="Zero out land regions" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="200" width="200" /></td>
+<td>
+<p><code>...[0] <a target="_parent" href="_normalize.shtml">--n</a>[-1] 0,1 <a target="_parent" href="http://gmic.eu/reference.shtml#mul">-mul</a>[-2,-1]...</code></p>
+<p>To distinguish "land" from "sea", we harness the original bilevel image as a mask, normalizing it to the range of zero to one. When we multiply the penultimate and last pipeline images (landmasses and mask, respectively), the effects of the bandpass command are masked out in zero regions, by fiat, corresponding to "land."</p>
+</td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/command_reference/bandpass/lmex_000004.png" title="harnessing gradient_norm as a frequency doubler" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="200" width="200" /></td>
+<td>
+<p><code>...<a target="_parent" href="_gradient_norm.shtml">--gradient_norm</a>[-1]...</code></p>
+<p>The misuse of the -gradient_norm command is justified through artistic license, in that it acts like a frequency doubler of the prototype water patterns.</p>
+</td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/command_reference/bandpass/lmex_000005.png" title="unsharp_octave to increase dynamic range" height="200" width="200" /></td>
+<td>
+<p><code>...<a target="_parent" href="http://gmic.eu/reference.shtml#unsharp_octave">--unsharp_octave</a>[-1] 7,30,20...</code></p>
+<p>As with -gradient_norm, -unsharp_octave increases the dynamic range of the pattern as well as sharpening it.&nbsp;</p>
+</td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/command_reference/bandpass/lmex_000006.png" title="finished shoreline" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="200" width="200" /></td>
+<td>
+<p><code>...--lt[-1] 15 <code><a target="_parent" href="_normalize.shtml">-normalize</a>[-1] 0,255 <a target="_parent" href="http://gmic.eu/reference.shtml#output">-o</a>[-1] lmc.png&para;</code></code></p>
+<p>A logic command, -lt 15 (less than intensity level 15). generates bivalue "True/False" images; pixels obtain either a zero or a one value. Since it is true that most pixels in the image have intensities less than fifteen, the image becomes largely white ("True"), except for the more intense wave traces around the land and the shoreline itself. The logic command, then, achived an image reversal and extracted the final pattern: two operations for the price of one.&nbsp;</p>
+<p>&nbsp;</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p></p>
+<p><em>Garry Osgood</em></p>
+
+
+
+   
+</body></html>

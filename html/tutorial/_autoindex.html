@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="tutorial.css">
+<script type="text/javascript" src="highslide/highslide.js"></script>
+<link rel="stylesheet" type="text/css" href="highslide/highslide.css" />
+<script type="text/javascript">
+hs.graphicsDir = 'highslide/graphics/';
+hs.wrapperClassName = 'wide-border';
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<body>
+
+
+      
+
+
+
+<div id="FigureOne" style="float: left; width: 2.75in; height: 2.25in; border: none; padding: 0in;"><img style="margin: 3px; border: 0px solid #808080;" class="img_block" src="http://www.particularart.com/static/media/uploads/command_reference/autoindex/ai_0.png" title="1939 NY World's Fair, \&quot;The World of Tomorrow\&quot;, Louis Gottscho" width="250" height="200" />
+<p style="font-size: small; line-height: 100%;"><i>Figure 1: 1939 New York World&rsquo;s Fair, &ldquo;The World of Tomorrow&rdquo;, <a target="_parent" href="https://en.wikipedia.org/wiki/Samuel_Gottscho">Samuel Gottscho</a></i></p>
+</div>
+<h1 id="autoindex">-autoindex</h1>
+<p>Given one or more selected images and a count, <tt>-autoindex</tt> produces new versions of the images composed of just the number of colors given by the count argument, these chosen so that the reduced-color image resembles its original to a fair degree. The reduced-color image may be dithered to further minimize differences between reduced-color and original versions. Use the command if some technical reason constrains the number of colors that can be used in an image or for the artistic effect of a somewhat posterized result.</p>
+<p><tt>-autoindex</tt> combines <tt><a target="_parent" href="_colormap.shtml">-colormap</a></tt> and <tt><a target="_parent" href="_index.shtml">-index</a></tt> into one step; the convenience of consolidation sacrifices access to the palette created by <tt>-colormap</tt>. If one discovers after the fact that the palette is needed, run <tt>-colormap[&hellip;] 0,0</tt> with the image filtered by <tt>-autoindex</tt> in the selection <tt>[&hellip;]</tt> to recover the palette.</p>
+<p>The command has the form :</p>
+<table cellpadding="0" cellspacing="0">
+<tbody>
+<tr valign="top">
+<td width="15%"><tt>-autoindex</tt>&nbsp;&nbsp;</td>
+<td width="85%"><tt>count &gt; 0<br /></tt></td>
+</tr>
+<tr valign="top">
+<td width="15%">&nbsp;</td>
+<td width="85%"><tt>0&lt;= dithering &lt;= 1,</tt></td>
+</tr>
+<tr valign="top">
+<td width="15%">&nbsp;</td>
+<td width="85%">
+<p><tt>method={ O=median-cut | 1=k-means }</tt></p>
+</td>
+</tr>
+</tbody>
+</table>
+<ol>
+<li><b>count:</b> (integer greater than zero) Sets the number of different colors available to match the original hues in the selected images.</li>
+<li><b>dithering:</b> (float from the closed interval [0, &hellip;, 1]) Sets the size of a neighborhood around which the command attempts to match the neighborhood average, rather than a single pixel. With nonzero dithering, the command factors nearby pixels through a kernel containing a dithering pattern (see <a target="_parent" href="_convolve.shtml">-convolve</a>). Otherwise, set to zero, it matches pixels without regard to the neighborhood.</li>
+<li><b>method:</b> When False, <tt>-autoindex</tt> only uses the <a target="_parent" href="gmic-color-mapping_median-cut-algorithm.shtml">median-cut</a> method. Otherwise, (True) <tt>-autoindex</tt> harnesses the <a target="_parent" href="/gmic/technical-notes/gmic-color-mapping/k-means-algorithm/">k-means</a> clustering algorithm to refine an initial median-cut-based estimate. The extra stage adds some processing overhead.</li>
+</ol>
+<p>Technical Note: <a target="_parent" href="gmic-color-mapping.shtml">Color Mapping in G'MIC</a></p>
+<p style="text-align: right;">&mdash;<em> Garry Osgood</em></p>
+
+
+
+   
+</body></html>

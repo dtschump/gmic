@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="tutorial.css">
+<script type="text/javascript" src="highslide/highslide.js"></script>
+<link rel="stylesheet" type="text/css" href="highslide/highslide.css" />
+<script type="text/javascript">
+hs.graphicsDir = 'highslide/graphics/';
+hs.wrapperClassName = 'wide-border';
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<body>
+
+
+      
+
+
+
+<h1>-area</h1>
+<div id="Frame3" style="float: left; width: 3.5in; height: 3.5in; border: none; padding: 0in;"><img title="ar-00.png" src="http://www.particularart.com/static/media/uploads/command_reference/area/ar-00.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="300" width="300" />
+<p style="font-size: 10pt; line-height: 100%; margin-right: 2pt;"><i>Figure 1: Area sets the intensity of quantized regions according to their sizes.</i></p>
+</div>
+<p>This command determines the area of of contiguous, or 'connected' regions. (See <a target="_parent" href="_label.shtml">-label</a> for a discussion on connectivity). For each pixel in an image, the command associates it with a particular region and labels it with that region's area. All pixels in a particular region then have identical labels: the count of the region's pixels. Pixels in small areas have low values and are visually dark; those in large areas have high values and are visually light. This distribution of values endows G'MIC image metrics with additional meanings:</p>
+<div style="margin-left: 10;"><ol>
+<li>iM provides the largest contiguous area in the image</li>
+<li>im provides the smallest contiguous area in the image</li>
+<li>ia provides the average size of contiguous areaa</li>
+</ol></div>
+<p>The format of the command is:</p>
+<p><code>tolerance&gt;=0,is_high_connectivity={ 0 | 1 }</code></p>
+<ul>
+<li><strong>tolerance</strong>: float. When zero, two pixels must have exactly the same value in order to be considered as contiguous in a particular region. <br />When positive, then unequal pixels with differences less than the tolerance are to be considered to be like one another and are contiguous. Otherwise they are not and are in two adjacent regions.</li>
+<li><strong>is_high_connectivity</strong>: boolean. When False, two regions just touching at corners are deemed unconnected. Otherwise, for True, they are connected. Defaults to False, disconnected.</li>
+</ul>
+<h2 id="ConnectedRegions">Connected Regions</h2>
+<p>Pixels endowed with common properties establish regions, pixel color an oft-used property for this purpose.</p>
+<div id="Frame2" style="float: right; width: 3.25in; height: 3.5in; border: none; padding: 0in;"><img src="http://www.particularart.com/static/media/uploads/command_reference/area/ar-01.png" title="ar-01.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="300px" width="300px" />
+<p style="font-size: 10pt; line-height: 100%; margin-right: 2pt;"><i>Figure 2.</i></p>
+</div>
+<p>The image in <i>Figure 2</i> has two colors: black and white. We can intuit that there seems to be one black region and perhaps three white regions, Maybe a total of four.<br />This total is doubtful because two regions just touching at a corner may be construed as both separate or combined. If we qualify low connectivity, then regions touching at corners are considered disconnected. Otherwise, for high connectivity, they are connected.<br />Two pixels sharing common properties, 'like pixels', are deemed 'connected' if and only if at least one path can run from one to the other without traversing unlike pixels. Regions consist of mutually connected pixels. Put informally, the command attempts a flood-fill and sees how far the flood goes. A flood-fill tests connectivity at each pixel it attempts to engulf with the nearest pixel already engulfed.<br /><br />There is still an ambiguity. What of the (one? two?) regions just touching at a corner? Resolving that ambiguity is what the connectivity flag argument to the -area command is for. When it is set to zero, low connectivity, two regions just touching at corners, are deemed unconnected; you are not allowed to run a path through that narrow defile. Set it to one, high connectivity, and you are; the two erstwhile regions are considered as one.<br /><br />In many images, what might be considered a region have fuzzy borders, which is when tolerance comes into play. When it is zero, two pixels must have exactly the same value in order for them to be contiguous. Positive values permit unequal pixels to be considered equivalent, so long as their intensity differences are less than the tolerance.<br /><br />With an unambiguous means to establish regions, -area tabulates areas and reports these using gray scales; the intensity value of all pixels in a particular region are set to the pixel count (in effect, 'area') of that region.</p>
+<table rules="all" class="table striped" style="border-color: #808080; border-width: 0px;" align="center" border="0">
+<tbody>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/command_reference/area/ar-02.png" title="ar-02.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="300" width="300" /></td>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/command_reference/area/ar-03.png" title="ar-03.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="300" width="300" /></td>
+</tr>
+<tr>
+<td>Areas of three regions. High Connectivity evaluation</td>
+<td>Areas of four regions. Low connectivity evaluation</td>
+</tr>
+</tbody>
+</table>
+<p><em>Garry Osgood</em><br /><br /></p>
+
+
+
+   
+</body></html>

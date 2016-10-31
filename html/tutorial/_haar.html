@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="tutorial.css">
+<script type="text/javascript" src="highslide/highslide.js"></script>
+<link rel="stylesheet" type="text/css" href="highslide/highslide.css" />
+<script type="text/javascript">
+hs.graphicsDir = 'highslide/graphics/';
+hs.wrapperClassName = 'wide-border';
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<body>
+
+
+      
+
+
+
+<h1>-haar</h1>
+<div id="InitFigure" style="float: left; width: 270px; height: 300px; border: none; padding: 5px;"><img src="http://www.particularart.com/static/media/uploads/command_reference/haar/init-000.png" title="init-000.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="256" width="256" />
+<p style="font-size: 10pt; line-height: 100%;"><i>Figure 1: A pyramid of smiley face differences</i></p>
+</div>
+<p>Performs a <a target="_parent" href="http://en.wikipedia.org/wiki/Discrete_wavelet_transform">Discrete Wavelet Transform (DWT)</a> analysis on the selected images by means of the <a target="_parent" href="http://en.wikipedia.org/wiki/Haar_wavelet">Haar wavelet basis</a>, producing a pyramid of differences at powers-of-two scales, with the one base image at the highest scale occupying the upper left corner of the image, (see example on the left), and the difference images, at decreasing scales (and larger size) radiating out in concentric ranks to the lower right. This pyramid constitutes a DWT <i>analysis </i>of the input image.</p>
+<p>The base image can be as small as one pixel, though it will be larger if at least one dimension of the original image is not a power of two or the image is not square (see <i>nb_scales</i>, following).</p>
+<p><a target="_parent" href="http://gmic.eu/reference.shtml#ihaar">-ihaar</a> is the companion G'MIC DWT <i>synthesis</i> command, which recovers the original when given an analysis produced by -haar.</p>
+<p>The format of the command is:</p>
+<p><code>-haar nb_scales &gt; 0</code></p>
+<ul>
+<li><i>nb_scales</i>: Sets the number of scalings, alternately, differencing cycles, or levels of the image pyramid, through which the command will proceed. The argument's upper limit is the smallest of the number of times that an image's width, height, or depth (if greater than one) may be divided by two. An image with at least one odd dimension cannot be directly decomposed by -haar. As a practical matter, one can make a proxy image with <a target="_parent" href="http://gmic.eu/reference.shtml#resize_pow2">-resize_pow2</a> which will pad images on the right and bottom with zero-valued pixels, so that the resultant becomes an image with dimensions rounded up to the next power-of-two. The zeroed-out pixels are essentially inert in computations, neither contributing to sums nor differences and retaining zero values through scalings.<br /> This argument is optional and if omitted, the command performs one cycle on the input image, so long as all dimensions are divisible by two.</li>
+</ul>
+<h2 id="AHaarCommandExample">A Haar Command Example</h2>
+<div id="Pixelate" style="float: left; width: 350px; height: 630px; border: 0px solid #808080; background: #ffffff; padding: 5px; margin: 3px; line-height: 11px;"><tt style="font-size: small;"> #@gmic pixelate : _coarse&gt;0,_details={ 0 | 1 } <br /> #@gmic : Yet another pixelize. You can't have <br /> #@gmic : enough of these. <br /> #@gmic : coarse increases pixelization. <br /> #@gmic : details puts saved details in <br /> #@gmic : another image. <br /> #@gmic : Default values: 'coarse=3' 'details=0' <br /> #@gmic : $ image.jpg -pixelate 5 <br /> pixelate : -check "${1=3}&gt;=0 &amp;&amp; isbool(${2=0})" <br /> -e[^-1] "Coalesce image$? into pixels at scale $1" <br /> -verbose - <br /> chk=2^$2 <br /> -repeat $! <br /> -local[{$&gt;*$chk}] <br /> sc={round(log2(max(w,h)))} <br /> ow={w} <br /> oh={h} <br /> dm={2^$sc} <br /> -if {$sc&lt;$1} <br /> px={2^$sc} <br /> -else <br /> px={2^$1} <br /> -endif <br /> -if {$dm!=$ow||$dm!=$oh} <br /> -resize[-1] {$dm},{$dm},[-1],[-1],0 <br /> -endif <br /> <span style="color: #dc2300;"><b>-haar {$sc}</b></span> <br /> -input 100%,100%,100%,100% <br /> -rectangle[-1] 0,0,{w/$px},{h/$px},1,1 <br /> -if $2 <br /> --negative[-1] <br /> --mul[-3,-1] <br /> -rm[-2] <br /> -mv[-1] 0 <br /> -endif <br /> <span style="color: #000000;" color="#000000"> <span style="color: #000000;" color="#000000">-mul[-2,-1] <br /> <span style="color: #dc2300;"><b>-ihaar {$sc}</b></span> <br /> -normalize 0,255 <br /> -crop 0,0,{$ow-1},{$oh-1} <br /> -endl <br /> -done <br /> -verbose + <br /> </span></span></tt></div>
+<p>The G'MIC script on the left defines a command called '-pixelate.' Copy this into your local &ldquo;<tt>~/.gmic</tt>&rdquo; file (Unix-like OS) or <tt>/%APPDATA%/gmic (Windows).</tt></p>
+<p>When an image has been analyzed, it is susceptible to spectral editing. To &ldquo;pixelate&rdquo; an image this script makes a boolean mask that zeros-out difference images at or lower than the scale specified by coarse. With these removed from the pyramid, the subsequent synthesis will only be able to partially recover the image. The result appears pixelated due to the character of the Haar wavelet, a square function that transitions from 0 to 1, 1 to -1, then -1 to zero.</p>
+<p>An optional flag, <tt>details=1</tt>, separates out the details into another image. This entails using an inverted version of the boolean mask that zeros out the scales the first one preserves, and retains the scales the first one removes.</p>
+<p>In either case, -ihaar performs a synthesis on an edited pyramid stack and restores only subsets of the information originally contained in the input image.</p>
+<p>See <a target="_parent" href="wavelet-analysis-and-synthesis-in-gmic.shtml"><i>Wavelet Analysis and Synthesis in G'MIC</i></a> in the Technical Notes section for the background on this command and its inverse, <a target="_parent" href="http://gmic.eu/reference.shtml#ihaar">-ihaar</a>.</p>
+
+
+
+   
+</body></html>

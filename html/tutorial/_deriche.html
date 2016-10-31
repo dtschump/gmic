@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="tutorial.css">
+<script type="text/javascript" src="highslide/highslide.js"></script>
+<link rel="stylesheet" type="text/css" href="highslide/highslide.css" />
+<script type="text/javascript">
+hs.graphicsDir = 'highslide/graphics/';
+hs.wrapperClassName = 'wide-border';
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<body>
+
+
+      
+
+
+
+<h1>-deriche</h1>
+<p><a target="_parent" href="img/_deriche_deriche_1_large.jpg" class="highslide" onclick="return hs.expand(this)"><img src="http://www.particularart.com/static/media/uploads/command_reference/deriche/deriche_1.png" title="Gaussian Curve and its First and Second derivatives" class="img_block" style="margin: 3px; border: 0px solid #808080; float: left;" height="349" width="360" /></a>Named for <a target="_parent" title="Rachid Deriche: Google Citations" href="http://scholar.google.com/citations?user=UDRtJsEAAAAJ&amp;hl=en&amp;oi=sra">Rachid Deriche</a>, this command filters images employing a recursive method that inexpensively approximates gaussian filters and their derivatives. The command is a basis for <a target="_parent" href="_blur_x.shtml">-blur_x</a>, <a target="_parent" href="_blur_y.shtml">-blur_y</a>, <a target="_parent" href="_blur_z.shtml">-blur_z</a>, <a target="_parent" href="_blur_xy.shtml">-blur_xy</a>, and <a target="_parent" href="_blur_xyz.shtml">-blur_xyz</a> and may be used in its own right to generate approximations of a gaussian filter and its first and second derivatives. See <a target="_parent" href="_convolve.shtml">-convolve</a> for an overview on filtering images with gaussian and other&nbsp; kernels.</p>
+<p>The format of the command is:</p>
+<p><code>-deriche std_variation&gt;=0[%],order={ 0 | 1 | 2 },... \<br />...axis={ x | y | z | c },_boundary</code></p>
+<ul>
+<li><em>std_variation</em>: sets the spread of the Gaussian kernel, informally the amount of blurring (when order=0). One must supply this value; there is no default. the percentage form sets the strength of the filter in relation to the longest dimension of an image.</li>
+<li><em>order</em>: An order of zero chooses an approximate gaussian filter, a non-negative bell-shape curve typically used to blur along an axis. Order one chooses the first derivative of that curve, roughly a positive bell-shaped pulse followed by a similar, but negative pulse; it finds application in detecting or sharpening edges. Order two chooses the second derivative. There are no defaults.</li>
+<li><em>axis</em>: One of 'x', 'y', 'z' or 'c', the axis along which the filter operates. There are no defaults.</li>
+<li><em>_boundary</em>: Picks an edge policy when the filter encompasses off-edge pixels. see "<a target="_parent" title="Images have edges; now what?" href="images-have-edges.shtml">Pictures Have Edges. Now What?</a>" A zero flag (0, Dirichlet) assumes that off-image pixels are black. A unit flag (1, Neumann) assumes that off-image pixels have the exact same value as the nearest edge pixel.</li>
+</ul>
+<p>This command operates along one dimension only; a sequence of -deriche commands may be used for effects along multiple axes. It is something of a primitive, and frequently occurs as a building block in other G'MIC commands.&nbsp;</p>
+<h2>Application: Deriche Desaturation</h2>
+<table rules="all" class="table table_striped" border="0">
+<tbody>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/command_reference/deriche/desat_000000.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="200" width="200" /></td>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/command_reference/deriche/desat_000001.png" title="Desaturated by Manipulating the Saturation Channel" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="200" width="200" /></td>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/command_reference/deriche/desat_000002.png" title="Desaturated via Deriche filter along the channel axis" height="200" width="200" /></td>
+</tr>
+<tr>
+<td><code>estella-e.svg reference image</code></td>
+<td><code>gmic estella-e.svg<br />--apply_channels \"-mul 0.3\",12</code></td>
+<td><code>gmic estella-e.svg<br />--deriche[-1] 2,0,c,1</code></td>
+</tr>
+<tr>
+<td>
+<p><em>-deriche can filter the spectral axis (c) as well as width (x), height (y) and depth (z) axes. This gives rise to an interesting &ndash; though perhaps not rigorously correct &ndash; desaturation-like command.</em></p>
+</td>
+<td><em>The canonical way to partially desaturate an image is to down scale the saturation channel when the image is represented in an HSV or HSL color space <a target="_parent" href="http://gmic.eu/reference.shtml#apply_channels">-apply_channels</a> lets us access and scale back saturation fairly quickly. (Note back slashes: These are needed in some command shells (bash, for example) to escape double quotes, so that these characters can reach the G'MIC command interpreter.)</em> &nbsp;</td>
+<td><em>Here, we harness -deriche to blur color channel data. Saturated colors in an RGB color space have at most two channels with high values and (at least) one channel with low values; blurring tends to equalize such inter-channel differences, 'desaturing' color, but not in a manner that preserves luminance. That said, the effect can still be artistically interesting.</em></td>
+</tr>
+</tbody>
+</table>
+<p><em>Garry Osgood</em></p>
+
+
+
+   
+</body></html>

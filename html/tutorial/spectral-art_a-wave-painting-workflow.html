@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="tutorial.css">
+<script type="text/javascript" src="highslide/highslide.js"></script>
+<link rel="stylesheet" type="text/css" href="highslide/highslide.css" />
+<script type="text/javascript">
+hs.graphicsDir = 'highslide/graphics/';
+hs.wrapperClassName = 'wide-border';
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<body>
+
+
+      
+
+
+
+<h2>A Wave Painting Workflow</h2>
+<p>Possessed now with a definite relationship between frequency and coefficients, we can codify our heretofore intuitive wave-making operation.</p>
+<table rules="all" class="table table-striped" style="border-color: #808080; border-width: 0px;" align="center" border="0">
+<tbody>
+<tr>
+<td colspan="3">
+<p>A waveform propagates in two spatial dimensions with an orientation such that along the X axis, a horizontal frequency of <i>q</i> may be observed, while along the Y axis it is a vertical frequency of <i>v</i>. The spectral space coefficients that could give rise to such a waveform all have labels <i>q:v;</i> there are at most four of them and the waveform in question is a product of at most two, allied as a chiral pair.</p>
+<p>Our procedure is:</p>
+</td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/spectral/spa-31.png" title="spa-31.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="100" width="100" /></td>
+<td>
+<p><b>1. </b>If we want to have a constant intensity image, <i>q=v=0</i>, we set coefficient 0:0 in the upper left hand corner to a non-zero real value.<strong> We're done.</strong></p>
+</td>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/spectral/spa-17.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="100" width="100" /></td>
+</tr>
+<tr>
+<td colspan="3">
+<p><b>2. </b>Otherwise, if we want to have waveforms at the Nyquist rate, N <i>only</i>, and the image dimensions are 2N, we may set one of the following coefficients to a non-zero real value:</p>
+</td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/spectral/spa-32.png" title="spa-32.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="100" width="100" /></td>
+<td><b>A. </b>N:0 for N widthwise cycles (coefficient at the middle of the top edge) &ndash; <b>we're done.</b></td>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/spectral/spa-45.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="100" width="100" /></td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/spectral/spa-33.png" title="spa-33.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="100" width="100" /></td>
+<td><b>B. </b>0:N for N depthwise cycles (coefficient at middle of the left edge) &ndash; <b>we're done.</b></td>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/spectral/spa-46.png" class="img_right_nospacetop" style="margin: 3px; border: 0px solid #808080;" height="100" width="100" /></td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/spectral/spa-34.png" title="spa-34.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="100" width="100" /></td>
+<td><b>C. </b>N:N for a N&times;N one pixel checkerboard (coefficient at the center of the map) &ndash; <b>we're done.</b></td>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/spectral/spa-47.png" title="spa-47.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="100" width="100" /></td>
+</tr>
+<tr>
+<td colspan="3"><b>3. </b>Otherwise for waveforms with q &lt; N or v &lt; N, we set a chiral pair of coefficients</td>
+</tr>
+<tr>
+<td colspan="3"><b>A. </b>For vertical or horizontal waveforms at a frequency less than the Nyquist rate along one axis and a zero frequency along the other:</td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/spectral/spa-35.png" title="spa-35.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="100" width="100" /></td>
+<td><b>i. </b>For vertical waveforms, we choose the coefficient from the top strip, counting from the origin (left) for one and counting from the right for the other, the two comprising a chiral pair &ndash; <b>we're done.</b></td>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/spectral/spa-42.png" style="margin: 3px; border: 0px solid #808080;" height="100" width="100" /></td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/spectral/spa-36.png" title="spa-36.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="100" width="100" /></td>
+<td><b>ii. </b>For horizontal waveforms, we choose the coefficient from the left strip, counting from the origin (top) for one and counting from the bottom for the other, the two comprising a chiral pair &ndash; <b>we're done.</b></td>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/spectral/spa-41.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="100" width="100" /></td>
+</tr>
+<tr>
+<td colspan="3"><b>B. </b>Otherwise, for 2N &times; 2N maps and vertical or horizontal waveforms at a frequency less than the Nyquist rate in one direction and at the Nyquist rate in the the other:</td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/spectral/spa-37.png" title="spa-37.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="100" width="100" /></td>
+<td><b>i. </b>For vertical waveforms, we choose the coefficient from the middle horizontal strip, counting from the origin (left) for one and counting from the right for the other, the two comprising a chiral pair &ndash; <b>we're done.</b></td>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/spectral/spa-44.png" style="margin: 3px; border: 0px solid #808080;" height="100" width="100" /></td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/spectral/spa-38.png" title="spa-38.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="100" width="100" /></td>
+<td><b>ii. </b>For horizontal waveforms, we choose the coefficient from the middle vertical strip, counting from the origin (top) for one and counting from the bottom for the other, the two comprising a chiral pair &ndash; <b>we're done.</b></td>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/spectral/spa-43.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="100" width="100" /></td>
+</tr>
+<tr>
+<td colspan="3"><b>C. </b>Otherwise, for waveforms not horizontally or vertically oriented, <i>q &lt; N</i> and <i>v &lt; N,</i> we pick an orientation, <i>bend dexter</i> or <i>bend sinister</i>, and:</td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/spectral/spa-39.png" title="spa-39.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="100" width="100" /></td>
+<td><b>i. </b>For bend dexter, choose coefficients of a chiral pair from the southwest and northeast quadrants. That is we count from the left and bottom for one and from the right and top for the other &ndash; <b>we're done.</b></td>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/spectral/spa-23.png" class="img_right_nospacetop" style="margin: 3px; border: 0px solid #808080;" height="100" width="100" /></td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/spectral/spa-40.png" title="spa-40.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="100" width="100" /></td>
+<td><b>ii. </b>For bend sinister, we choose coefficients from the northwest and southeast quadrants. That is we count from the left and top for one and from the right and bottom for the other &ndash; <b>we're done.</b></td>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/spectral/spa-21.png" class="img_right_nospacetop" style="margin: 3px; border: 0px solid #808080;" height="100" width="100" /></td>
+</tr>
+</tbody>
+</table>
+<p></p>
+<hr />
+<table style="border-color: #7f7f7f; border-width: 1px; background-color: #ffffff;" rules="all" align="center" border="1" cellpadding="2">
+<tbody>
+<tr>
+<td><a target="_parent" href="spectral-art_intermezzo-spectral-editing.shtml" title="Intermezzo: Spectral Editing">Intermezzo: Spectral Editing</a></td>
+<td><a target="_parent" href="spectral-art_tiletex.shtml" title="-"><tt>-tiletex</tt></a></td>
+</tr>
+</tbody>
+</table>
+
+
+
+   
+</body></html>

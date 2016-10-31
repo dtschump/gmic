@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="tutorial.css">
+<script type="text/javascript" src="highslide/highslide.js"></script>
+<link rel="stylesheet" type="text/css" href="highslide/highslide.css" />
+<script type="text/javascript">
+hs.graphicsDir = 'highslide/graphics/';
+hs.wrapperClassName = 'wide-border';
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<body>
+
+
+      
+
+
+
+<h1>Input and Fill</h1>
+<p>G'MIC can make ramps procedurally as a part of <a target="_parent" href="conjuring-images.shtml">image specifications</a> (<code>&lt;width&gt;</code>, <code>&lt;height&gt;</code>, <code>&lt;depth&gt;</code>, <code>&lt;channels&gt;</code>, <code>&lt;procedure&gt;</code>). These fall under the rubric of the<a target="_parent" href="_input.shtml"> -input</a> command.</p>
+<table rules="all" class="table table-striped" style="border-color: #7f7f7f; border-width: 1px;" border="1">
+<tbody>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/ramps/rampx.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="256" width="256" /></td>
+<td><code>#horizontal ramp \<br />gmic 256,256,1,1,'x' -normalize 0,255</code></td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/ramps/rampy.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="256" width="256" /></td>
+<td><code>#vertical ramp</code><br /> <code>gmic 256,256,1,1,'y' -normalize 0,255</code></td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/ramps/ramp_trig.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="256" width="256" /></td>
+<td><code># ramp along any orientation (30 deg or \<br /># 0.5236 rads shown.) \<br />gmic \<br />&nbsp;256,256,1,1,'x*cos(0.5236)+y*sin(0.5236)' \<br />&nbsp;-normalize 0,255</code></td>
+</tr>
+</tbody>
+</table>
+<p>In the preceding snippets, G'MIC evaluates the fifth parameter, <code>&lt;procedure&gt;</code>, as a G'MIC mathematical expression, described in Section 1.8 of <a target="_parent" href="http://gmic.eu/gmic_reference.pdf"><em>The Handbook</em></a>. These expressions run pixel-by-pixel, presets like <code>'x'</code> and <code>'y'</code> are set to the current column and row, and the pixel at <code>'x'</code> and <code>'y'</code> is assigned the results. For a simple expression like <code>'x'</code>, G'MIC assigns the value of the current column to the pixel's intensity and &ndash; voil&agrave;! &ndash; a horizontal ramp is born.</p>
+<table rules="all" style="border-color: #7f7f7f; border-width: 1px; background-color: #ffffff; border-style: solid;" align="center" border="1" cellpadding="2">
+<tbody>
+<tr>
+<td><a target="_parent" href="ramps.shtml">Ramps, a. k. a. &ldquo;Gradients&rdquo;</a></td>
+<td><a target="_parent" href="ramps_warp.shtml">Warp</a></td>
+</tr>
+</tbody>
+</table>
+
+
+
+   
+</body></html>

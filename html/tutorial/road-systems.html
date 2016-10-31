@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="tutorial.css">
+<script type="text/javascript" src="highslide/highslide.js"></script>
+<link rel="stylesheet" type="text/css" href="highslide/highslide.css" />
+<script type="text/javascript">
+hs.graphicsDir = 'highslide/graphics/';
+hs.wrapperClassName = 'wide-border';
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<body>
+
+
+      
+
+
+
+<h1>Road Systems, Maybe, or Cells</h1>
+<p><img class="img_left" height="300" src="http://www.particularart.com/static/media/uploads/ipiales.png" style="margin: 3px; float: left;" title="Country near Ipiales, Colombia" width="400"></p>
+<p><img alt="Microphotograph of a thin section of a plant stem" class="img_left" height="300" src="http://www.particularart.com/static/media/uploads/plantissue.png" style="margin: 5px;" title="Plant stem" width="400"></p>
+<p>Commonalities among seemingly unrelated things always intrigue. The lay of the land around Ipiales, Colombia at one thousand feet altitude has similarities with photomicrographs of plant stem tissue. They hint at universal rules governing how areas and volumes apportion themselves. The wealth of property owners, topographical features and human politics conspire to shape pastures and roads in particular ways. Similar logistics affect cell growth and division. Unless cancerous, cell size and shape are limited by the availability of nutrients, signalling from other cells and their own internal 'software' realized through DNA.</p>
+<p>The following recipe, in a vague way, may ape some of these logistical rules.  It generates a grayscale mask that usually becomes a part of a larger project. This particular recipe divides a surface into irregular cobblestones, perhaps, or cells, or pastures nestled between roads. Pick your interpretation.</p>
+<h3>Command:</h3>
+<p><code>gmic 512,512,1,1 -noise 0.07,2 --bandpass[-1] 0.0003,0.001 -normalize[-1] 0,255 --threshold[-1] 80 --thinning[-1] \<br>-dilate_circ[-1] 6 -normalize 0,255 --blur[-1] 4 -normalize[-1] 0,255 --threshold[-1] 120 -display -o road.png</code></p>
+<h3>Pipeliner Notes</h3>
+<table align="center" border="0" cellpadding="1" class="table table_striped" rules="all"><colgroup> <col width="50%"> <col width="50%"> </colgroup>
+<tbody>
+<tr>
+<td width="256"><img alt="Noise at standard deviation of 0.03" height="256" src="http://www.particularart.com/static/media/uploads/roadtmb_000000.png" title="Noise pattern" width="256"></td>
+<td width="256"><img alt="bandpass 0.0003,0.001" height="256" src="http://www.particularart.com/static/media/uploads/roadtmb_000001.png" style="margin: 3px;" title="Bandpass " width="256"></td>
+</tr>
+<tr>
+<td><em>A sparse scattering of white pixels, courtesy of the <code>'-noise 0.07,2'</code> command, is the initial image of this recipe. The second parameter, '2' request 'salt and pepper' noise, a pattern which gives rise to more pixels as the parameter grows larger. '0.07' requests a very sparse distribution; 0 is infinitely sparse, giving rise to an image wholly black.</em></td>
+<td><em>There are two complimentary ways to view images. We are most familiar with the spatial - regions of dark and light over a surface. The other view regards images as arising from signals of varying frequencies which interfere with each other constructively or destructively. The <code>'--bandpass 0.0003,0.001'</code> command works in this 'frequency domain.'  Its two parameters sets a lower and upper frequency, admitting just those signals which fall between the 'bandpass' frequencies and blocking the rest. The very low frequency components of the sparse scattering of pixels alternate between bright and dark spots, where signals tend to reinforce one another, and grey regions, where signals tend to cancel one another out.  <br></em></td>
+</tr>
+<tr>
+<td>-<img alt="Threshold 80, sufficient to connect white regions together." height="256" src="http://www.particularart.com/static/media/uploads/roadtmb_000002.png" style="margin: 3px;" title="Threshold" width="256"></td>
+<td width="256"><img alt="Thinned and dialated boundaries" height="256" src="http://www.particularart.com/static/media/uploads/roadtmb_000003.png" style="margin: 3px;" title="Thinning Boundaries" width="256"></td>
+</tr>
+<tr>
+<td>
+<p><em>As noted in <a target="_parent" href="images-as-datasets.shtml" title="Images as Datasets">Images as Datasets</a>,' the output of G'MIC commands may not be apt for image file formats. In particular, the average value of the dataset produced by the '--bandpass' command is very near zero, with minima negative and maxima positive.</em> <code>-normalize[-1] 0,255</code><em> transcribes this dataset into the range of 0,255, suitable for unsigned bytes. The command also furnishes calibration for <code>--threshold[-1] 80.</code> <em>This command converts all pixels with an intensity less than 80 to black (zero intensity) and all pixels with an intensity of 80 or greater to white (intensity 1.0) – this command also has a native range [0–1], unapt for image files. </em></em></p>
+<p><em>By thresholding, we've done some setup for the follow-on <code>'--thinning'</code> command. The intensity of 80 was chosen because it produces an image where all white pixels are contiguous, while the black form disjoint regions. That is, one can travel from any white pixel to any other without crossing a black region. The converse is not true, for black regions form isolated pockets.</em></p>
+</td>
+<td><em>The</em> <code>'--thinning'</code> <em>command is a morphological filter. Think of it as expanding a front out from each disjoint black pocket, a front that can only travel on white pixels and is stopped if it encounters another front. It is this command that, roughly speaking, sets up a kind of competition which allies these images to cell tissues or plots of land. This competition is preordained in favor of the larger 'wealthier' black pockets. Eventually the growth of all fronts are arrested As they collide upon the ridges, creating a set of parcels, each encompassing a low black region. The small pockets encompass very little to begin with and cannot expand as much as the larger pockets.</em></td>
+</tr>
+<tr>
+<td width="256"><img alt="Blur with STD deviation of 4" height="256" src="http://www.particularart.com/static/media/uploads/roadtmb_000004.png" style="margin: 3px;" title="Thinning Boundaries, blurred" width="256"></td>
+<td width="256"><img alt="Softened corners after second threshold." height="256" src="http://www.particularart.com/static/media/uploads/roadtmb_000005.png" width="256"></td>
+</tr>
+<tr>
+<td><em>The</em><code>-dilate_circ[-1] 6 -normalize 0,255 --blur[-1] 4 </code> <em>commands largely serve artistic interests. The first is another morphological filter, dialating out small circles from a (typically) small feature, each with a fixed diameter six pixels. The</em> <code>--blur[-1] 4 -normalize[-1] 0,255 --threshold[-1] 120</code> <em>round off sharp edges, as Nature tends to abhor sharp transitions.</em></td>
+<td><em>The last image in the pipeline can serve as a mask in downstream processes. Because it is not adorned in color or any detail, it is open to a number of interpretations: fields nestled among roadways, cellular tissue, and cobblestones all suggest themselves. Indeed, the other images in the pipeline can each serve as departure points to other images. A few possibilities follow this table.</em></td>
+</tr>
+</tbody>
+</table>
+<p>Road Systems, Maybe - Page 2</p>
+
+
+
+   
+</body></html>

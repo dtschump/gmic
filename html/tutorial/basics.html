@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="tutorial.css">
+<script type="text/javascript" src="highslide/highslide.js"></script>
+<link rel="stylesheet" type="text/css" href="highslide/highslide.css" />
+<script type="text/javascript">
+hs.graphicsDir = 'highslide/graphics/';
+hs.wrapperClassName = 'wide-border';
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<body>
+
+
+      
+
+
+
+<h1 id="Basics">Basics</h1>
+<p><img alt="An example image for examining GMIC operations" class="img_left" id="example_01" src="http://www.particularart.com/static/media/uploads/example.png" style="float: left; margin: 15px;" title="Example Image" width="150" lang="en-us" height="150" /></p>
+<p>G'MIC is an interpreter for the image processing language of the same name. It lives in terminal emulator command shells and has no GUI. It is never present on Windows or Mac systems unless you have already put it there. The G'MIC <a target="_parent" href="http://gmic.eu/download.shtml"><span class="external">download page</span></a> furnishes installation scripts and binaries for Windows, Mac, Debian, Ubuntu and generic Linux. These packages provide both the command line tool, <tt>gmic</tt>, and the <tt>gmic_gimp</tt> plug-in.</p>
+<h2 id="Alternatives">Alternatives</h2>
+<p>If you use a GNU/Linux distribution, the standalone G'MIC interpreter and Gimp G'MIC plugin are very likely in your distributor's repositories. These have been tuned and integrated with the distribution and could be a better fit than the generic binaries at the download site. Use '<tt>apt-get</tt>', '<tt>emerge</tt>', '<tt>yum</tt>' or whatever else manages your distribution's repository.</p>
+<p>There is also a small but very fine community of packagers who take great pains to integrate Gimp with its large train of plug-ins and extras, including G'MIC. They strive for installations that &ldquo;just work.&rdquo; Go to the <a target="_parent" href="http://gmic.eu">G'MIC home page</a> and, among the contributors, look up those who have the &lsquo;packager&rsquo; specialty by their names. Many names in this list link to distribution web pages where you can find further pointers and instructions. I can't/won't say who is best; I don't think that is possible. Each packager brings a fine technical and aesthetic sense to his or her product and each product reflects that sensibility in its makeup. Just remember, if you experiment with a few packagers, to fully clean up one candidate installation before installing the next. Debris from one installation interfering with another is a common source of packaging misbehavior.</p>
+<p>Finally, you can just <a target="_parent" href="https://github.com/dtschump/gmic-community/wiki/Building-from-Source">get the sources and build</a>, my personal favorite approach. You can get a tarball of the latest stable or development releases from the download page or <a target="_parent" href="https://github.com/dtschump/gmic">fork from github.com</a>. Gentoo is the Linux flavor to which I am partial, which renders source builds routine, but the <tt>gmic</tt> build environment is straightforward and builds take place on all manner of Linux, Mac, and Windows machines.</p>
+<p>If you are absolutely new to G'MIC, I heartily recommend installing both Gimp and the Gimp G'MIC plug-in and putting in some time with those tools first. You're not ready to spend much time at this site yet. By and large, the plug-in &ldquo;just works&rdquo; and has strong supporting communities. Some of the more popular ones are <a target="_parent" href="http://gimpchat.com/viewforum.php?f=28">GIMPChat/G'MIC</a>, <a target="_parent" href="https://plus.google.com/117441237982283011318/posts">G'MIC at Google+</a>, <a target="_parent" href="http://www.flickr.com/groups/gmic/discuss">G'MIC at Flickr</a>, and <a target="_parent" href="https://discuss.pixls.us/c/software/gmic">Pixls.us</a>.&nbsp;</p>
+<h2 id="gmicandgmicgimp">gmic and gmic_gimp</h2>
+<p><a target="_parent" href="img/basics_gmic_survey.jpg" class="highslide" onclick="return hs.expand(this)">According to the survey</a>, more than 85% of the people who use G'MIC at all use the <tt>gmic_gimp</tt> plug-in. That, of course, is the tip-of-the-iceberg of survey-respondents, resting on a much larger population of users beneath the surface, many of whom think that G'MIC is the plug-in and the plug-in is G'MIC. It probably seems contrary of me then to tell you up front, here and now, that there is hardly any documentation here at all about the plug-in. <a target="_parent" href="gimp-filters.shtml">Outside of the few filters</a> I've written myself, you will not find any Gimp G'MIC filter documentation here. Nada. Nihil. None. How churlish of me, going so against the grain.</p>
+<p>Indeed, these pages are resolutely for the less than five percent of you who use the command line executable, <tt>gmic</tt>. The reason for this is plain (I think). It is from <tt>gmic</tt> that <tt>gmic_gimp</tt> stems. Every one of the four hundred and forty some filters in the plug-in are pipelines written in <tt>gmic</tt>, with a bit of UI wrapper code to solicit arguments and present some sort of preview. The future of good quality <tt>gmic_gimp</tt> filters depends on a community of people who know how to write <tt>gmic</tt> pipelines. That, to my mind, makes the case for <tt>gmic</tt> documentation before plug-in documentation. But there is one more good reason.</p>
+<p>Quite apart from the plug-in, it so happens that <tt>gmic</tt>, stand alone, is a very nice tool for building image processing pipelines. In this regard, it goes toe-to-toe with its &ldquo;friendly competitor&rdquo; <a target="_parent" href="http://imagemagick.org/script/index.php">ImageMagick</a>, or its more stability-conscious fork, <a target="_parent" href="http://www.graphicsmagick.org/">GraphicsMagick</a>. I have no desire to get into flamewars over which is best or which has &ldquo;more.&rdquo; I'm not even sure I can answer that question. It so happens that I find that <tt>gmic's</tt> pipeline construction rules are more consistent &mdash; and more to my taste. I spent a number of years with both ImageMagick and GraphicsMagick and, compared to <tt>gmic</tt>, I feel that both Magicks have some rather idiosyncratic commands. It seemed that I could never build much of a pipeline without having to spend hours with documentation. G'MIC pipeline construction rules enforce strong patterns which cast individual commands into just a few molds. There are fewer mechanics to remember. Over time, I found myself getting more done with <tt>gmic</tt> pipelines than with the Magick ones.</p>
+<p>At some point, you might wish to extend the Gimp G'MIC plugin or filter a large number of images in some kind of image processing pipeline. At that point, you will want to become familiar with the G'MIC image processing languge itself and the interpreter that runs it. Then, we hope, you will find these pages useful.</p>
+<p>In the following, we will make use of a standard image called <em>example.png</em>, the stained-glass image of an 'E' at the opening of this article.</p>
+<h2>Running Commands</h2>
+<p>Invoke the interpreter by typing 'gmic'. Follow this with a series of items, separated by white space. The items are generally G'MIC commands followed by their affiliated parameters. Some commands do not have parameters, so G'MIC relies on a leading hyphen to distinguish commands from other items on the command line.</p>
+<p>Parameters consist of numbers, letters or words separated by commas, usually with no intervening white space. Occasionally, a parameter will embed white space; these need to be quoted.</p>
+<p>Here is an invocation of the G'MIC interpreter that will apply the <a target="_parent" href="http://gmic.eu/reference.shtml#glow">-glow</a> filter to our example image:</p>
+<p><code>$ gmic -input example.png -glow 10% -output ex_glow.png</code></p>
+<p>If all goes well, G'MIC will respond with a series of summary lines.</p>
+<p><code>[gmic]-0./ Start G'MIC parser.</code></p>
+<p><code>[gmic]-0./ Input file 'example.png' at position [0] (1 image 250x250x1x3).</code></p>
+<p><code>[gmic]-1./ Add soft glow on image [0], with amplitude 10%.</code></p>
+<p><code>[gmic]-1./ Output image [0] as file 'ex_glow.png' (1 image 250x250x1x3).</code></p>
+<p><code>[gmic]-1./ End G'MIC parser.</code></p>
+<p>You should now have a new file in your current directory called 'ex_glow.png'. This Portable Network Graphic file should contain an image that looks like this:</p>
+<p><img alt="The example image after an application of a ten percent glow" src="http://www.particularart.com/static/media/uploads/ex_glow.png" title="Glow: 10%" width="150" lang="en-us" height="150" /></p>
+<h2 class="western">What happened?</h2>
+<p>In this simple invocation, <a target="_parent" href="_input.shtml">-input</a>, <a target="_parent" href="http://gmic.eu/reference.shtml#glow">-glow</a> and <a target="_parent" href="http://gmic.eu/reference.shtml#output">-output</a> are commands, distinguished by their leading hyphens. 'example.png', '10%' and 'ex_glow.png' are parameters for their respective commands. All in all, six items were on the command line, three commands and three parameters. Had any of these commands needed two or more parameters, these would have been separated by commas.</p>
+<p>Through these commands, we performed the following actions:</p>
+<ol>
+<li>
+<p style="margin-bottom: 0in;">We created an image list (alternativly: <em>stack</em>), initially empty.</p>
+</li>
+<li>
+<p style="margin-bottom: 0in;">We invoked the <a target="_parent" href="_input.shtml">-input</a> command, giving it one parameter, a file. G'MIC placed the contents of this file, 'example.png', at the first image position in the list; this position has an index number of zero.</p>
+</li>
+<li>
+<p style="margin-bottom: 0in;">We invoked the <a target="_parent" href="http://gmic.eu/reference.shtml#glow">-glow</a> command, a filter which preserves details but otherwise blurs areas of relatively constant color and luminance. We gave it a parameter of ten percent and could have used any other percentage for a greater or lesser effect.</p>
+</li>
+<li>
+<p style="margin-bottom: 0in;">The <a target="_parent" href="http://gmic.eu/reference.shtml#glow">-glow</a> command <em>replaced</em> the original image on the list with the filtered image.</p>
+</li>
+<li>
+<p style="margin-bottom: 0in;">We invoked the&nbsp;<a target="_parent" href="http://gmic.eu/reference.shtml#output">-output</a> command, giving it one parameter, a template name. The<a target="_parent" href="http://gmic.eu/reference.shtml#output"> -output</a> command typically copies all images in the list to a like set of output files. In this case, of course, there was only one image in the list, so G'MIC only wrote one output file. In this special case, the name of the output file exactly matches the template name. Generally, though, image lists contain many items, so G'MIC usually appends to the template name an identifying numeral, the position of the image in the list ensuring that all output files have unique names.</p>
+</li>
+<li>
+<p style="margin-bottom: 0in;">G'MIC then closed down, destroying the image list. Since we had invoked the <a target="_parent" href="http://gmic.eu/reference.shtml#output">-output</a> command, nothing was lost.</p>
+</li>
+<li>
+<p>Our commands (<a target="_parent" href="_input.shtml">-input</a>,<a target="_parent" href="http://gmic.eu/reference.shtml#glow"> -glow</a>, <a target="_parent" href="http://gmic.eu/reference.shtml#output">-output</a>) and their associated parameters formed an image processing <em>pipeline</em> which operates on the image list. Unadorned, pipeline commands operate on all images on a list, though right hand side <a target="_parent" href="command-decorations.shtml">command decorations</a> limit the scope to various subsets of the list.</p>
+</li>
+</ol>
+<h2 class="western">Summary Lines</h2>
+<p>G'MIC always furnishes a list of summary lines documenting what it is doing, as it is doing it. These constitute at once a progress meter and a description of what is going on. It is worth one's while to become familiar with this precis and read it with care.</p>
+<ol>
+<li>
+<p style="margin-bottom: 0in;">The count of images in the list follows the [gmic] tag, in this example, at most one image occupied the list, so only '1' followed the [gmic] tag. In principle, any number of images may be on the list and in practice it is not uncommon to have dozens of items.&nbsp;</p>
+</li>
+<li>
+<p style="margin-bottom: 0in;">Next, G'MIC presents a summary of the currently executing command and the parameters in effect. Often, G'MIC describes more parameters than what might have been entered. These additional parameters are usually ones with internally defaulted values and need not be entered on the command line. You might override these defaults with other values in subsequent invocations.</p>
+</li>
+<li>
+<p>When an image moves onto the list or is output, G'MIC <a target="_parent" href="images.shtml">reports its shape</a> using four dimensions. You are likely familiar with the width and height of an image, dimensions measured in pixels. G'MIC also considers <em>depth</em>, also measured in pixels. This dimension can represent time&nbsp;&ndash; think of frames in a video&nbsp;&ndash; or slices that, in aggregate, make up a volume &ndash; think of a CAT scan. Finally, as a fourth dimension, G'MIC considers the number of <em>channels</em> in each pixel.&nbsp; Red, green, and blue data channels (RGB) is a common case. Perhaps an additional opacity/transparency channel may be present as well (RGBA). Alternatively, cyan, magenta, yellow and black channels (CMYK) may be present. These constitute various kinds of <em>color spaces. </em>G'MIC can, in principle, support many more color spaces than the few mentioned here and G'MIC itself does not adhere to a hard-and-fast interpretation of what these channels are. For many G'MIC commands, channels simply contain data.</p>
+</li>
+</ol>
+<p>This list constitutes the interpreter's primary diagnostic tool; harbingers of the unexpected often show up in the summary, often taking the form of images with unexpected dimensions. The follow-on discussion of <a target="_parent" href="conjuring-images.shtml">G'MIC's image structure</a> goes into somewhat greater detail.</p>
+<h2 class="western">Further Explorations</h2>
+<p>At this juncture, you can, in principle, build and execute a G'MIC image processing pipeline. The&nbsp;, <a target="_parent" href="_input.shtml">-input</a>, <a target="_parent" href="http://gmic.eu/reference.shtml#glow">-glow</a> and <a target="_parent" href="http://gmic.eu/reference.shtml#output">-output</a> ' commands have nearly eight hundred siblings documented in the standard <a target="_parent" href="http://gmic.eu/gmic_reference.pdf" target="_blank">G'MIC Handbook</a>. You might commence working your way through that tome with the knowledge you have now. In practice, such an exercise will likely drive you mad. There are additional details about G'MIC language which are worth knowing sooner rather than later and these will be taken up in the following sections.</p>
+<ol>
+<li>
+<p style="margin-bottom: 0in;"><a target="_parent" href="images.shtml">Images</a></p>
+</li>
+<li>
+<p style="margin-bottom: 0in;"><a target="_parent" href="command-decorations.shtml">Command Decorations</a></p>
+</li>
+<li>
+<p style="margin-bottom: 0in;"><a target="_parent" href="beginners-cookbook.shtml">Beginner's Cookbook</a></p>
+</li>
+<li>
+<p><a target="_parent" href="command-guide.shtml">Command Guide</a></p>
+</li>
+</ol>
+<p>We will conclude this section with a small gallery of commands, which, like <a target="_parent" href="http://gmic.eu/reference.shtml#glow">-glow</a>, are fairly simple to invoke. We also introduce the <a target="_parent" href="_display.shtml">-display</a> command, which, instead of writing files like <a target="_parent" href="http://gmic.eu/reference.shtml#output">-output</a>, routes the content of the image list to a display window, where the items in the pipeline appear as a set of thumbnails. Your mouse can manipulate this pipeline display. Examine a particular image by clicking on it with the left mouse button; other images go away and the selected image becomes larger. Magnify portions of the selected image by a left-mouse-down, drag, left-mouse-up action; you will draw out a rectangle that, on mouse-up, expands to fill the entire window. Step out by single-clicking with the left mouse button without dragging out a rectangle. Exit the pipeline display command by pressing the 'ESC' key.</p>
+<p style="border-top: none; border-bottom: 1px solid #000000; border-left: none; border-right: none; padding-top: 0in; padding-bottom: 0.03in; padding-left: 0in; padding-right: 0in;">You cannot save files with the '-display' command, but when exploring, that is usually not a big concern. If saving images is a big concern, however, place an '-output' command after the '-display' command. When you dismiss the display window by pressing ESC, the follow-on '-output' command will write the contents of the image processing pipeline to a set of files.</p>
+<p></p>
+<p>Some simple G'MIC commands</p>
+<table class="img_block" id="basic_image_gallery" style="border: solid #aaaaaa 1px;" summary="Basic Image Gallery" lang="en-US" align="center" border="0" cellpadding="2" cellspacing="2">
+<tbody>
+<tr>
+<td style="border: solid #cccccc 1px;"><img class="img_block" src="http://www.particularart.com/static/media/uploads/ex_boxfit.png" style="vertical-align: middle; margin: 2px;" title="-boxfitting command" width="150" height="150" /></td>
+<td style="border: solid #cccccc 1px;"><img class="img_block" src="http://www.particularart.com/static/media/uploads/ex_circ.png" style="vertical-align: middle; margin: 2px;" title="-circlism command" width="150" height="150" /></td>
+</tr>
+<tr>
+<td style="border: solid #cccccc 1px;">
+<p><code>$ gmic -input example.png -boxfitting 2,0 -display</code></p>
+</td>
+<td style="border: solid #cccccc 1px;">
+<p><code>$ gmic -input example.png -circlism 2,5 -display<br /></code></p>
+</td>
+</tr>
+<tr>
+<td style="border: solid #cccccc 1px;"><img class="img_block" src="http://www.particularart.com/static/media/uploads/ex_sketch.png" style="vertical-align: middle; margin: 2px;" title="-hardsketchbw command" width="150" height="150" /></td>
+<td style="border: solid #cccccc 1px;"><img class="img_block" src="http://www.particularart.com/static/media/uploads/ex_rod.png" style="vertical-align: middle; margin: 2px;" title="-rodilius command" width="150" height="150" /></td>
+</tr>
+<tr>
+<td style="border: solid #cccccc 1px;">
+<p><code>$ gmic -input example.png -hardsketchbw 300,40,0.05,10,1 -display</code></p>
+</td>
+<td style="border: solid #cccccc 1px;">
+<p><code>$ gmic -input example.png -rodilius 20,5,200,17,2,1 -display</code></p>
+</td>
+</tr>
+<tr>
+<td style="border: solid #cccccc 1px;"><img class="img_block" src="http://www.particularart.com/static/media/uploads/ex_bpass.png" style="vertical-align: middle; margin: 2px;" title="-bandpass command" width="150" height="150" /></td>
+<td style="border: solid #cccccc 1px;"><img class="img_block" src="http://www.particularart.com/static/media/uploads/ex_edge.png" style="vertical-align: middle; margin: 2px;" title="-edges command" width="150" height="150" /></td>
+</tr>
+<tr>
+<td style="border: solid #cccccc 1px;"><code>$ gmic -input example.png -bandpass 0.005,0.01 -normalize 0,255 -display<br />(normalize: -bandpass output is from -100 to 100)</code></td>
+<td style="border: solid #cccccc 1px;"><code>$ gmic -input example.png -edges 9% -normalize 0,255 -display<br />(normalize: -edges output is from 0 to 1)</code></td>
+</tr>
+</tbody>
+</table>
+
+
+
+   
+</body></html>

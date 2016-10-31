@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="tutorial.css">
+<script type="text/javascript" src="highslide/highslide.js"></script>
+<link rel="stylesheet" type="text/css" href="highslide/highslide.css" />
+<script type="text/javascript">
+hs.graphicsDir = 'highslide/graphics/';
+hs.wrapperClassName = 'wide-border';
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<body>
+
+
+      
+
+
+
+<h2 id="CoefficientValuesPartTree">Coefficient Values: Part Three</h2>
+<div style="float: left; width: 425px; height: 650px; border: none; padding: 0in;" id="FigureTwelve"><img style="margin: 3px; border: 0px solid #808080;" class="img_block" title="spa-79.png" src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/spectral/spa-79.png" height="400" width="400" />
+<p style="font-size: 10pt; line-height: 100%; margin-right: 10%;"><i>Figure 12: Rainbows. The pattern arises from interaction of chiral pairs 2:8 and 9:-2. All coefficients have equal magnitudes (255). (a) In the upper left image, all coefficients also have equal angles: 180,&deg; or pixel value rgb(127, 127, 127), giving rise to a value of &theta; = 180&deg; and &alpha; = 0&deg;. (b) In the upper right image, the angle pixels are set to very unsaturated complementary colors such that for each chiral pair, the average phase angle value is 127 in all color channels, but between each coefficient of a chiral pair the intensity differs from this mean by about &plusmn;30 (&asymp; &plusmn;20&deg;), giving rise to an average value of &alpha; of about 20&deg;. Consequently, each color channel phase shifts differently, giving rise to color fringing. (c) In the lower left image, the average angular settingss are still 127, but intensity differences are now&nbsp; &plusmn;70 (&asymp; &plusmn;50&deg;), a maximum misalignment. (d) In the lower right image, the angular colors were saturated, giving rise to intensity differences of nearly &plusmn;120 (&plusmn;87&deg;) but the misalignment is now so great that convergence on the inverse interference pattern is taking place and the image is quite unsaturated again &mdash; and also misaligned with the original.</i></p>
+</div>
+<h3 id="PhaseControl">Phase Control</h3>
+<p>&alpha; phase shifts the composite waveform generated from a chiral pair. It moves the waveform along its propagation axis, the hypotenuse of the right triangle with <em>q</em> and <em>v</em> as legs. <a target="_parent" href="spectral-art_coefficient-values.shtml#FigureEight">Recall Figure 8</a>.</p>
+<p>In its absence, the real and imaginary parts of the composite waveform align peak-to-peak, trough to trough, in phase and peaks (or troughs) are at a phase angle of zero. This puts the pixel at coordinate 0,0 at either the image maximum or minimum value in both the real and imaginary output images.</p>
+<p>Positive &alpha; changes the phase angle of the composite waveform, moving it counterclockwise, negative shifts the composite clockwise.</p>
+<p>in the prosaic world of <tt>-tiletex</tt>, the digital artist sets<em>&nbsp;&alpha;</em> indirectly, as she does with <i>&theta;</i> One technique popular with this writer entails setting both angles in one swell foop. Select the pixels representing the phase angles of both coefficients and fill them to a particular shade of gray; that becomes <i>&theta;</i> Then select one phase angle pixel and change it a particular amount, say four shades of gray. Then change the other phase angle pixel the same amount, but in the opposite direction, so that the average value of the two pixels remains the same. That difference, four steps in this example, is <i>&alpha;</i>. If the angle of <b><i>C</i></b> is lighter than <b><i>C'</i></b>, then the phase shift induced by <i>&alpha;</i> is counterclockwise, otherwise it is clockwise.</p>
+<p>As the illustration at the top of this page suggests, color shifting is the general pastime of this parameter. In a multispectral image, one shifts the various channels by different amounts of <em>&alpha;</em>.</p>
+<p>One may ask if it wouldn't be cheaper, faster and better just to use the G'MIC <tt>-shift</tt> command at the channel level. That indeed works for compositions entailing single chiral pairs, but once two or more chiral pairs are active in a composition, the interference patterns grow quite complex and the phase shifting is no longer linear, and simple <tt>-shifts</tt> are not necessarily cheaper, faster or better. Though it may not hurt to try.</p>
+<p align="center"><video id="alphaanim" width="640" height="480" style="margin:7px;border:1px solid #808080;" preload="metadata" poster="http://www.particularart.com/static/media/uploads/BeginnersCookbook/spectral/alphaanim.png" loop="loop" autoplay="autoplay"><source src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/spectral/alphaanim.mp4" type="video/mp4" /><source src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/spectral/alphaanim.webm" type="video/webm" /><source src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/spectral/alphaanim.ogv" type="video/ogg" /><source src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/spectral/alphaanim.mov" type="video/mov" /><source src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/spectral/alphaanim.avi" type="video/avi" /><object id="alphaanim" width="640" height="480" data="/static/grappelli/tinymce/jscripts/tiny_mce/plugins/media/moxieplayer.swf" type="application/x-shockwave-flash"><param name="src" value="/static/grappelli/tinymce/jscripts/tiny_mce/plugins/media/moxieplayer.swf" /><param name="flashvars" value="url=/static/media/uploads/BeginnersCookbook/spectral/alphaanim.mp4&amp;poster=/static/media/uploads/BeginnersCookbook/spectral/alphaanim.png" /><param name="allowfullscreen" value="true" /><param name="allowscriptaccess" value="true" /></object></video></p>
+<h3><strong>Damper Control, or Maybe a Differentiator Control<br /></strong></h3>
+<p>When |<em><strong>C</strong></em>| = |<em><strong>C'</strong></em>|, the coefficients of a chiral pair have the same magnitude, though they may have different orientations. As already noted, the real and imaginary parts are in phase, and as a consequence, they are also linearly polarized.</p>
+<p>When &Delta;C = |<em><strong>C</strong></em> &minus; <strong><em>C'</em></strong>| is positive, the two coefficient vectors no longer have the same magnitude. The one direct consequence is that the composite waveform is no longer linearly polarized, but becomes eliptically polarized. With one coefficient weaker, it is no longer possible to fully cancel out the other at cardinal points, so the ability of &theta; to function like a balance control diminishes, and disappears entirely when one or another coefficient vanishes. Similarly, the ability of &alpha; to shift the phase of the composite waveform diminishes, and likewise ceases when one or another coefficient vanishes. The real and imaginary parts of the composite waveform shift out of phase as one coefficient grows relatively smaller; the composite curve converging on the surviving coefficient. Because of this, the interference patterns between the real and imaginary output images become distinctly different, so much so that &Delta;C is as much like a differentiator control as it is a damper.</p>
+<p>The animation below shows the effect of one coefficient of a chiral pair growing relatively smaller than its counterpart until it vanishes, then the vanished coefficient reverses its course and grows back to its initial magnitude.&nbsp;</p>
+<p align="center"><video id="deltaanim" width="640" height="427" style="margin:7px;border:1px solid #808080;" preload="metadata" poster="http://www.particularart.com/static/media/uploads/BeginnersCookbook/spectral/deltaanim.png" loop="loop" autoplay="autoplay"><source src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/spectral/deltaanim.mp4" type="video/mp4" /><source src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/spectral/deltaanim.webm" type="video/webm" /><source src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/spectral/deltaanim.ogv" type="video/ogg" /><source src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/spectral/deltaanim.mov" type="video/mov" /><source src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/spectral/deltaanim.avi" type="video/avi" /><object id="deltaanim" width="640" height="427" data="/static/grappelli/tinymce/jscripts/tiny_mce/plugins/media/moxieplayer.swf" type="application/x-shockwave-flash"><param name="src" value="/static/grappelli/tinymce/jscripts/tiny_mce/plugins/media/moxieplayer.swf" /><param name="flashvars" value="url=/static/media/uploads/BeginnersCookbook/spectral/deltaanim.mp4&amp;poster=/static/media/uploads/BeginnersCookbook/spectral/deltaanim.png" /><param name="allowfullscreen" value="true" /><param name="allowscriptaccess" value="true" /></object></video></p>
+<p></p>
+<p></p>
+<hr />
+<table style="border-color: #7f7f7f; border-width: 1px; background-color: #ffffff;" rules="all" align="center" border="1" cellpadding="2">
+<tbody>
+<tr>
+<td><a target="_parent" href="spectral-art_coefficient-values-part-two.shtml" title="Coefficient Values: Part Two">Coefficient Values: Part Two</a></td>
+<td><a target="_parent" href="spectral-art_cheat-sheet.shtml" title="Cheat Sheet">Cheat Sheet</a></td>
+</tr>
+</tbody>
+</table>
+
+
+
+   
+</body></html>

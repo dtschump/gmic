@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="tutorial.css">
+<script type="text/javascript" src="highslide/highslide.js"></script>
+<link rel="stylesheet" type="text/css" href="highslide/highslide.css" />
+<script type="text/javascript">
+hs.graphicsDir = 'highslide/graphics/';
+hs.wrapperClassName = 'wide-border';
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<body>
+
+
+      
+
+
+
+<h2>Intermezzo: Spectral Editing</h2>
+<p>The distribution of magnitudes of coefficients strikes another symmetry, for they typically form distributions like sand piles, the so-called <i><a target="_parent" href="http://en.wikipedia.org/wiki/Normal_distribution">Gaussian distribution</a>,</i> around the origin. Almost always, when an image is translated from the spatial to the spectral, the high magnitude coefficients cluster around the origin, with the origin itself usually having the largest magnitude. There is no mathematical edifice compelling such a result, but it is a norm among the general run of images and a common enough <i>de facto</i> rule for spectral editing, an example following:</p>
+<table rules="all" class="table table-striped" style="border-color: #808080; border-width: 0px;" align="center" border="0">
+<tbody>
+<tr>
+<td colspan="2"><tt> gmic -input cheese.png \<br /> -fft \<br /> -shift 50%,50%,0,0,2 \<br /> -input 100%,100%,1,1 \<br /> -ellipse[-1] 200,200,80,80,0,1,1 \<br /> -to_rgb[-1] \<br /> -mul[-3,-2] [-1] \<br /> -remove[-1] \<br /> -shift -50%,-50%,0,0,2 \<br /> -ifft[-2,-1] \<br /> -remove[-1] \<br /> -normalize[-1] 0,255 \<br /> -output[-1] cheese_decimated.png</tt></td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/spectral/spa-29.png" title="spa-29.png" style="margin: 3px; border: 0px solid #808080;" height="400" width="400" />&nbsp;</td>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/spectral/spa-30.png" title="spa-30.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="400" width="400" /></td>
+</tr>
+<tr>
+<td><center><tt>cheese.png</tt></center></td>
+<td><center><tt>cheese_decimated.png</tt></center></td>
+</tr>
+<tr>
+<td colspan="2"><center><span style="font-size: x-small;"><em>Figure 6: Left: 100 calorie slice. Right: 12 calorie slice. Enjoy.</em></span></center></td>
+</tr>
+</tbody>
+</table>
+<p>Of the variations riding on the positive bias, the low frequency signals have the largest amplitudes. For example, the G'MIC pipeline illustrated in the top panel of<i> Figure 6 </i>elides all but about 12% of the coefficients in the spectral domain representation of the cheese and antipasto, leaving only the immediate region around the origin populated, the remainder zero. Such a substantial erasure suggests an almost complete destruction of the image, but in fact, nothing of the sort happens. Indeed, the modified image is almost identical to the original, as most of the information which defines the image allies with the coefficients around the origin.</p>
+<p>Because of this, one can &ldquo;spectrally compress&rdquo; an image by just discarding a large percentage of the coefficients around the Nyquist pole. Information <i>is</i> lost. The slight blurring and the ringing pattern around edges in <i>Figure 6,</i> right, tells as much, but where image transmission or storage is costly, these defections are but a small price to be paid. It is also common to ply the other side of this phenomenon and elide all but the high frequency components. This will fetch up the image edges when synthesis morphs spectral coefficients into spectral waveforms.</p>
+<p>If you want to examine this phenomenon in its entirety, David Tschumperl&eacute; has written a nice demo, <tt>-x_fourier</tt><a target="_parent" class="sdendnoteanc" name="sdendnote1anc" href="#sdendnote1sym"></a><sup>i</sup>, which illustrates this style of spectral editing. Go off now, type <tt>gmic -x_fourier</tt> in your favorite shell and idle away some minutes; we'll wait here.</p>
+<hr />
+<table style="border-color: #7f7f7f; border-width: 1px; background-color: #ffffff;" rules="all" align="center" border="1" cellpadding="2">
+<tbody>
+<tr>
+<td><a target="_parent" href="spectral-art_a-revised-map.shtml" title="A Revised Map">A Revised Map</a></td>
+<td><a target="_parent" href="spectral-art_a-wave-painting-workflow.shtml" title="A Wave Painting Workflow">A Wave Painting Workflow</a></td>
+</tr>
+</tbody>
+</table>
+<div id="sdendnote1">
+<p class="sdendnote"><a target="_parent" class="sdendnotesym" name="sdendnote1sym" href="#sdendnote1anc"></a><sup>i</sup>And for those of you who are Gimp-centric, Get Ye to Filters &rarr; G'MIC &rarr; Various &rarr; Games &amp; Demos and choose &ldquo;Fourier Filtering&rdquo;</p>
+</div>
+
+
+
+   
+</body></html>

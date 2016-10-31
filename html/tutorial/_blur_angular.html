@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="tutorial.css">
+<script type="text/javascript" src="highslide/highslide.js"></script>
+<link rel="stylesheet" type="text/css" href="highslide/highslide.css" />
+<script type="text/javascript">
+hs.graphicsDir = 'highslide/graphics/';
+hs.wrapperClassName = 'wide-border';
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<body>
+
+
+      
+
+
+
+<h1>-blur_angular</h1>
+<p><img src="http://www.particularart.com/static/media/uploads/command_reference/blur_angular/goudy.png" title="Angular blur from the center point compared to an unblurred version" class="img_block" style="float: left; margin: 3px; border: 0px solid #808080;" height="200" width="200" />Angular blurring conveys the impression of an image spinning clockwise &mdash; or possibly counter-clockwise &mdash; around a given point, a small uncertainty which induces shouting matches among otherwise casually disposed people. The degree that an image blurs transversely from the radius increases with the distance from the given point, the neighborhood in its immediate vicinity hardly changing at all, while distant regions reflect substantial streaking. Compare with <a target="_parent" href="_blur_radial.shtml">-blur_radial</a>.&nbsp;</p>
+<p>The format of the command is:</p>
+<p><code>-blur_angular amplitude[%],_cx,_cy</code></p>
+<ul>
+<li><em>amplitude: </em>sets the standard variation, or spread of the gaussian kernel, informally the amount of blurring, a positive number or percentage. One must supply a value; there are no defaults.</li>
+<li><em>_cx, _cy:</em> sets the center reference point around which the blur "spins." These parameters take values between zero and one and express relative width or height of the image. 0.5,0.5 selects the center point of the image. These values may be omitted and each defaults to 0.5</li>
+</ul>
+<p><em>Garry Osgood</em></p>
+
+
+
+   
+</body></html>

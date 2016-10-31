@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="tutorial.css">
+<script type="text/javascript" src="highslide/highslide.js"></script>
+<link rel="stylesheet" type="text/css" href="highslide/highslide.css" />
+<script type="text/javascript">
+hs.graphicsDir = 'highslide/graphics/';
+hs.wrapperClassName = 'wide-border';
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<body>
+
+
+      
+
+
+
+<h1>Remapping Space</h1>
+<p>Every technique we have engaged with so far has produced linear maps: &ldquo;From left to right, we go up and down.&rdquo; That is alright insofar as it goes. All of these maps, every single one of them, however, may be transformed into a radial equivalent, so take what you know so far and multiply it by two. <a target="_parent" href="http://gmic.eu/reference.shtml#polar2euclidean">-polar2euclidean</a> is the key space remapping command.</p>
+<p>The transform maps the left hand edge of a unit square into a singular point at the designated center, the top and bottom edges rotate around and mesh; we arbitrarily call this the zero degree line. The right hand edge maps to a full circle encircling the left hand edge, now a point. Please do not try this at home with the family dog; people will become annoyed with you.</p>
+<p>The first two parameters to the command plot the center somewhere in a unit square, the point where the left hand edge goes singular. The coordinates are fractions of one. (0.5, 0.5) coincides with the center of the unit square and is the point that one usually designates. The origin is in the upper left hand corner.</p>
+<p>Here are a few radial examples.</p>
+<table rules="all" class="table table-striped" style="border-color: #7f7f7f; border-width: 1px;" align="center" border="1" cellpadding="2">
+<tbody>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/ramps/rampp.png" title="Circular Ramp" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="256" width="256" /></td>
+<td><code>#Make a linear ramp a radial one.<br />gmic 256,256,1,1,'w-x' \<br />-polar2euclidean 0.5,0.5,1,1 \<br />-normalize 0,255</code></td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/ramps/ramppoc.png" title="Off Center Radial Ramp" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="256" width="256" /></td>
+<td><code>#Nobody said we have to plot in \<br />#the center \<br />gmic 256,256,1,1,'w-x' \<br />-polar2euclidean 0.25,0.85,1,1 \<br />-normalize 0,255<br /><br /></code></td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/ramps/ramppos.png" title="Radial Off Page" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="256" width="256" /></td>
+<td><code>#Nobody said we even had to stay \<br />#in the square. \<br />gmic 256,256,1,1,'w-x' \<br />-polar2euclidean 1.25,-0.35,1,1 \<br />-normalize 0,255</code></td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/ramps/ramppp.png" title="Pinprick Radial" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="256" width="256" /></td>
+<td><code>#The third parameter alters radial<br />#scaling. Values greater than one<br />#contract the space toward the center.<br />#Values less than one expand the center<br />#out to the perimeter.<br />gmic 256,256,1,1,'w-x' \<br />&nbsp;&nbsp; -polar2euclidean 0.25,0.85,3,1<br />&nbsp;&nbsp; -normalize 0,255</code></td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/ramps/ramppfx.png" title="Functional Radial" height="257" width="256" /></td>
+<td><code># Generate an arbitrary ramp &amp; wrap \<br /># around the northwest corner. \<br />gmic -function1d \<br />&nbsp;0.3,0,12,43,255,85,127,127,200,170,220,\<br />213,230,255,100 -expand_y 128 \<br />&nbsp;-polar2euclidean -0.0,0.0,0.8,2 \<br />&nbsp;-normalize 0,255</code></td>
+</tr>
+</tbody>
+</table>
+<h2>Closing up Shop</h2>
+<p>We've now reached a point where our ramps are beginning to look like general background patterns, which is not really surprising. There are many ways to go about ramp making in G'MIC, and the fancier approaches blend seamlessly into all kinds of pattern making. We could go on for pages and pages, but think you probably have the gist of it now.</p>
+<p>Much of what you've seen in this particular recipe is in Glorious Black And White, and that is also not surprising. These efforts might be called &ldquo;channel pieces,&rdquo; which, stacked by -append, can lead to very colorful pieces &ndash; or very subtle pieces. In any case, they are means to an end &ndash; and the end is up to you.</p>
+<table rules="all" style="border-color: #7f7f7f; border-width: 1px; background-color: #ffffff;" align="center" border="1" cellpadding="2">
+<tbody>
+<tr>
+<td><a target="_parent" href="ramps_applying-a-curve.shtml">Applying a Curve</a></td>
+<td><span style="color: #7f7f7f;">No Following Page</span></td>
+</tr>
+</tbody>
+</table>
+
+
+
+   
+</body></html>

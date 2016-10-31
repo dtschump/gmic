@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="tutorial.css">
+<script type="text/javascript" src="highslide/highslide.js"></script>
+<link rel="stylesheet" type="text/css" href="highslide/highslide.css" />
+<script type="text/javascript">
+hs.graphicsDir = 'highslide/graphics/';
+hs.wrapperClassName = 'wide-border';
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<body>
+
+
+      
+
+
+
+<h1>-distance</h1>
+<p><img src="http://www.particularart.com/static/media/uploads/command_reference/distance/dist_example.png" title="Distance from black" class="img_block" style="float: left; margin: 3px; border: 0px solid #808080;" width="300" height="300" />This command measures the distances of input pixels from benchmarks with a particular <em>isovalue</em> and creates a data set of displacements, each entry similarly positioned as the input pixel and measuring its distance to the isovalue.</p>
+<p>Suppose the isovalue is zero. Then a non-zero pixel from the input at least twenty seven pixels away from one with zero will correspond to a data set entry with the same coordinates as the input pixel but with a value of twenty seven. Pixels in an input image with the isovalue will always be zero in the data set since they are no distance at all from themselves.</p>
+<p>Since isovalues are simple scalar values, the command operates primarily on single channel (gray scale) images. Colors, being vectors, cannot be isovalues. If the -distance command has a multi-spectral operand, it will treat each image channel independently, producing a like multi-spectral image with each channel an independent distance data set of measurements to isovalues.</p>
+<p>Usually, operands for -distance arise from logic commands (<a target="_parent" href="http://gmic.eu/reference.shtml#lt">-lt</a>, -<a target="_parent" href="http://gmic.eu/reference.shtml#eq">eq</a>,...) and are single channel bi-valued (0, 1) images. The logic command presumably identifies pixels meeting some criterion and produces the immediate operand with identified pixels set to one and failing pixels set to zero. When given an isovalue of one, the -distance command determines how far away the failing pixels are from those which are not. It then generates an output image dimensioned as the operand but with pixels shaded to reflect the distances that their counterparts are from the nearest isovalues.</p>
+<p>Pixels in the original image (figure: left) with the isovalue zero presumably meet some criterion. They are also black (zero) in the resulting data set (figure: middle), as no distance at all separates these from the isovalue. All other pixels in the data set exhibit varying shades of gray, reflecting the varying distances of their counterparts to input pixels with the given isovalue. The lightest pixels in the data set correspond to those in the operand image that are furthest from the isovalue.</p>
+<p>It is not uncommon to further convert the data set produced by -distance with a <a target="_parent" href="_map.shtml">-map</a> command, as was done with the figure: right image. The Hue-Saturation-Value map used in this example identifies red with zero and violet to the highest value found in the data set. Often, such color coding makes distance relationships easier to grasp than with unadorned gray scale images.</p>
+<p>The command has two variants. The first assumes the measure of pixel edges to be fixed, with tabulation of length along each dimension being little more than a count of edges:</p>
+<p><code>-distance isovalue,_metric {0=chebyshev | 1=manhattan | 2=euclidean | 3=squared-euclidean }<br /></code></p>
+<ol>
+<li><em>isovalue:</em> A reference intensity. It may be specified as a particular floating point or integer value, or as a percentage of the intensity range from the lightest to the darkest pixel in the operand image (i<sub>M</sub> &ndash; i<sub>m</sub>) . Pixels with this value serve as benchmarks. They are &ldquo;signposts&rdquo; from which one measures distances. They render black in the resulting data set because, obviously, no distance separates them from themselves.</li>
+<li><em>_metric:</em> A selector assuming one of four values, from zero to three, choosing a particular measuring function. This selector may be omitted and defaults to 2, selecting the Euclidean metric. See "Metric Functions", below.</li>
+</ol>
+<p>The isovalue may be any value in the input range, but as a practical matter is best expressed as an integer value, often zero or one, with the input image commonly having a single binary value gray scale channel. (True/False, 1, 0). Floating point values can lead to unexpected results because the match to the isovalue must be exact, but the slight variations common with floating point values precludes such exact matches and, conceivably, the -distance command might not identify <em>any</em> pixel in an operand as having a given isovalue, while there may be thousand of pixels that happen to be exceedingly close. In these circumstances, -distance will produce data sets with every entry set to the largest floating point value the math library can express, since, from the command's perspective, the isovalue is "very far away" from every pixel in the operand. The receipt of such a data set is usually cause to re-think what one is trying to do. It may make sense to use <a target="_parent" href="http://gmic.eu/reference.shtml#round">-round</a> on an operand to slightly flatten a dataset into distinct isovalues.</p>
+<p>The second variant makes use of a custom metric map, this being realized by a gray scale image that is the same size as the input image.</p>
+<p><code>-distance isovalue[%],[metric],_method</code></p>
+<ol>
+<li><em>isovalue:</em> a reference intensity. This parameter functions identically to that of the first variant.</li>
+<li><em>[metric]:</em> a selection from the image list of a single channel, gray scale metric map composed of zero or positive value pixels. The metric map is identical in size to the operands and the intensity of each pixel in the metric map represents the &ldquo;cost&rdquo; of traversing the corresponding pixel in the operand images. These are multipliers and may scale the distance associated with a pixel from zero to an arbitrarily large value. See &ldquo;Metric Maps&rdquo; below. The -distance command will fail if the dimensions of the metric map differ from that of any of the selected operand images.</li>
+<li>&nbsp;<em>_method: </em>a selector ranging from 0-4, choosing one of three metric methods along with two variants:<ol type="a">
+<li><em>Fast Marching (selector is 0)</em>: When all multipliers in the metric map are constant, Fast Marching behaves very much like the Euclidean metric (see Metric Functions). This is a low-connectivity metric (see <a target="_parent" href="_label.shtml">-label</a> for an introduction to the idea of image connectivity). That is, two pixel regions touching only at corners are disjoint for measuring purposes.</li>
+<li><em>Low-Connectivity Dijkstra (selector is 1):</em> When all multipliers in the metric map are constant, this metric measures distances much like the Manhattan metric (see Metric Functions). As the name implies, this too is a low-connectivity metric; pixel regions touching only at corners are disjoint for measuring purposes.</li>
+<li><em>High-Connectivity Dijkstra (selector is 2):</em> When all multipliers in the metric map are constant, evaluates distances approximating a Euclidean metric. A high-connectivity metric, pixel regions touching only at corners are not considered disjoint for measuring purposes</li>
+<li><em>Low-Connectivity Dijkstra with Return Path Map</em> (selector is 3): The metric is the same as method 1, but also produces a secondary Return Path map. The G'MIC <a target="_parent" href="/admin/pages/richtextpage/256/-minimal_path">-minimal_path</a> command harnesses -distance to generate this map when it is used with its connectivity selector set to 'low'.</li>
+<li>&nbsp;<em>High-Connectivity Dijkstra (selector is 4):</em> The metric is the same as method 2, but also produces a secondary Return Path map. The G'MIC <a target="_parent" href="http://gmic.eu/reference.shtml#minimal_path">-minimal_path</a> command harnesses -distance to generate this map when it is used when its connectivity selector set to 'high'.</li>
+</ol></li>
+</ol>
+<p>The Return Maps cited in methods (d) and (e) are control word datasets, the control words correspond to each pixel in the operand image and are intended to direct some abstract pointer or cursor. G'MIC images exhibit three degrees of independent movement along width, height and depth axes, giving each pixel as many as twenty six distinct neighbors to which an abstract cursor sitting on the pixel may move. The control words are so composed to either direct the cursor one step toward the nearest isovalue, where it is to read the next control word, or stay in place because the pixel upon which it is situated is an isovalue. Other G'MIC commands such as <a target="_parent" href="http://gmic.eu/reference.shtml#minimal_path">-minimal_path</a> implement cursors that read these Return Maps.</p>
+<h2 id="MetricFunctions">Metric Functions</h2>
+<p>A <a target="_parent" href="http://en.wikipedia.org/wiki/Metric_space"><em>metric space</em></a> is a set of points associated with a <em>metric,</em> a function that takes a pair of points from the set and returns the distance separating them. The metric space with which we are most familar, Euclidean space, uses the <a target="_parent" href="http://en.wikipedia.org/wiki/Pythagorean_formula">Pythagorean Formula</a> as a metric, but other spaces exist which use different metrics. Of particular interest are those metrics that are cheap to compute, but which give rise to spaces sufficiently like a Euclidean one to serve most purposes. We should not be too alarmed if the distances in these spaces seem strange (or just plain wrong) to our Euclidean trained minds. For many purposes, all that we ask of a metric is to consistently distinguish near points from far points, and to do so as cheaply as possible. With this frame of mind, we are usually disposed to avoid the (expensive!) square root operation of the Pythagorean Formula.</p>
+<p>The following series of images each illustrate one of the four metric spaces supported by the -distance command. The antecedent image is everywhere black except for the upper left hand pixel, which has been set to an intensity of one. We invoke the&nbsp; -distance command four times to measure distances to this isovalue, specifying different metrics each time.</p>
+<p>To help visualize distances, we harness the -map command to encode distance with color. Here, red &mdash; rgb(255, 0, 0) &mdash; maps to a distance of zero and reddish violet to the maximum distance in the dataset. Pixels with similar colors are at a similar distance to the reference point under the given metric. There is no loss in generality if we simply regard these images as unit squares, sides equal to one, as that is a simple rescaling from whatever number of pixels these images are in this page.</p>
+<p>We can succinctly generate the illustrations with the following G'MIC pipeline:</p>
+<p><code>$ gmic 256,256,1,1 -set[-1] 1,0,0,0 <br /> &nbsp;&nbsp;-repeat 4,mapid [0] -distance[-1] 1,'$mapid' <br /> &nbsp; -map[-1] 1,1 -normalize[-1] 0,255 -o[-1] dis_'$mapid'.png<br /> &nbsp; -rm[-1] -done -rm[0]<br /></code></p>
+<table style="border-color: #7f7f7f; border-width: 1px; border-style: solid;" rules="all" class="table table-striped" border="1" cellpadding="2">
+<tbody>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/command_reference/distance/dist_0.png" title="chebyshev" width="200" height="200" /></td>
+<td>
+<h3>chebyshev</h3>
+<p>The chebyshev metric (_metric=0) defines the distance between any two points in the space as the largest of their differences along any spatial dimension.</p>
+<p><img src="http://www.particularart.com/static/media/uploads/command_reference/distance/chebyshev.png" title="chebyshev metric" width="213" height="40" /></p>
+<p>Construct a rectangle (a cuboid in three dimensions) on the line segment connecting the two points. In a space with a chebyshev metric, the separating distance is just the longest side of that geometric. the locus of points at a particular distance from the reference point form a square centered on the reference point.</p>
+<p>In this metric space, the length of the diagnonal is the same as the longest side. Indeed, in the square image on the left, the distance from the reference point to any point on either of the opposite sides is the same, which makes no sense to anyone grounded in the Euclidean metric. That oddity notwithstanding, the chebyshev metric furnishes a consistent reporting of distances between points&nbsp; &mdash; and it is exceedingly cheap to compute.</p>
+</td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/command_reference/distance/dist_1.png" title="manhattan" width="200" height="200" /></td>
+<td>
+<h3>manhattan</h3>
+<p>The manhattan metric (_metric=1) defines the distance between any two points as the sum of the absolutes of differences along each spatial dimension:</p>
+<p><img src="http://www.particularart.com/static/media/uploads/command_reference/distance/manhattan.png" title="manhattan metric" width="150" height="43" /></p>
+<p>We construct a rectangle (or cuboid) on the segment connecting the two points and add up the components along each dimension. The distance is exactly that of a taxi constrained to travel along the streets of a square grid such as in Manhattan, New York City (more or less).The locus of points at a particular distance from the reference form a diamond centered on the reference point.</p>
+<p>At the price of a little extra computation, at least with respect to the chebyshev metric, distances are fairly akin to those obtained with the Pythagorean Theorem. In the image at the left, diagonals of squares are longer than the sides, akin to what one would find with the Euclidean metric, though values differ. With the manhattan metric, the diagonal of the square image on the left is two, not the square root of two, for sides equal to one.</p>
+</td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/command_reference/distance/dist_2.png" title="Euclidean" width="200" height="200" /></td>
+<td>
+<h3>euclidean</h3>
+<p>The euclidean metric (_metric=2, default) defines the distance between any two points using the Pythagorean Formula:</p>
+<p><img src="http://www.particularart.com/static/media/uploads/command_reference/distance/euclidean.png" title="euclidean metric" width="150" height="43" /></p>
+<p>It is the "ordinary" distance which would be obtained with a ruler measuring the line segment between a given pair of points. The locus of points at a particular distance from the reference form a circle centered on the reference point.</p>
+<p>This is the&nbsp; natural, "common-sense" distance which most of us associate with the space around us and is the default method of the -distance command. It is computationally expensive compared to the other metrics, but renders the distance that one expects.</p>
+</td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/command_reference/distance/dist_3.png" title="Squared Euclidean" width="200" height="200" /></td>
+<td>
+<h3>squared-euclidean</h3>
+<p>The squared-euclidean metric (_metric=3) is simply the euclidean metric without the square root operation:</p>
+<p><img src="http://www.particularart.com/static/media/uploads/command_reference/distance/sqreuclidean.png" width="150" height="40" /></p>
+<p>Usually, the square root operation is the most expensive; its elimination gives rise to a metric space that behaves very much like a Euclidean one, differing only in that distances between points grow quadratically as points separate instead of linearly. Usefully, distances which sort in a particular order with a euclidean metric would sort to the same order with the squared-euclidean metric. This stems from the fact that the locus of points at a particular distance from the reference still forms a circle centered on the reference point, like the euclidean metric.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h2>Custom Metric Maps</h2>
+<p>Heretofore, we've been content to regard a pixel as representing a fixed object, its sides defining a unit length. We see elsewhere that choosing one or another metric (Euclidean, Manhattan...) can affect the computed distance between points, but in every case the pixel itself is a thing of constant measure and the tabulation of distances along the cardinal axes, common to each metric function, amounts to counting so many edges, each of unit length. It is under this regimen that the first form of the -distance command operates.</p>
+<p>When pixels vary in size or embody local traversal costs, the concept of 'distance' takes on a more general aspect. To accommodate this, the second form of the -distance command takes a metric map having the same width, height and depth as the operand image, with a one-to-one correspondence between the pixels of each. When such a map is present, the -distance command no longer associates a fixed length with pixel edges, but consults the metric map for a non-negative multiplier. If the multiplier is zero, the corresponding pixel is a dimensionless point and may be traversed without accruing distance. On the other hand, the multiplier may be positive and arbitrarily large, setting the size or &ldquo;traversal cost&rdquo; of the pixel.</p>
+<p>In this regimen, some very useful nuances may be introduced to the computation of distances. For example, in the so-called real world which purportedly exists outside the realm of computer graphics, we are told that hills are expensive. Climbing them requires additional fuel, Going down them wears out brakes. We generally go slower on such steep grades. In contrast, roads with low grades are relatively cheap to travel and we can go pretty fast. In a sense, two points connected by a road with low grades are closer together than a like pair of points with a lot of intervening hills, even though, &ldquo;as the crow flies,&rdquo; both pairs of points are about the same distance apart.</p>
+<p>We might consider a gray scale image as a height map of such hilly terrain. It might even look like an image produced by <a target="_parent" href="_plasma.shtml">-plasma</a>. Applying the <a target="_parent" href="_gradient_norm.shtml">-gradient_norm</a> command to this height map yields a new gray scale image where rapid changes in intensity in the original &ndash; steep grades &ndash; register as white or light gray in the gradient norm image &ndash; expensive pixels. We can then use this gradient norm image as a custom metric map. It will associate steep gradients with expensive pixels and the -distance command will produce a data set of distances adjusted to reflect the vagaries of the terrain.</p>
+<p>Here's a gallery of distance data sets, each to a fixed triplet of pixels of a particular isovalue plotting the vertices of an isosceles triangle. Each data set has different metric map.</p>
+<table rules="all" class="table table-striped" style="border-color: #7f7f7f; border-width: 1px;" align="center" border="1" cellpadding="2">
+<tbody>
+<tr><th>Metric Map</th><th>Distance data set</th><th>Comment</th></tr>
+<tr>
+<td>None</td>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/command_reference/distance/dmap_0.png" title="Triangle vertices in a Euclidean Metric Space" class="img_block" style="margin: 3px; border: 0px solid #808080;" width="256" height="256" /></td>
+<td>For comparison, this distance map arises from the application of <code>-distance 1,2</code>, harnessing the Euclidean metric. The vertices of the triangle have isovalues of 1 in the operand image. There is no metric map so all pixels in the operand were considered to be unit size. Unsurprisingly, points equidistant from vertex pairs form line segments. This is a &ldquo;typical&rdquo; distance data set.</td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/command_reference/distance/mmap_1.png" title="Vertices on a plasma-generated terrain." width="256" height="256" /></td>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/command_reference/distance/dmap_1.png" title="Distances accounting for cost of travel on a plasma domain" width="256" height="256" /></td>
+<td>We have applied a metric map, a gradient norm of a plasma, which tells the distance command about steep gradients situated among the isovalues. Observe the equal distance loci (lightest grays) which formed line segments in the previous dataset, but here are jagged, reflecting the varying expense of traversing pixels, altering the <em>de facto</em> distances among isovalues.</td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/command_reference/distance/mmap_2.png" title="Walled City Metic Map" width="256" height="256" /></td>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/command_reference/distance/dmap_2.png" width="256" height="256" /></td>
+<td>The metric map reflects an elaborate system of walls which partition the intervening regions between vertices. The effective distance to a vertex is fairly constant for large areas; the cost of traveling within walls is nearly free. The expense climbing over walls is reflected by abrupt changes in cost.</td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/command_reference/distance/mmap_3.png" width="256" height="256" /></td>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/command_reference/distance/dmap_3.png" width="256" height="256" /></td>
+<td>Vertices are surrounded by rectangular regions of expensive travel, these just touching at corners. We generated the dataset on the near left with a low-connectivity metric, so that the regions just surrounding each vertex are disconnected from the outside. Compare the shade of gray of pixels in the middle of this dataset with those of the following set.</td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/command_reference/distance/mmap_4.png" width="256" height="256" /></td>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/command_reference/distance/dmap_4.png" width="256" height="256" /></td>
+<td>This set differs from the previous only in that a high-connectivity metric was used, so that regions just touching at corners are considered &ldquo;connected.&rdquo; The middle pixels are darker &ndash; in effect less distant than &ndash; middle pixels in the previous set because now there are corner-crossing bridges, effectively shrinking the distance (or cost of travel) from the middle to the vertices.</td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/command_reference/distance/mmap_5.png" width="256" height="256" /></td>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/command_reference/distance/dmap_5.png" width="256" height="256" /></td>
+<td>The metric map in this example places a high cost of travel from nearly every point, with the exception of a network of roads where travel is nearly free. Points very close to vertices &ldquo;as the crow flies&rdquo; are, in effect, extremely distant from a cost-of-travel viewpoint. Every point on a &ldquo;road&rdquo; is more proximate to isovalues than the off-road pixel.</td>
+</tr>
+</tbody>
+</table>
+<p></p>
+<h2><em></em>Application: Modifying a Warning Image</h2>
+<p>It makes no sense to ask for distances to mauve, navy blue, pink or any other multiple-component color: -distance measures only to single channel intensity values. One may ask for distances to particular isovalues in multispectral images and obtain multispectral datasets indicating distances to the isovalue in each of the channels, with each channel treated as an independent grayscale image. If you are interested in the distances of all pixels to those colored some particular lime green, this will not give you what you want. Colors consist of multiple intensities; -distance will only measure to one such intensity.</p>
+<p>Finding distances to particular colors can be done, but with two steps. Step one is a logic question: ask if a pixel has a particular color. Posing that question to every pixel in an image produces a new dataset of binary yes/no, one/zero values. This is a dataset upon which -distance can operate, the second step. A practical example follows.</p>
+<p>Desktop publishing systems can produce 'out of gamut' warning images where all out of gamut pixels in some original are replaced with magenta, green, or some other highly saturated color, a kind that rarely appears in photographic images. Perhaps we might be interested in large out-of-gamut areas, but regard 'speckles' as acceptable. We don't wish to be bothered with images that may be out of gamut in a few pixels here and there. For our purposes, let any clump of pixels with a diameter of eight pixels or less be a 'speckle' or a line too thin to matter. The following G'MIC pipeline produces a modified warning image which, if it contains white (true) areas, corresponds to an original that really does require our attention.</p>
+<p><code>$ gmic -input wizard_gamut-warn.png 'fn={0,n}'<br /> &nbsp;&nbsp;-select_color 255,0,127 -distance[-1] 1<br /> &nbsp;&nbsp;-ge[-1] 4 -if '{iM&gt;0}' -output[-1] 'bad-${fn}' -endif<code></code></code></p>
+<p>Here is a walkthrough of this command sequence:</p>
+<table class="table striped" border="0">
+<tbody>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/command_reference/distance/wizard_gamut-warn.png" style="margin: 3px; border: 0px solid #808080;" width="350" height="467" /></td>
+<td>
+<h3>1</h3>
+<p><code>gmic -input wizard_gamut-warn.png 'fn={0,n}'</code></p>
+<p>A desktop publishing system reviewing images for printing on coated paper using four color process inks (CMYK) finds the RGB image of the wizard largely out of gamut, according to the output <a target="_parent" href="http://en.wikipedia.org/wiki/ICC_profile">ICC profile</a> furnished by the printing house.</p>
+<p>The particular subsystem making this discovery generates a new image, replacing all out-of-gamut colors with rgb(255,0,127), a reddish magenta. Other systems could use different indicator colors.</p>
+<p>The human in charge doesn't want to be bothered if only isolated pixels run out of gamut, but this example probably would concern him. The G'MIC pipeline which alerts him generates a new warning image, without speckles, but with areas coinciding with large out-of-gamut regions in the original. When the human sees the revised warning image, prefixed with 'bad-', he or she can inspect it, determine how bad the problem is, and decide upon some action.</p>
+<p>The first part of this pipeline entails basic setup housekeeping. Of note is the setting of a local variable, 'fn', to the file name of the first image on the stack, which will be used later in the pipeline if a warning image needs to be generated.</p>
+</td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/command_reference/distance/oog_0.png" style="margin: 3px; border: 0px solid #808080;" width="350" height="467" /></td>
+<td>
+<h3>2</h3>
+<p><code><a target="_parent" href="_select_color.shtml">-select_color</a> 0,255,0,127 </code></p>
+<p>Since -distance does not work with color directly, the G'MIC <a target="_parent" href="_select_color.shtml">-select_color</a> command can be harnessed to set out-of-gamut pixels to black and in-gamut colors to white, a dataset with which -distance can work.</p>
+</td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/command_reference/distance/oog_1.png" style="margin: 3px; border: 0px solid #808080;" width="350" height="467" /></td>
+<td>
+<h3>3</h3>
+<p><code>-distance[-1] 1</code></p>
+<p>Given the binary file from the last step, the -distance command makes a single channel gray scale dataset where pixels that are equal to the isovalue&nbsp;&mdash; in-gamut pixels&nbsp;&mdash; are black. Out of gamut pixels are some measurable distance from these; the command sets the intensity value of these to the distance from the nearest in-gamut pixel.</p>
+<p>Out-of-gamut pixels in isolated 'speckles' would be very close to in-gamut pixels. They would have small values, be very dark and would not be of great concern to the human. On the other hand, out-of-gamut pixels in large masses will acquire very high distance values, exhibit a light gray and flag a condition which the human would like to know about.</p>
+</td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/command_reference/distance/oog_2.png" style="margin: 3px; border: 0px solid #808080;" width="350" height="467" /></td>
+<td>
+<h3>4</h3>
+<p><code>-ge[-1] 4 -if '{iM&gt;0}' -output[-1] 'bad-${fn}' -endif</code></p>
+<p>The <a target="_parent" href="http://gmic.eu/reference.shtml#ge">-ge</a> command &mdash; greater than or equal to some reference value &mdash; produces another binary dataset. Here, any pixel with a value greater than or equal to 4 is in a clump larger than a&nbsp; mere speckle. The combination of -distance and -ge filters out the isolated out-of-gamut speckles, but identifies the broad swatch of background and many areas in the wizard's robe as sizeable regions of out-of-gamut color.</p>
+<p>The control command <a target="_parent" href="_if.shtml">-if</a> ... <a target="_parent" href="http://gmic.eu/reference.shtml#endif">-endif</a> assesses the environmental value iM, which always contains the largest value observed in the last image on the stack. Since large areas of out-of-gamut pixels have been found, there are pixels in the dataset equal to one, setting the value of the aggregate variable, iM, to one. This triggers the writing of this image to a new file, which has the same name as the old file, but with the prefix 'bad-' added to the file name. Note the use of the variable fn set in step one: <code>bad-${fn}</code>, The <code>${...}</code> construct tells G'MIC to access the value stored in varialble 'fn' and substitute it into the new file name.</p>
+<p>Later on, the human in charge will look at the files prefixed with 'bad-' to determine how bad the corresponding images are, and, with luck, be able to adjust them accordingly.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p><em>Garry Osgood</em></p>
+
+
+
+   
+</body></html>

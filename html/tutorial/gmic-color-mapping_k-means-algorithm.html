@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="tutorial.css">
+<script type="text/javascript" src="highslide/highslide.js"></script>
+<link rel="stylesheet" type="text/css" href="highslide/highslide.css" />
+<script type="text/javascript">
+hs.graphicsDir = 'highslide/graphics/';
+hs.wrapperClassName = 'wide-border';
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<body>
+
+
+      
+
+
+
+<h1 id="KMeans">K-Means</h1>
+<p><img src="http://www.particularart.com/static/media/uploads/technotes/colormap/cm_014.png" alt="Dover's Hill, Cotswold, United Kingdom: Progressively Decimated" title="cm-014" class="img_block" style="margin: 3px; border: 0px solid #808080;" width="900" height="300" /></p>
+<p style="font-size: x-small; text-align: right;"><i>Dover's Hill progressively decimated, near <a target="_parent" href="https://en.wikipedia.org/wiki/Chipping_Campden" title="Chipping Campden">Chipping Campden</a>, <a target="_parent" href="https://en.wikipedia.org/wiki/Gloucestershire" title="Gloucestershire">Gloucestershire</a>, The Cotswold, UK <a target="_parent" class="extern" href="http://www.flickr.com/people/jtrickey/">James Trickey</a> Wikimedia Commons</i></p>
+<p>K-means finds the dominant colors in an image through an iterative corrective process. In practice, users specify the number of colors as a parameter, often without any reference whatsoever to the statistical properties of the image. They have the desire (or are constrained because of technical reasons) to reproduce an image using a fixed (and usually small) number of colors. They can choose the colors, and want to choose the <b><i>best</i></b> ones. K-means will find quite good ones, but finding the "best" is currently an outstanding research problem.</p>
+<p>Users might provide a palette of colors as initial hints. The hints could be quite good or really bad; the k-means algorithm (almost!) always converges to a good solution, and (almost!) always better than any hints that users may have provided beforehand. Bad hints just take longer &mdash; maybe a lot longer &mdash; to converge. As used in the G'MIC <a target="_parent" href="/admin/pages/richtextpage/843/htt/tools-and-toys/gmic/command-guide/color-manipulation/-colormap"><tt>-colormap</tt></a> command, the k-means algorithm gets pretty good hints from an initial run of the <a target="_parent" href="gmic-color-mapping_median-cut-algorithm.shtml">median-cut algorithm</a>.</p>
+<p>The best way to approach the K-means algorithm is to think of colors as points in a color space where the notion of &ldquo;dominant color&rdquo; translates into a cloud of color points clustering, more or less closely, around some mean: a dominant color.</p>
+<p>At the outset, K-Means has no idea where these may be, but, taking the initial palette as so many starting points, the algorithm &ldquo;tags&rdquo; each color in the image with the ID of the closest palette color (see <a target="_parent" href="_index.shtml">-index</a>). This tagging process is sometimes called the <em>assignment phase</em>. These separate groups of colors, each with a tag in common, are initially the best known clusters to the algorithm.</p>
+<p>How good are they? To find out, the k-means algorithm locates the median color of each cluster. This median, the "center of the cluster," is taken to be the <a target="_parent" href="https://en.wikipedia.org/wiki/Weighted_arithmetic_mean">weighted average</a> of all similarly tagged colors. The algorithm weighs a particular color by the count of its appearances in the cluster divided by the total count of all colors in the cluster. This weight, a ratio somewhere between zero and one inclusive, is the relative size of a particular color population with respect to the whole. This scheme ensures that particular colors contribute to the hue of the mean color only in relation to their numbers as a fraction of the whole. Computing these weighted averages is sometimes called the<em> update phase</em>.&nbsp;</p>
+<p>The algorithm takes the difference between all weighted averages, one for each swatch in the color palette, and the original color swatches. If average magnitude of these differences exceeds a certain predefined tolerance, then the algorithm takes the weighted averages as the better solution and cycles using these as entries in the updated palette. The process completes when two successive palettes are found to be identical, or so similar that their differences do not matter.</p>
+<ol>
+<li>
+<p>Begin with an original image, a minimum error threshold, &epsilon;, and a palette<sub>0</sub>, with <i>k</i> swatches indexed {0, &hellip;, <i>k</i> &ndash; 1}. Let palette&nbsp;<sub>0</sub> be the &ldquo;current palette,&rdquo; to wit:</p>
+<p align="center">palette&nbsp;<sub>C</sub>&larr;palette&nbsp;<sub>0</sub></p>
+</li>
+<li>
+<p>Tag each pixel in the original image with the index of the most closely matching swatch in the current palette <sub>C</sub>, producing an intermediary image where every pixel is a two-field record of integers containing the actual hue in the least significant field and the closest matching swatch index in the most significant field.</p>
+</li>
+<li>
+<p>For each swatch index <i>i</i> in palette<sub> </sub><sub>C</sub> with index <i>i</i> in {0, &hellip;, <i>k</i> &ndash; 1}:</p>
+<ol type="a">
+<li>
+<p>Generate per-channel histograms with <i>2</i><sup><i>d</i></sup><sup> </sup>bins from all pixels tagged with swatch index<i> i</i>. <i>d</i> is the bit depth of the channels; <i>2</i><sup><i>d</i></sup> for <i>d</i> = 8 bits/channel is equal to 256 histogram bins.</p>
+</li>
+<li>
+<p>For each histogram bin, multiply its count with the corresponding luminance value from a black-to-white ramp of <i>2</i><sup><i>d </i></sup>steps. For each channel, this step selects luminance values from the ramp observed in the image and associated with swatch <i>i</i>. Luminance values that have not been observed with swatch <i>i</i><i>'s</i> tag necessarily have zero counts while those with positive counts have been tabulated in direct proportion to their frequency of appearance.</p>
+</li>
+<li>
+<p>Normalize the products of counts and luminance values through dividing by the total count of pixels associated wih the swatch, yielding weights for each color relative to the whole swatch population. The sum of these variously weighted colors is the <em>weighted average</em> color of swatch <i>i</i><i>.</i></p>
+</li>
+<li>
+<p>Subtract this weighted average color from the one in the current palette. This difference measures the offset from the median recorded in palette<sub> </sub><sub>C</sub> and the updated median tabulated from the image.</p>
+</li>
+</ol></li>
+<li>
+<p>Take the average of the absolute values of all <i>k</i> differences computed in step 3d and compare with &epsilon;.</p>
+</li>
+<li>
+<p>If this average of absolute differences exceeds &epsilon;, define palette <sub>C</sub><sub><i>+1</i></sub> based on the weighted average colors found in step 3c and continue with step 2 using palette <sub><i>C</i></sub><sub><i>+1</i></sub>.</p>
+</li>
+<li>
+<p>Otherwise, accept palette <sub><i>C</i></sub> as an optimized version of the initial palette <sub><i>0</i></sub></p>
+</li>
+</ol>
+<p>Step 2 implements an <i>assignment phase</i>. For each image pixel, the algorithm determines which swatch is nearest to the pixel in color space distance and assigns the swatch ID to that pixel. This task is implemented almost entirely by the G'MIC <tt>-index</tt> command. Through this process, the algorithm can readily group image pixels by swatch ID.</p>
+<p>The computation of new averages in steps <b>3b</b> and <b>3c</b> initiates an <i>update phase</i>. If image pixels group with the same swatches for two successive palettes, then counts do not change and the averaging in step <b>3c</b> produces the same set of median luminance values. This completes the algorithm, furnishing a corrected palette.</p>
+<p>On the other hand, if, in successive palettes, different pixel groupings arise then counts change, as one re-tagged pixel affects two counts, two averages and two swatches. In this case, an updated palette with shifted medians arises.</p>
+<p>The trial then recommences with this updated palette, necessary because in computing new averages, cluster medians move &ndash; and almost certainly, in their new locations, some pixels which used to be rather closer to one median are now rather closer to another, creating new misalignments.</p>
+<p>The heuristic belief is that these misalignments become fewer in number as iterations proceed. That is, medians eventually migrate to the center of their &ldquo;true&rdquo; clusters giving rise to a minimum of misalignments and updates that barely change in successive rounds.</p>
+<table style="width: 100%;"><colgroup><col width="47%" /> <col width="53%" /> </colgroup>
+<tbody>
+<tr>
+<td><a target="_parent" class="intern" href="img/gmic-color-mapping_k-means-algorithm_cm_013.jpg" class="highslide" onclick="return hs.expand(this)"><img src="http://www.particularart.com/static/media/uploads/technotes/colormap/cm_013_s.png" alt="normalization doesn't change relative distance relationships" title="cm-013-s" class="img_block" style="margin: 3px; border: 0px solid #808080;" width="300" height="150" /></a></td>
+<td>
+<pre>    m={im} M={iM} 
+   -normalize. 0,255
+   <span style="color: #808080;"><i>&lt;color mapping and tagging&gt;</i></span>
+    <span style="color: #808080;">-do</span>
+       <span style="color: #808080;"><i>&lt;k-means iteration&gt;</i></span> 
+    <span style="color: #808080;">-while {$diff&gt;0.5}</span>
+   <span style="color: #808080;"><i>&lt;Convert back to original colors&gt;</i></span>
+   </pre>
+</td>
+</tr>
+</tbody>
+</table>
+<h2 id="Normalization">Normalization</h2>
+<p>Our detail k-means walk through concerns itself with a single-channel gray scale; concepts here extend without change to multichannel images &ndash; it is the same story repeated for however many channels an image may have.</p>
+<p>We begin with a pair of math expressions capturing the initial minimum and maximum values of the original image, followed by a temporary normalization of the image to the full luminance range of <i>0,...2</i><sup><i>d</i></sup><i> &ndash; 1</i>. No generality is lost in normalizing an image to the full luminance range of the bit depth of the channel. Its geometric effect in RGB color space is one of magnifying distances, but the <i>relative</i> positions of pixels with respect to their neighbors or their cluster medians do not change. This normalization step is necessary to make full use of the luminance range of the histograms introduced in step <b>3a</b>. Without normalization, nearly all pixels of an extremely subtle, low-contrast, gray-on-gray image wind up in just a very few bins of the histogram and we would be unable to fully resolve clusters. At the end of the run, we apply <tt>m</tt> and <tt>M</tt> in a renormalization step to scale the swatches of the palette back to the luminance range of the original image.</p>
+<table style="width: 100%;"><colgroup><col width="47%" /> <col width="53%" /> </colgroup>
+<tbody>
+<tr>
+<td>&nbsp;<a target="_parent" class="intern" href="img/gmic-color-mapping_k-means-algorithm_cm_006.jpg" class="highslide" onclick="return hs.expand(this)"><img style="margin: 3px; border: 0px solid #808080;" class="img_block" src="http://www.particularart.com/static/media/uploads/technotes/colormap/cm_006_s.png" alt="Histogram and some estimated swatches" title="cm-006-s" width="300" height="194" /></a>
+<p style="text-align: center;"><i>Illustration 1</i></p>
+</td>
+<td>
+<pre>  <span style="color: #808080;"><i>&lt;normalization&gt;</i></span>
+  --colormap $1
+  <span style="color: #808080;">--index.. [-1],0,0</span>
+  <span style="color: #808080;">-+[-3,-1]</span>
+  <span style="color: #808080;">-do</span>
+     <span style="color: #808080;"><i>&lt;k-means iteration&gt;</i></span>
+  <span style="color: #808080;">-while {$diff&gt;0.5}</span>
+<span style="color: #808080;"><i>&lt;Convert back to original colors&gt;</i></span></pre>
+</td>
+</tr>
+</tbody>
+</table>
+<h2 id="ColorMappingAndTagging">Color Mapping and Tagging</h2>
+<p>The first step of great moment is the running of the gradient-cut algorithm on the renormalized image; this produces an initial trial palette which the k-means algorithm refines.</p>
+<p>Recall that <tt>-_colormap </tt>is a &ldquo;private&rdquo; G'MIC command encapsulating the<a target="_parent" class="western" href="#1.2.Median-cut|outline"> median-cut</a> algorithm, so on the second line of our code excerpt, everything documented in <a target="_parent" href="gmic-color-mapping_median-cut-algorithm.shtml">Median-cut</a> happens and, with its<a target="_parent" class="intern" href="command-decorations.shtml#LefthandDecorations" intern=""> left-hand decoration</a> written as a double-hyphen, the <tt>-_colormap</tt> command returns leaving the original image intact and the initial palette following it on the image list. Note that <tt>$1</tt> is a substitution sequence for the first item on the command line, in this example, an argument setting the palette size to 4 color swatches, each corresponding to a (presumed) cluster median in the original image, at least in the humble opinion of the gradient-cut algorithm.</p>
+<p>Illustration 1 depicts the initial case. The dark blue markers illustrate the luminance distribution of values in one channel of the original image. There seems to be local peaks &ndash; lots of pixels with the same luminance &ndash; at values of 0 (about 50 pixels), 88, (about 15 pixels) 150 (about 30 pixels) and 255 (about 108 pixels). Potentially, these peaks are at or near the median values of clusters occurring in this channel. All other luminance values have just single digit counts and many luminance values have zero counts, corresponding to no pixels at all.</p>
+<p>Four very colorful markers are superimposed on this luminance distribution. For this particular channel, they flag the luminance values within the four swatches of the initial palette. If the swatches truly align with the median values native to the channel then there would be only small differences between the palette values and those computed in an initial round of the k-means algorithm. However, the values of these swatches, 119, 147, 168 and 202, seem quite far from some of the peaks in the distribution, particularly those at either end of the distribution.</p>
+<table style="width: 100%;"><colgroup><col width="47%" /> <col width="53%" /> </colgroup>
+<tbody>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/technotes/colormap/cm_008_s.png" title="cm-008-s" class="img_block" style="margin: 3px; border: 0px solid #808080;" width="300" height="45" />
+<p align="center"><i>Illustration 2: Image channel, dimensioned to a one pixel row ([0]), and the presumed optimum palette ([1]). Only one channel is depicted. </i></p>
+</td>
+<td>
+<pre>  <span style="color: #808080;"><i>&lt;normalization&gt;</i></span>
+  <span style="color: #808080;">--_colormap $1</span> 
+  --index.. [-1],0,0
+  -*. 256
+  -+[-3,-1]
+  <span style="color: #808080;">-do</span>
+    <span style="color: #808080;">&lt;k-means iteration&gt;</span>
+  <span style="color: #808080;">-while {$diff&gt;0.5}</span>
+  <span style="color: #808080;"><i>&lt;Convert back to original colors&gt;</i></span>
+</pre>
+</td>
+</tr>
+</tbody>
+</table>
+<p>This situates us at Step 1 of the k-means algorithm. The pixels of the original image, still arrayed in one row, is in position <tt>[0]</tt> and the initial palette follows it at position <tt>[1]</tt>; see <a target="_parent" href="#Image9|graphic"><i>Illustration 2</i></a>. The error threshold, &epsilon; is hard-coded at 0.5.<a target="_parent" class="sdfootnoteanc" name="sdfootnote1anc" href="#sdfootnote1sym"></a><sup>*</sup></p>
+<p><tt><a target="_parent" class="intern" href="_index.shtml">--index</a></tt> associates each pixel in the original image with the closest of the four swatches from the palette, commencing the <i>assignment phase</i> of Step 2. Its particular arguments disable dithering, which serves no purpose here, and requests an <i>index map</i>. The output pixel is not colored with the chosen palette swatch, but has the index number of the closest swatch instead. These are the <i>tags</i> which later commands assign to image pixels.</p>
+<p>The &ldquo;closeness&rdquo; of a pixel color and a palette swatch is grounded on the idea that color may be thought to occupy a <a target="_parent" class="intern" href="_orientation.shtml#Theory">three dimensional color space</a>, where the additive primaries of red, green and blue occupy analogous roles to the <i>x, y </i>and <i>z </i>coordinates of the volume around us. One need not go into the math to find sympathy with the idea that blue-green and cyan must be very close together, but a substantial distance from red or orange. Assigning the primaries to coordinate axes lends rigor to this notion; we can then use a <a target="_parent" class="intern" href="_distance.shtml#MetricFunctions">metric relationship</a> like the Pythagorean Formula to calculate precisely the distance between two colors.</p>
+<p>The next two steps complete the &ldquo;tagging&rdquo; of the assignment phase. -* scales the tags by <i>2</i><sup><i>d</i></sup> (256 for eight bit deep channels) and -+[-3,-1] combines the tags with the pixels, in effect turning each into a two-field record: the most significant field has the tag, the swatch index of the closest palette color to the pixel, and the least significant field has the actual value. In a sort, such as what <tt><a target="_parent" class="intern" href="http://gmic.eu/reference.shtml#histogram">-histogram</a></tt> does, this particular arrangement causes pixels to group first by swatch assignment, and next by intensity value, effectively grouping image pixels into swatch-specific histograms. The utility of this becomes manifest in the next section, covering the <i>update</i> phase.</p>
+<table style="width: 100%;"><colgroup><col width="47%" /> <col width="53%" /> </colgroup>
+<tbody>
+<tr>
+<td><a target="_parent" href="img/gmic-color-mapping_k-means-algorithm_cm_009.jpg" class="highslide" onclick="return hs.expand(this)"><img src="http://www.particularart.com/static/media/uploads/technotes/colormap/cm_009_s.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" width="300" height="135" /> </a>
+<p style="text-align: center;" id="Frame4|frame"><i>Illustration 3: The top row is effectively a series of four histograms, one for each swatch. Each pixel represents a histogram bin containing a count of pixels tagged with a particular swatch ID and having a particular luminance value. These bins are sorted first by swatch ID, then by counts for particular luminance values. Middle: one ramp for each swatch ID. Ramp steps are multiplied pixel-wise with the top row histogram bins to produce the bottom row, luminance values weighted by histogram counts. The average of these weighted values is that which </i>should<i> be associated with the swatch ID, based as it is on actual population assessments. Of course, these averages may differ from those comprising the current palette.</i></p>
+</td>
+<td>
+<pre><span style="color: #808080;"><i>&lt;normalization&gt;</i></span>
+<span style="color: #808080;"><i>&lt;color mapping and tagging&gt;</i></span>
+-do
+  -repeat {s}
+     -shared[0] $&gt; 
+     --histogram. {$1*256},0,{$1*256-1} 
+     -remove..
+     -input.. 256,1,1,1,'x'
+     -resize.. {w},1,1,1,0,2
+     -mul.. [-1]
+     <span style="color: #808080;">-resize[-2,-1] $1,1,1,1,2</span>
+     <span style="color: #808080;">-max. 0.01</span>
+     <span style="color: #808080;">-div[-2,-1]</span>
+  <span style="color: #808080;">-done</span>
+  <span style="color: #808080;"><i>&lt;difference testing&gt;</i></span>
+<span style="color: #808080;">-while {$diff&gt;0.5}</span>
+<span style="color: #808080;"><i>&lt;Convert back to original colors&gt;</i></span>
+</pre>
+</td>
+</tr>
+</tbody>
+</table>
+<h2 id="KMeansIteration">K-Means Iteration</h2>
+<p>The tagging in Step 2 of the algorithm makes possible a sorting of image pixels first by swatch ID and then by counts of luminance value, grouping into one set all the pixels that <tt>-index</tt> deemed as being close to a particular swatch. The aim of Step 3 in all its parts, a &ndash; d, is to determine if the average value of these pixels in each swatch grouping differs significantly from that of the swatch. If it does, then the swatch needs updating.</p>
+<p>The G'MIC implementation flattens the per-swatch iteration given in the k-mean overview. The sorting, first by tags and then by value, essentially generates as many histograms as there are tags. These can be processed in parallel in one image, as shown in <a target="_parent" href="#Frame4|frame">Illustration 3</a>. The G'MIC implementation just iterates over image channels, and carries out Steps 3a &ndash; 3d in parallel through the ganged-together images shown in Illustration 3.</p>
+<p>Computing the average luminance value of a collection of pixels tagged with the same swatch ID takes place in the <tt>-repeat {s}&hellip;-done</tt> block, producing, in each loop over a channel, a set of averages, one for each swatch. It suffices for us to follow the evaluation of one channel.</p>
+<p><tt><a target="_parent" class="intern" href="_shared.shtml">-shared</a>[0]</tt> $&gt; places a virtual image on the end of the list containing the current channel to be processed, this identified by the substitution symbol $&gt;, which successively selects channel 0 through <i>n</i>, <i>n</i> being however many channels an image may have. <tt>--histogram. {$1*256},0,{$1*256-1}</tt> essentially generates a series of 256 bin histograms, one histogram for each unique swatch ID, this by virtue of the tagging done in Step 2. Note the double-hyphen left-hand decoration on <tt>--histogram</tt>. It operates on a shared buffer belonging to the original image and without such notation it would have replaced one channel of the original image, breaking it. The double-hyphen form has copy semantics, so the original is left alone.</p>
+<p>Note also that <tt>$1</tt> is the substitution symbol for the number of swatches first requested by the user, the product <tt>$1*256</tt> ensures that the histogram will have sufficient bins to accommodate every possible swatchID/luminance value pair. The value range given by the second and third parameters, <tt>0,{$1*256-1}</tt> sets the range to an extent so that every possible product of swatch ID and luminance value will just map to just one and only one bin. Finally, <tt>-remove..</tt> takes the virtual image off the list. Of course, no bytes are really lost by virtue of its virtuality &ndash; the buffer still exists a component of the original image, but is no longer shared. In this case, <tt>-remove</tt> is <tt>'-unshare'</tt>, by another name.</p>
+<p>The result of this command is the histogram at the top of <a target="_parent" class="intern" href="#Frame4|frame">Illustration 3</a>. Strictly speaking, it is one histogram, but each 256 bin section can be regarded as a distinct histogram for all pixels tagged with a particular swatch ID. Each bin tabulates how many pixels of a specific luminance value contributes to a particular swatch ID. If the luminance value associated with this swatch ID is (more-or-less) correct, then the pixels that are more-or-less like its value have high counts, and others, less like the swatch, have low or zero counts. This may not be the case when the value of the swatch isn't really much like the pixels tagged with its swatch ID. This will give rise to an average value for the swatch that differs from the value associated with it, as will be seen in later steps.</p>
+<p><tt>-input.. 256,1,1,1,'x'</tt> creates a <a target="_parent" class="intern" href="ramps_input-and-fill.shtml">256 step ramp</a>. <tt><a target="_parent" class="intern" href="http://gmic.eu/reference.shtml#resize">-resize</a>..{w},1,1,1,0,2</tt> combines the 'no interpolation' resizing parameter (0) with the <a target="_parent" class="intern" href="images-have-edges.shtml">cyclic boundary</a> policy (2) to rubber-stamp the ramp along the width axis, a neat trick. Fortuitously, each ramp step aligns with its counterpart tabulation and the product of the tabulation and ramp values, obtained with <tt>-mul.. [-1]</tt>, results in a weighted value, essentially a luminance value scaled by the number of times it has been 'observed' as being tagged by the swatch ID. This datum, in conjunction with the other 255 count &times; ramp value multiplications, can be summed together to find the weighted average luminance value produced by all the pixels tagged with a particular swatch ID.</p>
+<table style="width: 100%;"><colgroup><col width="47%" /> <col width="53%" /> </colgroup>
+<tbody>
+<tr>
+<td><a target="_parent" class="intern" href="img/gmic-color-mapping_k-means-algorithm_cm_010.jpg" class="highslide" onclick="return hs.expand(this)"><img src="http://www.particularart.com/static/media/uploads/technotes/colormap/cm_010_s.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" width="300" height="152" /></a><br />
+<p style="text-align: center;" id="Frame5|frame"><i>Illustration 4: The top row is the palette that <tt>-index</tt> used to group pixels by swatch IDs. The bottom row has the average luminance values found those groups by one iteration of the k-means algorithm. The difference indicates that the initial palette wasn't exactly correct.</i></p>
+</td>
+<td>
+<pre><span style="color: #808080;"><i>&lt;normalization&gt;</i></span>
+<span style="color: #808080;"><i>&lt;color mapping and tagging&gt;</i></span>
+  <span style="color: #808080;">-do</span>
+    <span style="color: #808080;">-repeat {s}</span>
+       <span style="color: #808080;">-shared[0] $&gt;</span>
+       <span style="color: #808080;">--histogram. {$1*256},0,{$1*256-1}</span> 
+       <span style="color: #808080;">-remove..</span>
+       <span style="color: #808080;">-input.. 256,1,1,1,'x'</span>
+       <span style="color: #808080;">-resize.. {w},1,1,1,0,2</span>
+       <span style="color: #808080;">-mul.. [-1]</span>
+       -resize[-2,-1] $1,1,1,1,2
+       -max. 0.01
+       -div[-2,-1]
+  <span style="color: #808080;">-done</span>
+  <span style="color: #808080;"><i>&lt;difference testing&gt;</i></span>
+<span style="color: #808080;">-while {$diff&gt;0.5}</span>
+<span style="color: #808080;"><i>&lt;Convert back to original colors&gt;</i></span>
+</pre>
+</td>
+</tr>
+</tbody>
+</table>
+<p><tt>-resize[-2,-1] $1,1,1,1,2</tt> may not seem to be an averaging tool, but resizing the width of the histogram to just the number of swatches in the palette, in conjunction with the linear interpolation parameter (1) essentially averages each 256 block of luminance values &times; counts into one pixel containing the average product of luminance values &times; counts. So each pixel in the penultimate image on the list <tt>[-2]</tt> contains this quantity:</p>
+<pre><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"> <semantics> <mfrac> <mrow> <mrow> <munderover> <mo stretchy="false">&Sigma;</mo> <mrow> <mi>k</mi> <mo stretchy="false">=</mo> <mn>0</mn> </mrow> <mn>255</mn> </munderover> <msub> <mi>v</mi> <mi>k</mi> </msub> </mrow> <msub> <mi>c</mi> <mi>k</mi> </msub> </mrow> <mn>256</mn> </mfrac> <annotation encoding="StarMath 5.0">{ sum from{k=0} to{255} v_k c_k } over 256</annotation> </semantics> </math></pre>
+<p>for each swatch.</p>
+<p>Alas, this is not quite the weighted sum of luminance values that we want; weights should <i>partition unity</i>, that is, the weights should look like percentages which together add up to 100% because we are adding up fractional parts of a whole. But the weights here are just the raw counts, which add up to some total count, so our results are fantabulously skewed. Fortituously, the piece we need to turn this expression into a proper weighted sum of luminance values can be had from the last image on the list, the histogram counts <i>c<sub>k</sub></i> for each luminance value <i>v<sub>k</sub></i> of pixels. Both the penultimate and the last image on the list was a part of <tt>-resize's</tt> selection, so each pixel in the last image on the list [-1] is:</p>
+<pre><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"> <semantics> <mfrac> <mrow> <munderover> <mo stretchy="true">&Sigma;</mo> <mrow> <mi>k</mi> <mo stretchy="false">=</mo> <mn>0</mn> </mrow> <mn>255</mn> </munderover> <msub> <mi>c</mi> <mi>k</mi> </msub> </mrow> <mn>256</mn> </mfrac> <annotation encoding="StarMath 5.0">{ sum from{k=0} to{255} c_k } over 256</annotation> </semantics> </math></pre>
+<p>for each swatch. So we can be almost home free by just performing a pixel-wise division of the penultimate image (averaged luminance values &times; counts per swatch) by the last image (averaged counts per swatch), which is what <tt>-div[-2,-1] </tt>does in far less time than it takes to write about it.</p>
+<pre><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"> <semantics> <mrow> <mrow> <mrow> <mo fence="true" stretchy="true">(</mo> <mrow> <mfrac> <mn>256</mn> <mrow> <munderover> <mo stretchy="false">&Sigma;</mo> <mrow> <mi>k</mi> <mo stretchy="false">=</mo> <mn>0</mn> </mrow> <mn>255</mn> </munderover> <msub> <mi>c</mi> <mi>k</mi> </msub> </mrow> </mfrac> </mrow> <mo fence="true" stretchy="true">)</mo> </mrow> <mo stretchy="false">&times;</mo> <mrow> <mo fence="true" stretchy="true">(</mo> <mrow> <mfrac> <mrow> <mrow> <munderover> <mo stretchy="false">&Sigma;</mo> <mrow> <mi>k</mi> <mo stretchy="false">=</mo> <mn>0</mn> </mrow> <mn>255</mn> </munderover> <msub> <mi>v</mi> <mi>k</mi> </msub> </mrow> <msub> <mi>c</mi> <mi>k</mi> </msub> </mrow> <mn>256</mn> </mfrac> </mrow> <mo fence="true" stretchy="true">)</mo> </mrow> </mrow> <mo stretchy="false">&rarr;</mo> <mfrac> <mrow> <mrow> <munderover> <mo stretchy="false">&Sigma;</mo> <mrow> <mi>k</mi> <mo stretchy="false">=</mo> <mn>0</mn> </mrow> <mn>255</mn> </munderover> <msub> <mi>v</mi> <mi>k</mi> </msub> </mrow> <msub> <mi>c</mi> <mi>k</mi> </msub> </mrow> <mrow> <munderover> <mo stretchy="false">&Sigma;</mo> <mrow> <mi>k</mi> <mo stretchy="false">=</mo> <mn>0</mn> </mrow> <mn>255</mn> </munderover> <msub> <mi>c</mi> <mi>k</mi> </msub> </mrow> </mfrac> <mo stretchy="false">&rarr;</mo> <mrow> <munderover> <mo stretchy="false">&Sigma;</mo> <mrow> <mi>k</mi> <mo stretchy="false">=</mo> <mn>0</mn> </mrow> <mn>255</mn> </munderover> <mrow> <msub> <mi>v</mi> <mi>k</mi> </msub> <mfrac> <msub> <mi>c</mi> <mi>k</mi> </msub> <msub> <mi mathvariant="normal">&Sigma;</mi> <mi>c</mi> </msub> </mfrac> </mrow> </mrow> <mi mathvariant="italic">&nbsp;where&nbsp;</mi> <mrow> <mrow> <munderover> <mo stretchy="false">&Sigma;</mo> <mrow> <mi>k</mi> <mo stretchy="false">=</mo> <mn>0</mn> </mrow> <mn>255</mn> </munderover> <msub> <mi>c</mi> <mi>k</mi> </msub> </mrow> <mo stretchy="false">=</mo> <msub> <mi mathvariant="normal">&Sigma;</mi> <mi>c</mi> </msub> </mrow> </mrow> <annotation encoding="StarMath 5.0">{left ( {256 over { sum from{k=0} to{255} c_k } } right )} times {left ( {{ sum from{k=0} to{255} v_k c_k } over 256} right )} drarrow { sum from{k=0} to{255} v_k c_k } over { sum from{k=0} to{255} c_k } drarrow { sum from{k=0} to{255} {v_k {c_k over %SIGMA_c }} } where { sum from{k=0} to{255} c_k } = %SIGMA_c</annotation> </semantics> </math>
+</pre>
+<p>The right end of the simplification tells us to scale each pixel value <i>v<sub>k</sub></i> by the ratio of its count, that is, the frequency of occurence of the value <i>v<sub>k</sub></i> tagged with a particular swatch ID, and the total count of all pixels tagged by that particular swatch ID. These fractional weights by themselves add up to one, or 100%, or unity, so all of the terms <span><math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"> <semantics> <mrow> <msub> <mi>v</mi> <mi>k</mi> </msub> <mfrac> <msub> <mi>c</mi> <mi>k</mi> </msub> <msub> <mi mathvariant="normal">&Sigma;</mi> <mi>c</mi> </msub> </mfrac> </mrow> <annotation encoding="StarMath 5.0">v_k { c_k over %SIGMA_c }</annotation></semantics></math></span> sum to a luminance value that is not magnified or diminished by inadvertant scaling factors.</p>
+<p>The only little bit that keeps us shy of being home free is the possibility of a count average being zero, which would induce a division by zero which would blow everything up and possibly get people annoyed with us. To avoid this calamity, <tt>-max. 0.01</tt> visits every pixel in the image of averaged pixel counts and should that command find a zero count, it replaces it with 0.01. That is, every averaged count is left alone unless it is zero, when it gets enough of smidgin value to keep the math library at peace with the world.</p>
+<p>This leaves us at Step 3c, a new palette of average, per-swatch values, based on the pixel-tagging performed by <tt>-index</tt>. Illustration 4 compares the current and new palettes at the end of the first iteration, suggesting quite a difference betwixt the two.</p>
+<table style="width: 100%;"><colgroup><col width="47%" /> <col width="53%" /> </colgroup>
+<tbody>
+<tr>
+<td><a target="_parent" class="intern" href="img/gmic-color-mapping_k-means-algorithm_cm_011.jpg" class="highslide" onclick="return hs.expand(this)"><img src="http://www.particularart.com/static/media/uploads/technotes/colormap/cm_011_s.png" title="cm-011-s" class="img_block" style="margin: 3px; border: 0px solid #808080;" width="300" height="194" /></a>
+<p style="text-align: center;" id="Frame6|frame"><i>Illustration 5: (Compare also with <a target="_parent" class="intern" href="#Frame7|frame">Illustration 6</a>), superimposed over the histogram of a channel of the original image are the channel values of swatches of successive palettes, converging toward a solution. Iterations read from bottom to top; the initial palette is at the bottom, marked with iteration 0, the solution appears at the top, occurring 25 iterations later. Vertical lines descending from the plots locate the swatches in the histogram. The dark end of the histogram and the darkest swatches are on the left, the lightest on the right. To a lesser and greater extent, the two lightest swatches seemed initially to converge on a light solution, then, around iteration 9, switch directions and commenced converging on a darker solution, reaching it sixteen iterations later.</i></p>
+</td>
+<td>
+<pre>  <span style="color: #808080;"><i>&lt;normalization&gt;</i></span>
+  <span style="color: #808080;"><i>&lt;color mapping and tagging&gt;</i></span>
+  <span style="color: #808080;">-repeat {s}</span>
+     <span style="color: #808080;"><i>&lt;Compute swatch averages&gt;</i></span>
+  <span style="color: #808080;">-done</span>  
+  -append[2--1] c
+  -sub.. [-1]
+  -abs..
+  diff={{-2,is}/w} 
+  -rm..
+  -and.. 255
+  --index.. [-1],0,0
+  -mul. 256 
+  -add[-3,-1]
+-while {$diff&gt;0.5}
+</pre>
+</td>
+</tr>
+</tbody>
+</table>
+<h2 id="DifferencingTheAverages">Differencing the Averages and Comparing Palettes</h2>
+<p>In the sweet fullness of time, the k-means iteration processes all the channels of an image, leaving on the image list, from position <tt>[2]</tt> to the end, a series of gray scales that constitute the channels of the newly estimated palette. Position <tt>[0]</tt> has the tagged pixels of the original image, still arrayed along one row, and position <tt>[1]</tt> has the current palette, which may or may not be significantly different from the just-estimated palette. This situates us at Step 5 of the algorithm, the decision point.</p>
+<p><tt>-append[2--1] c</tt> assembles the series of gray scales into a multichannel palette. Superficially, it may seem to be little different to the current palette in position <tt>[1]</tt>, but appearances can be deceiving. The <tt>-sub.. [-1]</tt> command effectively replaces the current palette with the differences between it and the newly estimated palette. The <tt>-abs..</tt> command follows, converting positive and negative differences to positive differences, because it is the cumulative magnitudes of change that matter to us, and not the direction of change. The <tt>diff={{-2,is}/w}</tt> command performs the accumulation, assigning the average cumulative differences to <tt>$diff</tt>. G'MIC maintains the sum of pixel values of an image as a property, <tt>is</tt>, and the math expression <tt>{-2,is}</tt> assesses this property from the penultimate image, second from the last, and the average is taken by dividing it by the width of the last image.</p>
+<p>A purist may have written the average difference calculation as <tt>diff={{-2,is}/{-2,w}}</tt> obtaining both properties from the same image, but the newly estimated palette and the image of swatch differences have the same dimensions, so an economy of keystrokes trumps a purity of expression. So there. Get over it.</p>
+<p>Everything following is setup for the next iteration, though such may not take place. <tt>-rm..</tt> cleans the differences image off the image list, and <tt>-and.. 255</tt> strips the now-outdated tags from pixels in the original image. Note that 255 as a binary mask which admits the least significant eight bits, the pixel luminance values, but zeros out the swatch ID tags, now outdated.</p>
+<p>The last three steps before the bottom of the <tt>-do &hellip; -while</tt> loop, <tt>--index.. [-1],0,0; -mul. 256;</tt> and <tt>-add [-3,-1]</tt> have been dissected already; these implement Step 2, the assignment and tagging step of the k-means algorithm, again done in anticipation of another iteration. Whether such actually takes place depends on the boolean expression associated with the <tt>-while {$diff&gt;0.5}</tt>. If the test succeeds, the average differences across all the channels exceeds the tolerance value of 0.5 and another round of the k-means algorithm occurs. Otherwise, the two last successive palettes are essentially identical, with very, very little to be gained through further iterations.</p>
+<table><colgroup><col width="47%" /> <col width="53%" /> </colgroup>
+<tbody>
+<tr>
+<td><a target="_parent" class="intern" href="img/gmic-color-mapping_k-means-algorithm_cm_012.jpg" class="highslide" onclick="return hs.expand(this)"><img src="http://www.particularart.com/static/media/uploads/technotes/colormap/cm_012_s.png" title="cm-012-s" class="img_block" width="300" height="194" /></a><br />
+<p style="text-align: center;" id="Frame7|frame"><i>Illustration 6: Differences of successive palettes, beginning with the not especially well matching palette from the start of the walk through. Convergence of the k-means algorithm is almost always certain, but not necessarily steady and sometimes exhibiting a kind of damped oscillation between two solutions. Here, with our palette, differences dropped exponentially in five iterations from a high of nearly 25 to a low of about 0.6 &ndash; and then became stuck for five more iterations, actually losing ground. It broke through to a new solution at the tenth iteration and converged slowly and steadily for the next fifteen steps.</i></p>
+</td>
+<td>
+<pre><span style="color: #808080;"><i>&lt;normalization&gt;</i></span>
+<span style="color: #808080;"><i>&lt;color mapping and tagging&gt;</i></span>
+    <span style="color: #808080;">-do</span>
+       <span style="color: #808080;"><i>&lt;k-means iteration&gt;</i></span> 
+    <span style="color: #808080;">-while {$diff&gt;0.5}</span>
+-rm.. 
+-*. {($M-$m)/255} 
+-+. $m
+</pre>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="western">Illustrations 5 and 6 let us step back and see how our initially conjured palette converges onto a solution. Illustration 5 shows the rake's progress of comparable channels of the four palette swatches, superimposed over the histogram first shown in Illustration 1. It diagrams how the values of the swatches changed and converged toward more likely medians over the course of 25 iterations of the k-median algorithm. Read the iterations from bottom to top. Vertical lines dropping from each median locate its place in the histogram.</p>
+<p class="western">Illustration 6 shows the convergence toward zero of the average differences between successive palettes. Differences dropped exponentially in the first five iterations, promising a ready solution, then began getting worse from the 6<sup>th</sup> to the 10<sup>th</sup> iteration. A solution seemed to break at this juncture, and differences between successive palettes steadily converged to zero at the 25<sup>th</sup> iteration.</p>
+<hr style="border: 0px solid #808080;" />
+<div id="sdfootnote1">
+<p class="sdfootnote-western"><a target="_parent" class="sdfootnotesym" name="sdfootnote1sym" href="#sdfootnote1anc"></a><span class="sdfootnote-western"></span></p>
+<p style="font-size: small;">*You will not void your G'MIC Warranty if you <a target="_parent" class="western" href="https://github.com/dtschump/gmic-community/wiki/Custom-commands#23-arguments">recode this to pass in a tolerance parameter from the command line</a>. If that is truly your wont <a target="_parent" class="western" href="http://gmic.eu/template.gmic">to hack this code</a>, then first <a target="_parent" class="western" href="https://github.com/dtschump/gmic"><i>Fork Us On GitHub!</i></a> Next, copy the colormap command from gmic_stdlib.gmic to $HOME/.gmic (Linux/MacOS) or %APPDATA%/user.gmic (Windows). Name it &ldquo;kolormap&rdquo; or some such so the G'MIC parser can distinguish your version from the standard one. Then hack away. You may even document your hackage nicely and submit a patch or pull request. For here, for now, &epsilon; is hard-coded.</p>
+</div>
+
+
+
+   
+</body></html>

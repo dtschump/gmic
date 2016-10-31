@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="tutorial.css">
+<script type="text/javascript" src="highslide/highslide.js"></script>
+<link rel="stylesheet" type="text/css" href="highslide/highslide.css" />
+<script type="text/javascript">
+hs.graphicsDir = 'highslide/graphics/';
+hs.wrapperClassName = 'wide-border';
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<body>
+
+
+      
+
+
+
+<h1><img src="http://www.particularart.com/static/media/uploads/tigercook.png" style="margin: 5px; float: right;" title="G`imicky Cooking Up Some Effects" height="300" width="400" />Beginner's Cookbook</h1>
+<p>If you've visited the <a target="_parent" href="basics.shtml" title="G'MIC Basics">Basics page</a>, you might have noticed a gallery of what some G'MIC commands do. They are wonderful, but also atypical, in that they are single commands that create an effect atomically. In typical cases, G'MIC effects arise from a good many commands, arrived at through some (more or less) controlled process of experimentation. G'MIC is a self-extending language, meaning that an especially interesting set of commands can be converted into a single command. This process can go on <em>ad infinitum</em>, with commands building upon other commands. We won't go into that topic in this basic cookbook, but will visit the topic later.</p>
+<p>"Images from Whole Cloth" might be the theme of this basic cookbook. All images here are conjured up from random processes ('-rand'), noise makers ('-noise') and the <a target="_parent" href="http://en.wikipedia.org/wiki/Diamond-square_algorithm" title="Diamond Square Algorithm">diamond-square algorithm</a> ('-plasma'). G'MIC experimentation is invariably iterative, and certain <a target="_parent" href="command-decorations.shtml#idiomata" title="Command Idiomata">command line idiomata</a> help this process. Each recipe here began with an image conjured up from the aether, followed by a random process or two, creating seed images, followed sets of filters, often transforming the seed images into entirely different arrangements.</p>
+<p>Exploration was helped along by two command idiomata:</p>
+<ol>
+<li><strong>...- -foo[-1] <em>&lt;parameter list&gt;</em> - -bar[-1] <em>&lt;parameter list&gt;...</em></strong></li>
+<li><em></em><strong>- -foo[<em><em>&lt;range&gt;</em></em>] <em><em>&lt;parameter list&gt;</em></em></strong></li>
+</ol>
+<p>The first idiom subjects a base image to a sucession of commands, leaving the intermediaries in the pipeline. A <a target="_parent" href="_display.shtml">-display</a> command at the end puts the entire progression on the screen for review. The last image, and any intermediary could then serve as the basis for another round of experimentation. I call this the Serial Idiom.</p>
+<p>The second idiom subjects a number of images to the same command, which I call the Parallel Idiom. This places a set of "After" images following their "Before" antecedents, which could then be compared through the -display command. Again, any intermediary can serve as a basis for subsequent experimentation. Throughout, Emacs served as a recording tool for interesting command sequences, but any text editor can serve in this capacity.</p>
+<p>Before you take on any of these recipies, we suggest reading up on the <a target="_parent" href="basics.shtml" title="G'MIC Basics">basics</a> of G'MIC, including <a target="_parent" href="images.shtml">images</a> and <a target="_parent" href="command-decorations.shtml">command decorations</a>. All of these recipies assume a reasonable familiarity with command conventions and notation.</p>
+
+
+
+   
+</body></html>

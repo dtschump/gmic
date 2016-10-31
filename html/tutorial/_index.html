@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="tutorial.css">
+<script type="text/javascript" src="highslide/highslide.js"></script>
+<link rel="stylesheet" type="text/css" href="highslide/highslide.css" />
+<script type="text/javascript">
+hs.graphicsDir = 'highslide/graphics/';
+hs.wrapperClassName = 'wide-border';
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<body>
+
+
+      
+
+
+
+<div id="FigureOne" style="float: left; width: 2.75in; height: 3.0625in; border: none; padding: 0in;"><a target="_parent" href="img/_index_windmill.jpg" class="highslide" onclick="return hs.expand(this)"><img style="margin: 3px; border: 0px solid #808080;" class="img_block" src="http://www.particularart.com/static/media/uploads/command_reference/index/windmill.png" title="Belgian Windmill" width="250" height="200" /></a>
+<p style="font-size: 10pt; line-height: 100%;"><i>Figure 1: A lovely Belgian windmill, fully indexed and dithered with perfectly awful, randomly selected colors.</i></p>
+</div>
+<h1 id="index">-index</h1>
+<p>Given a <em>palette</em> or <em>look-up table</em> of reference colors and a source image, the command determines for each source image pixel, the most closely matching reference color in the palette. Depending on the <tt>map_palette</tt> flag, the pixels of the output image may hold reference colors or look-up table indices to the most closely matching color.</p>
+<p>The command has the form :</p>
+<table style="width: 643px;" cellpadding="0" cellspacing="0"><colgroup><col width="60" /> <col width="583" /> </colgroup>
+<tbody>
+<tr valign="top">
+<td width="10%"><tt>-index</tt></td>
+<td width="90%"><tt>{ [palette] | predefined_palette },</tt></td>
+</tr>
+<tr valign="top">
+<td width="10%">&nbsp;</td>
+<td width="90%"><tt>0&lt;= dithering &lt;= 1,</tt></td>
+</tr>
+<tr valign="top">
+<td width="10%">&nbsp;</td>
+<td width="90%">
+<p><tt>map_palette={ 0 | 1 }</tt></p>
+</td>
+</tr>
+</tbody>
+</table>
+<ol>
+<li>
+<p><b>palette:</b> An <a target="_parent" href="command-decorations.shtml#image_selection">image selection</a> or the index number of one among a number of predefined Look-up Tables (LUT). Either form furnishes the command with a set of reference colors among which it can find a &ldquo;close match&rdquo; for each pixel in the original image.</p>
+<p>When this parameter is an image selection (a numeric index in square brackets), the selected image is taken to be a single row, multicolumn set of reference colors, regardless of the image dimensions. The command indexes the pixels in the reference image from left-to-right, top-to-bottom, taking each pixel to be a reference color. While the image may be any size, it is rarely practical to have more than a few hundred reference colors, and a few dozen are usually ample. The image is almost always quite small.</p>
+<p>When this parameter is a integer, it is taken to be a reference to a number of built-in color lookup tables. As distributed, G'MIC has eight such tables:</p>
+<ol start="0" type="1">
+<li><em>Default:</em> the 256 colors of an 8&times;8&times;8 RGB color cube</li>
+<li><em>HSV:</em> 256 steps counterclockwise, 360&deg; around the HSV color circle,</li>
+<li><em>Line:</em> 256 colors of varying saturation and luminance that collectively resembles the &ldquo;average picture&rdquo;,</li>
+<li><em>Hot:</em> 256 steps from the black to red, red to yellow, and yellow to white vertices of the RGB color cube,</li>
+<li><em>Cool:</em> 256 step ramp from cyan to magenta,</li>
+<li><em>Jet:</em>256 step ramp clockwise around an arc of the HSV color circle, from 240&deg; (blue), through 120&deg; (green), 60&deg; (yellow) and 0&deg; (red), Often used in false color visualizations.</li>
+<li><em>Flag:</em> 4 steps: black followed by the French tricolor,</li>
+<li><em>Cube:</em> 256 step ramp traversing the black, red, green, yellow, cyan, white, blue and magenta vertices of the RGB color cube.</li>
+</ol></li>
+<li>
+<p><b>dithering:</b> (float from the closed interval [0, &hellip;, 1]) Sets the size of a neighborhood around which the command attempts to match the neighborhood average, rather than a single pixel. With nonzero dithering, the command factors nearby pixels through a kernel containing a dithering pattern (see <a target="_parent" title="-convolve" href="_convolve.shtml"><tt>-convolve</tt></a>). Otherwise, set to zero, it matches pixels without regard to the neighborhood.</p>
+</li>
+<li>
+<p><b>map_palette: </b>(boolean), when False, output image pixels contain the index number that addresses the closest matching color in the palette. That is, the image is an <em>index map</em>. Superficially, the index map seems to be a gray scale; in fact, each pixel contains an index into the color palette addressing the closest matching color. The <a target="_parent" title="-map" href="_map.shtml"><tt>-map</tt></a> command, in conjunction with the given palette, outputs an image with indices replaced by the reference color. Otherwise, when True, the output image is directly composed with the closest matching reference colors.</p>
+</li>
+</ol>
+<p>When <tt>dithering</tt> is non-zero, <tt>-index</tt> can very nearly cancel out otherwise large mismatch errors. This is especially useful when the reference colors are fixed and have no great affinity to the colors in the given source image. The command takes into account the value of neighboring pixels and can assign reference colors to adjacent pixels that are also &ldquo;wrong, but wrong in different directions&rdquo;, so that, when averaged in the eye of the viewer, the two errors produce an aggregate that (more or less) approximates the color of the neighborhood. Look at the dithered and undithered CMYK examples below.</p>
+<p>When the flag <tt>map_palette</tt> is set to False, output pixels are set to the numeric index of the position of the reference color in the palette, rather than the reference color itself. This indirection is useful for tabulating color usage statistics; the output constitutes an index map. Retaining the palette of reference colors, and applying the <a target="_parent" href="_map.shtml"><tt>-map</tt></a> command to the palette and index map produces an output image with the reference colors replacing their indices.</p>
+<h2 id="Examples">Examples</h2>
+<table class="table, table-striped" border="0">
+<tbody>
+<tr>
+<td width="50%"><a target="_parent" href="img/_index_castlegate.jpg" class="highslide" onclick="return hs.expand(this)"><img src="http://www.particularart.com/static/media/uploads/command_reference/index/castlegate.jpg" title="A door at Castle Pern&scaron;tejn, Nedvědice, Czech Republic, by Pudelek, Wikimedia Commons" class="img_block" style="margin: 3px; border: 0px solid #808080; vertical-align: middle;" width="320" height="223" /></a></td>
+<td width="50%">
+<pre>     castlegate.jpg
+</pre>
+</td>
+</tr>
+<tr>
+<td colspan="2" width="100%">A door at Castle Pern&scaron;tejn, Nedvědice, Czech Republic, by <a target="_parent" href="https://commons.wikimedia.org/wiki/User:Pudelek">Pudelek</a>, Wikimedia Commons</td>
+</tr>
+<tr>
+<td width="50%"><a target="_parent" href="img/_index_cg_random.jpg" class="highslide" onclick="return hs.expand(this)"><img src="http://www.particularart.com/static/media/uploads/command_reference/index/cg_random.png" title="indexed by random colors " class="img_block" style="margin: 3px; border: 0px solid #808080;" width="320" height="223" /></a></td>
+<td width="50%">
+<pre>gmic -srand 67123             \
+     -input castlegate.jpg    \
+     4,4,1,3,u                \
+     -normalize[-1] 0,255     \
+     -index[-2] [-1],1,1      \
+     -output[-2] cg_random.png
+</pre>
+</td>
+</tr>
+<tr>
+<td colspan="2" width="100%">Indexed by sixteen randomly chosen reference colors, fully dithered</td>
+</tr>
+<tr>
+<td width="50%"><a target="_parent" href="img/_index_cg_optimal.jpg" class="highslide" onclick="return hs.expand(this)"><img src="http://www.particularart.com/static/media/uploads/command_reference/index/cg_optimal.png" title="Optimal reference colors, via -colormap" class="img_block" style="margin: 3px; border: 0px solid #808080;" width="320" height="223" /></a></td>
+<td width="50%">
+<pre>gmic -input castlegate.jpg \
+     --colormap[-1] 16,1,1 \
+     -index[-2] [-1],0.5,1 \
+     -output[-2] cg_optimal.png
+</pre>
+</td>
+</tr>
+<tr>
+<td colspan="2" width="100%">Indexed by sixteen optimally chosen reference colors, as estimated by the <a target="_parent" href="_colormap.shtml"><tt>-colormap</tt></a> command, partially dithered.</td>
+</tr>
+<tr>
+<td width="50%"><a target="_parent" href="img/_index_cg_graph.jpg" class="highslide" onclick="return hs.expand(this)"><img src="http://www.particularart.com/static/media/uploads/command_reference/index/cg_graph.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" width="400" height="300" /></a></td>
+<td width="50%">
+<pre>gmic -input castlegate.jpg        \
+     --colormap[-1] 16,1,1        \
+     -index[-2] [-1],1,0          \
+     -histogram[-2] '{-1,w}'      \
+     -display_graph[-2] 800,600,3 \
+     -output[-2] cg_graph.png
+</pre>
+</td>
+</tr>
+<tr>
+<td colspan="2" width="100%">A graph indicating how frequently the optimal reference colors occur in the output image when fully dithered.</td>
+</tr>
+<tr>
+<td width="50%"><a target="_parent" href="img/_index_cg_ftri.jpg" class="highslide" onclick="return hs.expand(this)"><img src="http://www.particularart.com/static/media/uploads/command_reference/index/cg_ftri.png" title="indexed by the French flag, plus black" class="img_block" style="margin: 3px; border: 0px solid #808080;" width="320" height="223" /></a></td>
+<td width="50%">
+<pre>gmic -input castlegate.jpg \
+     -index[-1] 6,1,1      \
+     -output[-1] cg_ftri.png
+</pre>
+</td>
+</tr>
+<tr>
+<td colspan="2" width="100%">Indexed by black and the three colors of the French flag, fully dithered.</td>
+</tr>
+<tr>
+<td width="50%"><a target="_parent" href="img/_index_cg_cmyk.jpg" class="highslide" onclick="return hs.expand(this)"><img src="http://www.particularart.com/static/media/uploads/command_reference/index/cg_cmyk.png" title="CMYK reference colors. No dithering" class="img_block" style="margin: 3px; border: 0px solid #808080;" width="320" height="223" /></a></td>
+<td width="50%">
+<pre>gmic -input castlegate.jpg \
+     '(0,255,255,0^255,0,255,0^255,255,0,0)'\
+     -index[-2] [-1],0,1    \
+     -output[-2] cg_cmyk.png
+</pre>
+</td>
+</tr>
+<tr>
+<td colspan="2" width="100%">
+<p class="western">Indexed by CMYK, not dithered at all</p>
+</td>
+</tr>
+<tr>
+<td width="50%"><a target="_parent" href="img/_index_cg_cmyk2.jpg" class="highslide" onclick="return hs.expand(this)"><img src="http://www.particularart.com/static/media/uploads/command_reference/index/cg_cmyk2.png" title="indexed by CMYK; fully dithered" class="img_block" style="margin: 3px; border: 0px solid #808080;" width="320" height="223" /></a></td>
+<td width="50%">
+<pre>gmic -input castlegate.jpg \
+     '(0,255,255,0^255,0,255,0^255,255,0,0)'\
+     -index[-2] [-1],1,1    \
+     -output[-2] cg_cmyk2.png</pre>
+</td>
+</tr>
+<tr>
+<td colspan="2" width="100%">
+<p class="western">Indexed by CMYK, fully dithered.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Technical Note: <a target="_parent" href="gmic-color-mapping.shtml">Color Mapping in G'MIC</a></p>
+
+
+
+   
+</body></html>

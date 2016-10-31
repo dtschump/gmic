@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="tutorial.css">
+<script type="text/javascript" src="highslide/highslide.js"></script>
+<link rel="stylesheet" type="text/css" href="highslide/highslide.css" />
+<script type="text/javascript">
+hs.graphicsDir = 'highslide/graphics/';
+hs.wrapperClassName = 'wide-border';
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<body>
+
+
+      
+
+
+
+<h2><a target="_parent" name="1.5.Tensors for the Tonsorially Challenged|outline"></a>Tensors for the Tonsorially Challenged</h2>
+<p><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/dyidiffusion/init-01.png" class="img_block" style="margin: 3px; border: 0px solid #808080; float: left;" height="300" width="300" />Randomness is all well and good, but there are days when we wish for some control over our lives, or at least our G'MIC installations. The question is, can we plot these swirling curves so that they flow in particular directions?</p>
+<p>And &ndash; of course &ndash; the answer is &ldquo;Yes!!!&rdquo; Because that's <i><span style="text-decoration: underline;">exactly</span></i> the problem which the anisotropic smoothing bits have to figure out when they are composing a tensor field. At the end of the day, -smooth gets a tensor field which tells it exactly how to directionally blur an image. It's behavior is being managed in a precise way.</p>
+<p>Since -diffusiontensors knows how to write those kind of instructions, our course seems to run along the lines of preparing edges or lines in the patterns we'd like to make. The anisotropic smoothing bits will detect the lines and edges in these &ldquo;guidelines&rdquo; and build a diffusion tensor field for smooth. We'll then give -smooth an entirely different image to work on. Noise, of course, can be an ideal basis for making hair.</p>
+<h3>Hairlocks</h3>
+<p>A lock of hair is an example of &ldquo;directed noise&rdquo;. A pretty simple hair model consists of noise that diffuses along particular curved paths, the individual bits of noise elongating into curved strands of hair, reminiscent of the <a target="_parent" href="#0.4.Directional Blurs|outline">directional blur</a> we've seen on previous pages.</p>
+<p>Of course, this model leaves out a lot: specular highlights and subsurface scattering, but, if we're not that hell-bent on photo realistic rendering, then perhaps a coarse, first order approximation serves our purposes.</p>
+<h4>Setup</h4>
+<table style="border-color: #808080; border-width: 1px; border-style: solid;" rules="all" class="table table-striped" cols="2" border="1">
+<tbody>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/dyidiffusion/dyid-16.png" title="dyid-16.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="400" width="400" /></td>
+<td>We begin with simple guide marks. We do not need many and almost any source will do &ndash; scanned in felt pen or brush strokes serve as well as anything else.
+<p>We use Inkscape because we're partial to the Interpolated sub-paths tool in the Path Effects editor. We:</p>
+<ol>
+<li>Make a curve</li>
+<li>Copy and flip it</li>
+<li>Move the curves apart and shape them by hand.</li>
+<li>Combine the segments into into one SVG path and use the path interpolation tool to estimate three intermediaries.</li>
+<li>Covert back to sub-paths and break apart for any minor tweaking which aesthetic sensibilities might require.</li>
+</ol>
+<p>This file kicks off the G'MIC pipeline. Look for &ldquo;<code>hairlock_unit.png</code>&rdquo; downstream.</p>
+</td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/dyidiffusion/dyid-17.png" title="dyid-17.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="400" width="400" /></td>
+<td>While specular highlights and sub-surface scattering may be beyond our reach, we can get a rough approximating of such with sparse noise. The aim here is to smooth such noise along with a similar noise generating the hair itself.<br /> <br /> To that end, we open a layer above our guidelines and make some arcs, positioning them roughly where we think specular high lights should appear. We invert the art and blur it, making a multiplier mask. Downstream, we multiply this mask with sparse noise and smooth that pattern along with the hair. See &ldquo;<code>hairlock_hlight.png</code>&rdquo; downstream.</td>
+</tr>
+</tbody>
+</table>
+<h4>G'MIC Pipeline: Customizing a Tensor Field</h4>
+<p>The G'MIC command -diffusiontensors does everything that -smooth does except actually smooth an image. Instead, it produces a tensor field which -smooth uses to remove noise anisotropically. Here, we'll invoke diffusiontensors ourselves and unpack its output tensor field, performing some custom edits on <b>EigenOne</b> and <b>EigenTwo</b>.</p>
+<table style="border-color: #808080; border-width: 1px; border-style: solid;" rules="all" class="table table-striped" cols="2" border="1">
+<tbody>
+<tr>
+<td colspan="2"><tt> gmic -input hairlock_unit.png <br /> --diffusiontensors[-1] 1,0,0.1,4,0 <br /> -diffusiontensors[-2] 0,1,0.1,10,0 <br /> </tt></td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/dyidiffusion/dyid-18.png" title="dyid-18.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="200" width="400" /></td>
+<td>We invoke -diffusiontensors twice, but mainly work with the left hand dataset. We generated this with sharpness set to zero and anisotropy set to one which engenders broadly sweeping smoothing patterns. Along that line, we also set the alpha parameter to as near zero as we could stand and the sigma parameter to a high value.<br /> <br /> Behind the scenes, -diffusiontensors calls -structuretensors, first pre-blurring the operand image, the Gaussian variation set by the alpha parameter. This slight blurring tends to erode noise more significantly than coherent edges, which helps -diffusiontensors identify edges.<br /> <br /> -diffusiontensors also blurs the tensor field produced by -structuretensors, here by the amount -sigma. This tends to suppress small scale variations in local directions, favoring large-scale laminar flow.<br /> <br /> We invoke -diffusiontensors a second time to harvest a mask from it that handily sets the region of the blurring pattern we deem 'valid', something of a heuristic judgment. We set the width of this mask by way of the -sigma parameter passed to this second invocation. We convert this mask into a single channel gray scale that will serve as the final image's alpha channel.</td>
+</tr>
+<tr>
+<td colspan="2"><tt> -eigen[-2,-1] -rm[-1] \<br /> -split[-1] c -rm[-1] \<br /> -mul[-1] -1 -add[-1] 1 \<br /> -normalize[-1] 0,255 -o[-1] hairmask.png \<br /> -mv[-1] 0 \<br /> </tt></td>
+</tr>
+<tr>
+<td width="256"><p><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/dyidiffusion/dyid-19.png" title="dyid-19.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="200" width="400" /><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/dyidiffusion/dyid-20.png" title="dyid-20.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="200" width="200" /></p>
+<p></p>
+</td>
+<td>We edit the right hand dataset to extract the mask in which we are interested, deleting all but <b>EigenOne</b>, which, providentially selects a region centered on our original guidelines. We save this mask in a file and also move it to the first slot in the image list; it will be the alpha mask of the final image.</td>
+</tr>
+<tr>
+<td colspan="2"><tt> -split[-2] c \<br /> -rm[-3] \<br /> -mul[-2] -1 \<br /> -add[-2] 1 \<br /> --mul[-2] 0 \<br /> -reverse[-1,-2] \<br /> -append[-3,-2] c \<br /> </tt></td>
+</tr>
+<tr>
+<td width="256"><p><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/dyidiffusion/dyid-21.png" title="dyid-21.png" class="img_right_nospacetop" style="margin: 3px; border: 0px solid #808080;" height="200" width="400" /></p>
+<p><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/dyidiffusion/dyid-22.png" title="dyid-22.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="200" width="200" /></p>
+</td>
+<td>We modify<b> EigenOne</b> and <b>EigenTwo</b> so that the only region -smooth will modify are those around our guidelines. We found the reverse of EigenTwo preferable as <b>EigenOne</b>, setting <b>EigenTwo</b> to constant zero.<br /> <br /> When harnessing strong directional blur, as we are doing here, Our wont is to set the magnitude of blurring entirely through <b>EigenOne</b>, keeping E<b>igenTwo</b> at zero. We harness <b>EigenTwo </b>primarily to reduce the eccentricity of the blurring ellipse.</td>
+</tr>
+<tr>
+<td colspan="2"><tt>-eigen2tensor[-2,-1] \<br /> -o[-1] hairlock_tensor.cimg \</tt></td>
+</tr>
+<tr>
+<td width="256"><p><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/dyidiffusion/dyid-23.png" title="dyid-23.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="200" width="400" /></p>
+</td>
+<td>With our edits complete we fold up the control datasets into a tensor field, but have no images to blur. We conjure these from the aether in the next section.</td>
+</tr>
+</tbody>
+</table>
+<h4>GMIC Pipeline: Noise Generation.</h4>
+<p>We model the hair with salt-and-pepper noise, upon which smooth performs a strong directional blur. Most of the following concerns itself with coloring a &ldquo;slightly coalesced&rdquo; noise, that is, a noise morphologically dilated, giving rise to thicker &ldquo;hair strands&rdquo; which can survive a certain amount of image shrinking.</p>
+<p>We set the color of the hair by moving the noise into a Hue-Saturation-Lightness color space and manipulating the channels. Much of this work is moot, however, as at the end of the day we find ourselves readjusting the color work in Gimp.<br /><br />Probably the most useful aspect of this segment is not so much the particular hue that we set, but the range over which the noise spans from the central color. This gives rise to variational streaking.</p>
+<table cols="2" rules="all" class="table table-striped" style="border-color: #808080; border-width: 1px;" border="1">
+<tbody>
+<tr>
+<td colspan="2"><tt>90%,90%,1,3 \<br /> -noise[-1] 16,2 \<br /> -resize[-1] [-2],[-2],[-1],[-1],0,0,0.5,0.5,0.5,0.5 \<br /> -dilate_circ[-1] 2 \<br /> -blur[-1] 1,1,1 \<br /> -normalize[-1] 0,255 \<br /> </tt></td>
+</tr>
+<tr>
+<td width="256"><p><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/dyidiffusion/dyid-24.png" title="dyid-24.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="400" width="400" /></p>
+</td>
+<td>Slightly dilated salt and pepper noise is the foundation for hair. We infill a region offset from the edges a bit because smooth has difficulty altering near-edge pixels, hence a black buffer zone.<br /> <br /> The amount of dilation here sets the coarseness of the hair; it is a candidate parameter of some <i>gedanken</i> gimp-gmic filter.</td>
+</tr>
+<tr>
+<td colspan="2"><tt> -rgb2hsl[-1] \<br /> -split[-1] c \<br /> -mul[-3] 0.3 \<br /> -add[-3] 170.0 \<br /> -mul[-2] 0.4 \<br /> -mul[-1] 0.1 \<br /> -append[-3,-2,-1] c \<br /> -hsl2rgb[-1] \<br /> -mv[-1] 0 \<br /> </tt></td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/dyidiffusion/dyid-25.png" title="dyid-25.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="400" width="400" /></td>
+<td>We colorize the hair noise by moving to the<br />Hue-Saturation-Lightness color model and largely scaling and offsetting the Hue dataset.<br />These particular machinations set a blue-gray<br />hair color, but are moot. With final compositional efforts debouching into Gimp or similar tools, there are ample downstream opportunities to set color elsewhere.</td>
+</tr>
+<tr>
+<td colspan="2"><tt> hairlock_hilite.png \<br /> -normalize[-1] 0,1 \<br /> 100%,100%,1,1 \<br /> -noise[-1] 2,2 \<br /> -mul[-2,-1] \<br /> -mv[-1] 0 \<br /> </tt></td>
+</tr>
+<tr>
+<td width="256"><p><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/dyidiffusion/dyid-26.png" title="dyid-26.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="400" width="400" /></p>
+</td>
+<td>Here, we generate a rough approximation of &ldquo;spectral highlights&rdquo; harnessing a mask we originally set up in Inkscape. We multiply a gray scale channel of sparse salt-and-pepper noise and multiply with the mask that we created during our initial Inkscape session.</td>
+</tr>
+</tbody>
+</table>
+<h4>G'MIC Pipeline: Smoothing Everything</h4>
+<table style="border-color: #808080; border-width: 1px; border-style: solid;" rules="all" class="table table-striped" cols="2" border="1">
+<tbody>
+<tr>
+<td colspan="2"><tt> -repeat 3 \<br /> -smooth[-4,-3,-2] [-1],500 \<br /> -done \<br /> -normalize[-4,-3,-2] 0,255 \<br /> -sharpen[-4] 6,0 \<br /> -rm[-1] \<br /> -append[-2,-1] c \<br /> -output[-1] hairlock_final.png \<br /> -output[-2] hairlock_gfinal.png<br /> </tt></td>
+</tr>
+<tr>
+<td width="256"><p><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/dyidiffusion/dyid-27.png" title="dyid-27.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="400" width="400" /></p>
+</td>
+<td>At last, we invoke smooth. You probably thought we'd never get here.<br /> <br /> We harness the tensor field composed in the first part of the G'MIC pipeline to smooth the spectral highlights, body of the hair, and the selection mask.</td>
+</tr>
+<tr>
+<td width="256"><p><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/dyidiffusion/dyid-28.png" title="dyid-28.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="400" width="400" /></p>
+</td>
+<td>
+<p>The base color of the hair arises from smoothing the denser, colored salt-and-pepper noise</p>
+</td>
+</tr>
+<tr>
+<td width="256"><p><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/dyidiffusion/dyid-29.png" title="dyid-29.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="400" width="400" /></p>
+</td>
+<td>
+<p>We use this image as the alpha channel of the hairlock. Recall that we extracted this from a dataset produced by a -diffusiontensors command near the top of the pipeline.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h4>Final Composition</h4>
+<p><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/dyidiffusion/dyid-30.png" title="dyid-30.png" class="img_block" style="margin: 3px; border: 0px solid #808080; text-align: center;" height="600" width="600" /></p>
+<p>&nbsp;</p>
+<table style="border-color: #808080; border-width: 1px; border-style: solid;" rules="all" class="table table-striped" colspan="2" border="1">
+<tbody>
+<tr>
+<td width="256"><p><img src="http://www.particularart.com/static/media/uploads/BeginnersCookbook/dyidiffusion/dyid-31.png" title="dyid-31.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="600" width="600" /></p>
+</td>
+<td>To test our concept, we overlapped the original guidelines on the hair lock. The tracking is quite faithful, almost too faithful, as real hair will have strands here and there migrating around.<br /> <br /> Steps toward more hairlike hair could entail multiple passes with sparse noise. If we warp the guidelines slightly with each pass, the resulting hair will crisscross. Furthermore, we would have more layers to composite, with opportunities of making shadow layers. In other words, with a greater investment of time and thought, we'll have a cure for pattern baldness.</td>
+</tr>
+</tbody>
+</table>
+<p><em>Code in this tutorial has been implemented as a Gimp-GMIC Filter. See <a target="_parent" href="the-hairlock-filter.shtml">The Hair lock Filter</a>.</em></p>
+<table rules="all" style="border-color: #7f7f7f; border-width: 1px; background-color: #ffffff;" align="center" border="1" cellpadding="2">
+<tbody>
+<tr>
+<td><a target="_parent" href="dyidiffusion_directional-blurring.shtml"><span class="internal"><span class="internal">Directional Blurring </span></span></a></td>
+<td><a target="_parent" href="dyidiffusion_fake-depth-of-field.shtml"><span class="internal"><span class="internal"><span class="internal"><span class="internal">Fake Depth of Field</span></span></span></span></a></td>
+</tr>
+</tbody>
+</table>
+
+
+
+   
+</body></html>

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="tutorial.css">
+<script type="text/javascript" src="highslide/highslide.js"></script>
+<link rel="stylesheet" type="text/css" href="highslide/highslide.css" />
+<script type="text/javascript">
+hs.graphicsDir = 'highslide/graphics/';
+hs.wrapperClassName = 'wide-border';
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<body>
+
+
+      
+
+
+
+<h1 id="Repeat">-repeat&nbsp;&hellip;&nbsp;-done</h1>
+<div id="FigureOne" style="float: left; width: 326px; height: 400px; border: none; padding: 0in;"><img src="http://www.particularart.com/static/media/uploads/command_reference/repeat/twirl.png" title="twirly.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" width="300" height="300" />
+<p style="font-size: 10pt; line-height: 100%;"><i>Figure 1: The 1911 Goudy Bookletter&nbsp; ampersand Compact Disc.</i></p>
+</div>
+<p>The <tt>-repeat &hellip; -done</tt> block executes any code within its precinct over a number of cycles given by <tt>-repeat's</tt> numeric argument.</p>
+<p>The format of the command is:</p>
+<p><code>-repeat <i>iterations,loop_variable</i> &hellip;&nbsp;-done</code></p>
+<p>'Iteration' may take any integer value, but <tt>-repeat</tt> does not act upon zero and negative arguments, furnishing an implicit conditional test should<tt>-repeat's</tt> argument stem from computations that may produce non-positive values.</p>
+<p>'loop_variable', an optional argument, establishes a label for a local (within the loop) variable; it holds the current loop count. Do not use the '$' substitution signet when defining the variable label, but do use '$' with the variable label in the body of the loop to reference the current count.</p>
+<p>A programmer can terminate a <tt>-repeat &hellip; -done</tt> iteration prematurely by executing a <tt>-break</tt> command anywhere in the body of the block. Usually one embeds the <tt>-break</tt> command in a <tt>-if &hellip; -endif</tt> block. Similarly, a <tt>-continue</tt> command within the <tt>-repeat &hellip; -done</tt> block terminates the current iteration; <tt>-repeat</tt> decrements its loop count and, if that is still positive, restarts execution with the initial command in the body of the <tt>-repeat &hellip; -done</tt> block.</p>
+<h2 id="ListIterationWithLocalEndlocal">List Iteration with -local &hellip; -endlocal</h2>
+<p>It is a common G'MIC idiom to nest a <tt><a target="_parent" href="_local.shtml">-local</a>&hellip;<a target="_parent" href="_local.shtml">-endlocal</a></tt> block within a <tt>-repeat &hellip; -done</tt> block; The construct creates an image list iterator, a form that many G'MIC commands take. In this construct, the argument to <tt>-repeat</tt> is frequently the image list size substitution sequence, <tt>'$!'</tt>. As <tt>-repeat</tt> iterates from zero to the size of the image list, less one, another substitution sequence '<tt>$&gt;</tt>' assumes the loop count, incrementing by one with each iteration. This becomes the argument to <tt>-local</tt>, constituting the inner block of the iterator. This induces <tt>-local</tt> to create a 'local list' consisting of just the image indexed by <tt>$&gt;</tt>. The body of the command resides in the <tt><a target="_parent" href="_local.shtml">-local</a>&hellip;<a target="_parent" href="_local.shtml">-endlocal</a></tt> block, where the effects of its operations are restricted to the one image on the local list. In the larger scheme of things, the image iterator 'visits' each image in turn and during the course of the iteration the effects of its operations are limited to that one image. &nbsp;</p>
+<h2 id="Example">Examples</h2>
+<p>We set our course upon transforming the 1911 Goudy Bookletter ampersand into a compact disc (approximately), a desire that has been burning in our hearts since early childhood, perhaps.</p>
+<table style="border-color: #808080; border-width: 0px; border-style: solid;" rules="all" class="table table-striped" align="center" border="0"><colgroup> <col width="40%" /> <col width="60%" /> </colgroup>
+<tbody>
+<tr>
+<td><tt>$ gmic -input <a target="_parent" href="http://www.particularart.com/static/media/uploads/command_reference/repeat/ampersand_goudybl1911.svg">ampersand_goudybl1911.svg</a> \<br />-negative[-1] \<br />-blur[-1] 3,1,0</tt></td>
+<td>Ampersand by <a target="_parent" href="https://plus.google.com/117431922163742703251/about">Barry Schwartz</a> who also designed a nice font to go with it. We negate and slightly blur the ampersand because slightly blurred edges behave a bit like neon light ribbons under the Negation compositng operator of the <a target="_parent" href="http://gmic.eu/reference.shtml#blend">-blend</a> command; that happens downstream from here.</td>
+</tr>
+<tr>
+<td><tt>100% 100% \<br />-append c&nbsp;</tt></td>
+<td>&nbsp;We <a target="_parent" href="conjuring-images.shtml">conjure from the aether</a> two black images and append along the spectral dimension to obtain a red, slightly blurred, ampersand.</td>
+</tr>
+<tr>
+<td><tt>-expand_x {{w}/2}</tt></td>
+<td>Pad horizontally. In G'MIC, you do math within curly braces. The substitution sequences which fetch metrics about the last image on the stack also harness curly braces, giving rise, perhaps,&nbsp; to a bemusement of curly braces. This particular substitution sequence fetches the width of the last image on the list.</td>
+</tr>
+<tr>
+<td><tt>100%,100%,100%,100% -append[-2,-1] y</tt></td>
+<td>Pad vertically, after conjuring another image from the aether. Now we have room to twirl.</td>
+</tr>
+<tr>
+<td><tt>100%,100%,100%,100%</tt></td>
+<td>&nbsp;Conjure (yet another) image from the aether, this a drawing pad upon which to rubber-stamp ampersands.</td>
+</tr>
+<tr>
+<td><tt>-repeat {360/6} \<br />k={6*($&gt;+1)}</tt></td>
+<td>
+<p>We've worked our way up to the example on -repeat, the point to this entire program. We're stepping around the circle in six degree increments, which we will do sixty times. Why not simply write '60' for -repeat's argument? A personal taste. Writing the computation instead of the result documents the code a little bit; I am reminded that I'm dividing up a circle. Your tastes will vary.</p>
+<p>More math within curly braces; we set 'k' to the accumulated rotation, this based on another G'MIC substitution sequence: '$&gt;' which the interpreter replaces with the loop count.</p>
+</td>
+</tr>
+<tr>
+<td><tt>&nbsp;&nbsp;--rotate[0] {$k},2,1,255,255</tt></td>
+<td>We duplicate the original ampersand and rotate the copy in one swell foop - observe the <a target="_parent" href="command-decorations.shtml">double hyphen lefthand decoration</a></td>
+</tr>
+<tr>
+<td><tt>&nbsp;-apply_channels[-1] "-add "$k,hsl_h<br /></tt></td>
+<td>&nbsp;What goes on here? In one swell foop, -<a target="_parent" href="http://gmic.eu/reference.shtml#apply_channels">apply channels</a> converts the image into the HSL color space and lets us rotate the hue angle by the current increment, $k. That done, -apply channels brings us back to RGB space.</td>
+</tr>
+<tr>
+<td><tt>&nbsp;&nbsp;-blend[-2,-1] negation,0.7</tt></td>
+<td>&nbsp;We merge the current ampersand onto the drawing pad using G'MIC compositing engine, the rather extensive -blend command. Negation is the blending operation</td>
+</tr>
+<tr>
+<td><tt>-done -rm[-2]</tt></td>
+<td>That's it; we're done. We remove the rubber-stamping image.</td>
+</tr>
+<tr>
+<td><tt>-output twirl.png</tt></td>
+<td>Save the creation for the front piece illustration.</td>
+</tr>
+</tbody>
+</table>
+<p><em>Garry Osgood</em></p>
+
+
+
+   
+</body></html>

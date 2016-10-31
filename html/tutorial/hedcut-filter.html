@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="tutorial.css">
+<script type="text/javascript" src="highslide/highslide.js"></script>
+<link rel="stylesheet" type="text/css" href="highslide/highslide.css" />
+<script type="text/javascript">
+hs.graphicsDir = 'highslide/graphics/';
+hs.wrapperClassName = 'wide-border';
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<body>
+
+
+      
+
+
+
+<h2>The Gimp Hedcut Filter</h2>
+<div id="FigureOne" width="4.5in" height="5.0in" style="float: left;"><img style="margin: 3px; border: 0px solid #808080;" class="img_block" title="Jean Cocteau's Right Eye: 1923" src="http://www.particularart.com/static/media/uploads/filters/hedcut/jc_righteye.jpg.jpg" height="400" width="400" />
+<p style="font-size: x-small; line-height: 100%;"><i>Figure 1: <a target="_parent" href="http://en.wikipedia.org/wiki/Jean_Cocteau">Jean Cocteau's</a> right eye in 1923.</i></p>
+</div>
+<p>Somewhere around here ('Here' being an apartment in Brooklyn) I have a few post cards of Prospect Park produced around the turn of the Twentieth Century. So far as I know they were lithographed in Germany in nineteen oh something.</p>
+<p>They are drop-dead beautiful.</p>
+<p>Their most remarkable aspect is their printing. Lots of colors, more than four, but I'm not sure how many. The halftoning is not anything like today. Not a rotated column-and-row ordering of different sized elliptical dots, but something that squiggles around snake-like; it is not a periodic pattern at all. The best theory that I've heard that it was some sort of chemical etching of metal, perhaps an intaglio process which cut away metal and the ink would be retained in the cup-like depressions. Some sort of photographic negative regulated the chemical etching somehow.</p>
+<p>Fast forward a century. There's a discussion on Gimp Chat about <a target="_parent" href="http://gimpchat.com/viewtopic.php?f=18&amp;t=11108">Stippling and Hedcuts</a>, the sort of thing <a target="_parent" title="Randy Glass" href="http://www.randyglassstudio.com/">Randy Glass</a>, <a target="_parent" href="http://nolinovak.com/">Noli Novak</a> et. al. do for the <em>Wall Street Journal</em> and other papers of Serious Note. The discussion rolls around to thoughts about whether a filter of some sort could do this. And I start fooling around with G'MIC, thinking of German post cards. So in a few hours I don't have a filter that Does Dots, but I have one that Does Snakes, and these follow image geometry, well, sort of, and that's part of the charm. Maybe the Snakes follow the geometry, and maybe they follow their own tails. Dots. Schmots. I like them snakes anyway.&nbsp;</p>
+<p>The Hedcut Filter goes about its business in three phases. Phase One entails Feature Extraction. The filter tries to extract as many sharp transition edges as possible from a given image. It will pick up some edges; maybe pick up some noise too. Phase Two entails plotting offset lines from the extracted features. Go run Contours &rarr; Edges Offset by David Tschumperl&eacute; (Ronounours) and see what I mean. The Third phase entails running Spectral Filters&nbsp;&rarr; Bandpass over the extracted features with offset curves, a low pass filter, which generates an interference pattern: The Snakes. Add the Snakes to the Image and Threshold. Done.</p>
+<p>Details. Yes. I've left some out. All that will be packaged up in a Beginners Cookbook dissecting the G'MIC command <tt>-hedcut</tt>, which encapsulates the logic and can do everything mentioned here from the command line without the paint program overhead. So let's mention everything here:</p>
+<ol>
+<li>Being experimental, and possibly radioactive, the filter currently lives in Testing &rarr; Gmic Tutorials &rarr; Hedcut (experimental). Perhaps it will move to Black and White when it matures and gains some friends.</li>
+<li>The widgetware is in three groups: Photometric, Pattern and Choice, the last housing a couple of flags.</li>
+<li><strong>Photometric:</strong><ol type="a">
+<li><em>contrast</em>: larger values increase the range between darkest and lightest. Go too far either way and the pattern collapses into solid black or white &mdash; which may be what you want. Ranges from zero to one and defaults at one half.</li>
+<li><em>Luminance level</em>: Lightens the picture overall with larger settings; darkens them with smaller settings. Everything said about pattern collapse before applies here as well. Ranges from zero to one and defaults at one half.</li>
+</ol></li>
+<li><strong>Pattern:</strong><ol type="a">
+<li><em>Smoothing:</em> Larger numbers increase a pre-blurring step to reduce noise and edges. Very large numbers also trigger a morphological erode/dilate cycle to further reduce spot noise. This affects the Snake pattern. Noise makes the snakes go turbulent; they chase their tails rather than follow edges. Look at the region under Jean Cocteau's eye for an example of tail chasing. As this setting goes smaller, expect more tail chasing. As it goes larger, expect more edge following than tail chasing. See the third item in this list as well: Steps. Ranges from zero to one and defaults at one half.</li>
+<li><em>Size:</em> Larger values increase the size of the snake pattern relative to pixel dimensions. If you wish to have a finer pattern than the smallest setting, consider doubling or tripling your image first, then reducing in post. Ranges from zero to one and defaults at zero, the smallest scale pattern.</li>
+<li><em>Step:</em> After it has found edges, this filter constructs offset lines in a series of steps. The interference pattern which <a target="_parent" href="_bandpass.shtml"><tt>-bandpass</tt></a> generates shifts and chages as the step size changes. This alters the pattern in ways that are hard to describe, but, like Smoothing, above, generally the Snakes follow geometry more readily when this is a large setting; they tend to turbulence when this setting is small. This setting is worth tweaking this way and that. Ranges from zero to one and defaults at one half.</li>
+</ol></li>
+<li><strong>Choice:</strong><ol type="a">
+<li><em>Quality</em>: The pattern is either black or white, no anti-aliasing is done. That may be what you want. Then again, maybe it is too jaggedy for your tastes. Should that be the case, set this flag on. The filter will scale your image up 4X and work on it oversized, then scale it back down 25% when it is done. The results are nicer, but the processing time increases nearly by three and memory usage increases by a like amount. You'll have trouble with images larger than 3000x3000 on a 2 GB machine.</li>
+<li><em>Force Gray:</em> This filter will process RGB on a per-channel basis, treating each channel as an independent task. If you are processing an erstwhile "black-and-white" image when The Gimp is in RGB mode, then this filter will think that it is color and do three times as much processing as you need. It will see three identical layers and have at it. To avoid extra processing, when The Gimp is in RGB mode and you are working on a black and white image, set this flag on. The image will be converted to a gray scale on the G'MIC pipeline, and be switched back to an RGB layer when the processing is done. Also useful for converting color to black and white on the fly. It can be set, but is meaningless, if The Gimp is in gray scale mode.</li>
+</ol></li>
+</ol>
+<h2 id="Workflow">Workflow</h2>
+<p>The first item to choose is Pattern Size. If you are just exploring, leave this at the smallest value. If you wish to have patterns smaller than the smallest setting on the filter, consider enlarging your image as a pre-step, then scaling it back down again in post. You may set a larger pattern, but you will find that it becomes harder to set Contrast and Luminance level as the pattern gets larger.</p>
+<p>With the pattern size chosen, do a trial run at default settings and contemplate the results. set Contrast and Luminance Levels, then run another trial. Iterate until you are satisfied. Technically (if that means anything) the "Ideal Settings" will give you mere black-on-white hairline patterns in the highlights, and mere white-on-black hairline patterns in the shadows. Play with Contrast an Luminance levels until you reach that state or whatever state you are reaching after.</p>
+<p>With luminance and contrast chosen, experiment with Pattern Smoothing and Pattern Step. If you want the pattern to trace the image geometry, set both Pattern Smoothing and Step to large values. Otherwise set them to smaller values, which tend to turbulence patterns. Try not to treat these pair as ganged controls. Each affects pattern details but in different ways. These two controls are worth the experimentation.</p>
+<p><em>Garry Osgood</em></p>
+
+
+
+   
+</body></html>

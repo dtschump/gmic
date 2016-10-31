@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="tutorial.css">
+<script type="text/javascript" src="highslide/highslide.js"></script>
+<link rel="stylesheet" type="text/css" href="highslide/highslide.css" />
+<script type="text/javascript">
+hs.graphicsDir = 'highslide/graphics/';
+hs.wrapperClassName = 'wide-border';
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<body>
+
+
+      
+
+
+
+<h1>-diffusiontensors</h1>
+<p><img src="http://www.particularart.com/static/media/uploads/command_reference/diffusiontensors/init-000.png" title="init-000.png" class="img_block" style="margin: 3px; border: 0px solid #808080; float: left;" height="300px" width="300px" />This command produces <a target="_parent" href="dyidiffusion_eigen-thingys.shtml#structure_and_diffusion_tensors"><i>tensor fields</i></a> from noisy input images. These encode <a target="_parent" href="_smooth.shtml#anisotropic_smoothing"><i>smoothing geometries</i></a> for the corrupted images, each field having the same dimensions as the input image. The tensors comprising each field are in a one-to-one correspondence with the pixels of the input image.</p>
+<p>The command implements the "anisotropic smoothing" operation usually attributed to<a target="_parent" href="_smooth.shtml"> -smooth</a>, one that strives to recover corrupted images (see the example on the left). Typically, -smooth calls the internal implementation of -diffusiontensors when it has not otherwise been given a particular smoothing geometry.</p>
+<p>A script author usually calls -diffusiontensors when she wishes to modify smoothing geometries in particular ways. See &ldquo;<a target="_parent" href="dyidiffusion_tensors-for-the-tonsorially-challenged.shtml"><i>Tensors for the Tonsorially Challenged</i></a>&rdquo; in the Cookbook for an example.</p>
+<p>Belying a close relationship, the parameter list for -diffusiontensors echoes many of -smooth's. Indeed, -smooth essentially passes such parameters unchanged to its internal copy of -diffusiontensors. The command has the following format:</p>
+<p><code>$gmic -diffusiontensors sharpness&gt;=0,0&lt;=anisotropy&lt;=1, alpha[%]&gt;=0,sigma[%]&gt;=0,is_sqrt={0|1}</code></p>
+<ol>
+<li>
+<p><em>sharpness</em>: &gt;= 0.0 Optional and defaults to 0.7. Increasing values diminish smoothing and preserves small scale detail. Settings in excess of 1.0 run the risk of suppressing smoothing too much, preserving noise as well as detail.</p>
+</li>
+<li>
+<p><em>anisotropy</em>: range: 1.0 &ge; <em>a</em> &ge; 0.0. Optional and defaults to 0.3. Induces greater smoothing along edge contours at the expense of cross-gradient smoothing. Smaller anisotropy values induce a shift toward unidirectional diffusion; the effect tends to be more like conventional blurring. Anisotropy values near unity often causes "false edges" to be detected creating sinuous, hairlike artifacts.</p>
+</li>
+<li>
+<p><em>alpha:</em> Pre-structure blur variance. Gaussian variance&nbsp;&sigma;<sub>0</sub> &ge; 0. Optional and defaults to 0.6. The command initially calls <a target="_parent" href="_structuretensors.shtml">-structuretensors</a> to locate edges in images. Before doing so, -diffusiontensors applies a conventional isotropic Gaussian blur to the operand image, which, to a degree, assists -structuretensors with edge detection and finding edge orientation. Alpha sets the Gaussian variance, &sigma;, for that operation. As it is based on isotropic blurring, too high a value of alpha can obliterate edges as well as noise.</p>
+</li>
+<li>
+<p><em>sigma:</em> Post-structure blur filter. Gaussian variance&nbsp;&sigma;<sub>1</sub> &ge; 0. Optional and defaults to 1.1. Following its call to -structuretensors, -diffusiontensors blurs the tensor field it obtains from that command; this parameter sets the variance, &sigma;. For particularly noisy images, the tensor field produced by -structuretensors can have spurious entries; blurring tends to reduce the effects of such outliers. Larger values of sigma tend to favor large-scale laminar smoothing over localized 'eddy' smoothing.</p>
+</li>
+<li>
+<p><em>is_sqrt:</em> Boolean flag {0|1} Modifies the computation of the smoothing intensities in the gradient and contour directions. See "Smoothing Geometry," below, for further details.</p>
+</li>
+</ol>
+<h2 id="SmoothingGeometryDiffusion">Smoothing Geometry</h2>
+<p>For each pixel in a noisy image, -diffusiontensors calculates a tensor embodying a "smoothing geometry" for that pixel. This tensor encodes two vectors, one directed along the <em>gradient</em>, the largest intensity change manifest in the locale of a pixel, and which is likely to be an edge, and the other along the <i>contour</i> of the (suspected) edge. These vectors are orthogonal to each other.</p>
+<p>In the presence of noise, and with increased anisotropy settings, the smoothing vector along the contour is stronger than across the gradient. The operation tends to strengthen edges because diffusion proceeds more rapidly in directions parallel to edges, smearing noise pixels without smearing edge gradients.</p>
+<p>The process is adaptive. Where intensity differences are great in a particular locale, indicating edges much stronger than the ambient noise, smoothing vectors are correspondingly small, an inverse proportional relationship. Strong edges do not require as much enhancement as degraded ones, and unnecessary smoothing would require more time and possibly introduce artifacts.</p>
+<p>-diffusiontensors calculates smoothing geometries from two sources: guidance parameters from the command line, in particular, <em>sharpness</em>, <em>anisotropy</em>, and<em> is_sqrt</em>, and a survey performed by <a target="_parent" href="_structuretensors.shtml">-structuretensors</a>. The survey identifies "edge-like" structures from differences in image intensity in the locality of each pixel.</p>
+<p>-structuretensors itself produces a tensor field. The tensors comprising that field characterize the rapidity of change in image intensity along the cardinal directions (width and height) in the neighborhood of associated pixels. Pixels which straddle marked changes in intensity give rise to structure tensors with <a target="_parent" href="dyidiffusion_eigenvalues-and-eigenvectors.shtml">eigenvalues</a> that differ greatly in value, their associated <a target="_parent" href="dyidiffusion_eigenvalues-and-eigenvectors.shtml">eigenvectors</a> oriented along and transverse to the gradient.</p>
+<p>-diffusiontensors sets out to estimate corresponding smoothing tensors for each pixel, applying <i>sharpness, </i><i>anisotropy</i><i>, is_root</i> and the corresponding eigenvalues and eigenvectors computed from the structure tensors. At each pixel, smoothing tensors have the same orientation as the corresponding structure tensor but have different magnitudes, respectively <i>s</i><sub><i>+</i></sub> for smoothing strength in the gradient direction and <i>s</i><sub><span style="font-family: Liberation Serif,serif;" face="Liberation Serif, serif"><i>‒</i></span></sub> for smoothing strength in the contour direction.</p>
+<p>These new magnitudes have inverse power relationships with the corresponding eigenvalues of the structure tensors. Smoothing is very small where structure tensor eigenvalues exhibit large differences. This phenomenon corresponds to well-defined edges in the source image and these are not regions where one needs a great deal of edge enhancement. As the absolute sizes and differences of structure tensor eigenvalues decline, gradient and contour smoothing magnitudes increase. This is natural, as the smaller eigenvalues correspond to less distinct features which smoothing might profitably enhance.</p>
+<p>We could regard s<sub>+</sub> and s<sub>‒</sub> as the axes of an elliptic diffusion kernel; differences in their magnitudes induces ellipses of greater eccentricity and a correspondingly greater directional effect in the diffusion pattern. The command line parameters which set the overall smoothing magnitude and effect a differentiation between s<sub>+</sub> and s<sub>‒</sub> are, respectively, <i>sharpness</i> and <i>anisotropy</i>.</p>
+<h3 id="DeterminingSmoothingStrength">Determining Smoothing Strength</h3>
+<p>Given are:</p>
+<ol>
+<li>&lambda;<sub>+</sub>, the gradient eigenvalue, derived for each pixel in the source image by -structuretensors. Its corresponding eigenvector points along the steepest gradient.</li>
+<li>&lambda;<sub>‒</sub>, the contour eigenvalue, corresponding to the contour vector, oriented at right angles to the gradient vector and pointing along the edge.</li>
+<li><i>sharpness</i>, from the command line, which scales exponents <i>p</i><sub><i>1</i></sub> and <i>p</i><sub><i>2</i></sub> (see relationships following) and, correspondingly, uniformly reduces smoothing values s<sub>+</sub> and s<sub>‒.</sub></li>
+<li><i>anisotropy</i>, from the command line. As it ranges over the semi-closed interval [0,&hellip;1), this factor increases the inequality <i>p</i><sub><i>1</i></sub><i> </i><i>&le;</i><i> p</i><sub><i>2</i></sub> and which, from the &ldquo;Contour and Gradient Smoothing&rdquo; relationships following, induces s<sub>+</sub> <i>&le;</i> s<sub>‒</sub>. That is, as anisotropy increases, smoothing along the gradient, s<sub>+</sub>, decreases in relation to smoothing along the contour, s<sub>‒</sub>. The eccentricity of diffusion kernels increase and smoothing becomes increasingly biased in the direction set by contour eigenvectors.</li>
+<li><i>is_sqrt</i>, when set, sharpness is scaled by one half. Since this value sets <i>p</i><sub><i>1</i></sub>, and <i>p</i><sub><i>1</i></sub> in turn scales <i>p</i><sub><i>2</i></sub>, both these exponents are scaled by one half, and, through the exponential law, induces square root operations on the calculations of s<sub>+</sub> and s<sub>‒</sub>. As with an inverse relationship, the halving of exponents <i>p</i><sub><i>1</i></sub> and <i>p</i><sub><i>2</i></sub> strengthen s<sub>+</sub> and s<sub>‒</sub>. The effect of setting this flag to one roughly amounts to &ldquo;super-smoothing.&rdquo;</li>
+</ol>
+<p>With these given parameters, the following relationships calculate smoothness values s<sub>+</sub> and s<sub>‒</sub>:</p>
+<table cols="2" rules="all" class="table table-striped" style="border-color: #808080; border-width: 1px;" border="1">
+<tbody>
+<tr>
+<td colspan="2">
+<h3>Exponents</h3>
+</td>
+</tr>
+<tr>
+<td><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"> <semantics> <mrow> <msub> <mi>p</mi> <mn>1</mn> </msub> <mo stretchy="false">=</mo> <mrow> <mo fence="true" stretchy="true">{</mo> <mrow> <mtable> <mtr> <mtd> <mrow> <mfrac> <mstyle mathvariant="italic"> <mtext>sharpness</mtext> </mstyle> <mn>2</mn> </mfrac> <mi>;</mi> <mrow> <mstyle mathvariant="italic"> <mtext>is_sqrt</mtext> </mstyle> <mo stretchy="false">&gt;</mo> <mn>0</mn> </mrow> </mrow> </mtd> </mtr> <mtr> <mtd> <mrow> <mstyle mathvariant="italic"> <mtext>sharpness</mtext> </mstyle> <mi>;</mi> <mrow> <mstyle mathvariant="italic"> <mtext>is_sqrt</mtext> </mstyle> <mo stretchy="false">=</mo> <mn>0</mn> </mrow> </mrow> </mtd> </mtr> </mtable> </mrow> <mo fence="true" stretchy="true">}</mo> </mrow> </mrow> <annotation encoding="StarMath 5.0">p_1 = left lbrace{ binom{ ital "sharpness" over 2; ital "is_sqrt" &gt; 0}{ ital "sharpness"; ital "is_sqrt" = 0} }right rbrace</annotation> </semantics> </math></td>
+<td><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"> <semantics> <mrow> <msub> <mi>p</mi> <mn>2</mn> </msub> <mo stretchy="false">=</mo> <mfrac> <msub> <mi>p</mi> <mn>1</mn> </msub> <mrow> <mn>1</mn> <mo stretchy="false">&minus;</mo> <mstyle mathvariant="italic"> <mtext>anisotropy</mtext> </mstyle> </mrow> </mfrac> </mrow> <annotation encoding="StarMath 5.0">p_2 = p_1 over { 1 - ital "anisotropy" }</annotation> </semantics> </math></td>
+</tr>
+<tr>
+<td colspan="2">
+<h3 id="ContourAndGradoemtSmoothing">Contour and Gradient Smoothing</h3>
+</td>
+</tr>
+<tr>
+<td><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"> <semantics> <mrow> <msub> <mi>s</mi> <mtext>-</mtext> </msub> <mo stretchy="false">=</mo> <mfrac> <mn>1</mn> <msup> <mrow> <mo fence="true" stretchy="false">(</mo> <mrow> <mrow> <mn>1</mn> <mo stretchy="false">+</mo> <msub> <mi mathvariant="normal">&lambda;</mi> <mtext>+</mtext> </msub> <mo stretchy="false">+</mo> <msub> <mi mathvariant="normal">&lambda;</mi> <mtext>-</mtext> </msub> </mrow> </mrow> <mo fence="true" stretchy="false">)</mo> </mrow> <msub> <mi>p</mi> <mn>1</mn> </msub> </msup> </mfrac> </mrow> <annotation encoding="StarMath 5.0">s_"-" = 1 over {(1 + %lambda_"+" + %lambda_"-")^{p_1} } </annotation> </semantics> </math></td>
+<td><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"> <semantics> <mrow> <msub> <mi>s</mi> <mtext>+</mtext> </msub> <mo stretchy="false">=</mo> <mfrac> <mn>1</mn> <msup> <mrow> <mo fence="true" stretchy="false">(</mo> <mrow> <mrow> <mn>1</mn> <mo stretchy="false">+</mo> <msub> <mi mathvariant="normal">&lambda;</mi> <mtext>+</mtext> </msub> <mo stretchy="false">+</mo> <msub> <mi mathvariant="normal">&lambda;</mi> <mtext>-</mtext> </msub> </mrow> </mrow> <mo fence="true" stretchy="false">)</mo> </mrow> <msub> <mi>p</mi> <mn>2</mn> </msub> </msup> </mfrac> </mrow> <annotation encoding="StarMath 5.0"> s_"+" = 1 over {(1 + %lambda_"+" + %lambda_"-")^{p_2} }</annotation> </semantics> </math></td>
+</tr>
+</tbody>
+</table>
+<h2 id="ADifferentialPipeline">A Diffusiontensors Pipeline</h2>
+<p>To help develop a concrete sense of how -diffusiontensors operates, we trace histories of four pixels through an image reconstruction pipeline mediated by this command and -smooth. Apart from the action of -smooth, this narrative is internal to the -diffusiontensors command. Some readers may wish to refer to the command's definition in <tt>gmic_stdlib.gmic</tt>.</p>
+<table rules="all" class="table  table-striped" style="border-color: #808080; border-width: 1px;" border="1">
+<tbody>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/command_reference/diffusiontensors/dift-000.png" title="dift-000.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="300px" width="300px" /></td>
+<td>
+<p class="western">Original picture. We mark four reference pixels. From top to bottom:</p>
+<ol>
+<li>
+<p class="western">(155, 51) Touch point of a small, upward pointing green arrow and the largest arrow</p>
+</li>
+<li>
+<p class="western">(97, 80) A high contrast transition point along the upper vertical edge of the largest arrow</p>
+</li>
+<li>
+<p class="western">(40,176) A low contrast transition point along lower edge of the leftmost green arrow</p>
+</li>
+<li>
+<p class="western">(120,230) A point in a nearly constant field, nowhere near any transition</p>
+</li>
+</ol></td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/command_reference/diffusiontensors/dift-001.png" title="dift-001.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="300px" width="300px" /></td>
+<td>
+<p>The same picture, now corrupted with noise at a variety of scales. We apply the <a target="_parent" href="_plasma.shtml">-plasma</a> command with iterations through two scales, dependent perturbations (alpha) of seventeen and scale independent perturbations (beta) of fourteen. We overlay a Gaussian noise with a variance of thirty.</p>
+<p>Our trial -diffusiontensor parameters are:</p>
+<ul>
+<li>sharpness: 0.7</li>
+<li>anisotropy: 0.7</li>
+<li>alpha: 4.0</li>
+<li>sigma: 1.0</li>
+<li>is_sqrt: 1</li>
+</ul>
+</td>
+</tr>
+<tr>
+<td width="256"><img style="margin: 3px; border: 0px solid #808080;" class="img_block" src="http://www.particularart.com/static/media/uploads/command_reference/diffusiontensors/dift-002.png" title="dift-002.png" height="300px" width="300px" /></td>
+<td>
+<p>-diffusiontensors calls <a target="_parent" href="_structuretensors.shtml">-structuretensors</a> to locate the strength and orientation of image features.</p>
+<ol>
+<li>
+<p>-diffusiontensors first applies <a target="_parent" href="_blur.shtml">isotropic blurring</a> with a Gaussian variance of 4 (<i>alpha</i>). To a degree, this filtering affects ambient noise more than it does image features, but a too large variance will erode image features as well.</p>
+</li>
+<li>
+<p>Following <i>alpha</i> filtering, -diffusiontensors invokes -structuretensors. That command generates a tensor field, the coefficients of the individual tensors are computed from differences between pixels and their immediate left and right, top and bottom neighbors.</p>
+</li>
+<li>
+<p>The data comprising the tensor field produced by -structuretensors is not itself free from noise; some values will be outliers. Consequently, -diffusiontensors blurs the field produced by -structuretensors, employing a Gaussian variance of 1.0 (<i>sigma</i>). In effect, this blurring averages such outliers with the prevailing values of the neighborhood.</p>
+<p>As with<i> alpha</i>, one can go too far with <i>sigma, </i>as too large a variance can make indistinct smaller features that -structuretensors has detected.</p>
+</li>
+</ol>
+<p>Here are the tensors which -structuretensors calculated for our reference points, reflecting a local averaging from the second blurring operation (<i>sigma</i><i>)</i>:</p>
+<ol>
+<li><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"> <semantics> <mstyle mathsize="9pt"> <mrow> <mstyle mathvariant="bold"> <msub> <mi>G</mi> <mrow> <mo fence="true" stretchy="false">[</mo> <mrow> <mn>155,51</mn> </mrow> <mo fence="true" stretchy="false">]</mo> </mrow> </msub> </mstyle> <mo stretchy="false">=</mo> <mrow> <mo fence="true" stretchy="true">[</mo> <mrow> <mtable> <mtr> <mtd> <mn>75.02135</mn> </mtd> <mtd> <mn>62.97602</mn> </mtd> </mtr> <mtr> <mtd> <mn>62.97602</mn> </mtd> <mtd> <mn>65.44759</mn> </mtd> </mtr> </mtable> </mrow> <mo fence="true" stretchy="true">]</mo> </mrow> </mrow> </mstyle> <annotation encoding="StarMath 5.0">size 9 { bold {G}_[155,51] = left [ matrix{ 75.02135 # 62.97602 ## 62.97602 # 65.44759 } right ] }</annotation> </semantics> </math></li>
+<li><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"> <semantics> <mstyle mathsize="9pt"> <mrow> <mstyle mathvariant="bold"> <msub> <mi>G</mi> <mrow> <mo fence="true" stretchy="false">[</mo> <mrow> <mn>97,80</mn> </mrow> <mo fence="true" stretchy="false">]</mo> </mrow> </msub> </mstyle> <mo stretchy="false">=</mo> <mrow> <mo fence="true" stretchy="true">[</mo> <mrow> <mtable> <mtr> <mtd> <mn>381.901</mn> </mtd> <mtd> <mn>4.90887</mn> </mtd> </mtr> <mtr> <mtd> <mn>4.90887</mn> </mtd> <mtd> <mn>1.75710</mn> </mtd> </mtr> </mtable> </mrow> <mo fence="true" stretchy="true">]</mo> </mrow> </mrow> </mstyle> <annotation encoding="StarMath 5.0">size 9 { bold {G}_[97,80] = left [ matrix{ 381.901 # 4.90887 ## 4.90887 # 1.75710 } right ] }</annotation> </semantics> </math></li>
+<li><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"> <semantics> <mstyle mathsize="9pt"> <mrow> <mstyle mathvariant="bold"> <msub> <mi>G</mi> <mrow> <mo fence="true" stretchy="false">[</mo> <mrow> <mn>40,176</mn> </mrow> <mo fence="true" stretchy="false">]</mo> </mrow> </msub> </mstyle> <mo stretchy="false">=</mo> <mrow> <mo fence="true" stretchy="true">[</mo> <mrow> <mtable> <mtr> <mtd> <mn>6.70915</mn> </mtd> <mtd> <mrow> <mo stretchy="false">&acirc;</mo> <mn>3.57508</mn> </mrow> </mtd> </mtr> <mtr> <mtd> <mrow> <mo stretchy="false">&acirc;</mo> <mn>3.57508</mn> </mrow> </mtd> <mtd> <mn>55.02620</mn> </mtd> </mtr> </mtable> </mrow> <mo fence="true" stretchy="true">]</mo> </mrow> </mrow> </mstyle> <annotation encoding="StarMath 5.0">size 9 { bold {G}_[40,176] = left [ matrix{ 6.70915 # -3.57508 ## -3.57508 # 55.02620 } right ] }</annotation> </semantics> </math></li>
+<li><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"> <semantics> <mstyle mathsize="9pt"> <mrow> <mstyle mathvariant="bold"> <msub> <mi>G</mi> <mrow> <mo fence="true" stretchy="false">[</mo> <mrow> <mn>120,230</mn> </mrow> <mo fence="true" stretchy="false">]</mo> </mrow> </msub> </mstyle> <mo stretchy="false">=</mo> <mrow> <mo fence="true" stretchy="true">[</mo> <mrow> <mtable> <mtr> <mtd> <mn>6.20982</mn> </mtd> <mtd> <mrow> <mo stretchy="false">&acirc;</mo> <mn>1.00163</mn> </mrow> </mtd> </mtr> <mtr> <mtd> <mrow> <mo stretchy="false">&acirc;</mo> <mn>1.00163</mn> </mrow> </mtd> <mtd> <mn>6.77233</mn> </mtd> </mtr> </mtable> </mrow> <mo fence="true" stretchy="true">]</mo> </mrow> </mrow> </mstyle> <annotation encoding="StarMath 5.0">size 9 { bold {G}_[120,230] = left [ matrix{ 6.20982 # -1.00163 ## -1.00163 # 6.77233 } right ] }</annotation> </semantics> </math></li>
+</ol></td>
+</tr>
+<tr>
+<td width="256"><img style="margin: 3px; border: 0px solid #808080k;" class="img_block" src="http://www.particularart.com/static/media/uploads/command_reference/diffusiontensors/dift-003.png" title="dift-003.png" height="300px" width="300px" /></td>
+<td>
+<p>While a compact representation, tensors do not lend themselves to easy visualization. Here, we solve for their eigenvalues and eigenvectors and overlay the data onto their structure tensor field locales. In each case, the gradient vector is the larger of the two and is directed along the most rapid change in intensity; the companion contour vector is barely visible at this scale. As noted in the text, the magnitude of the difference between &lambda;<sub>+</sub> and &lambda;<sub>\u2500 </sub>signal edges, with the contour vector running along it and the gradient vector crossing it.</p>
+<ol><ol>
+<li value="1">
+<p>(155, 51): <i>&lambda;</i><sub>&ndash;</sub> = 7.0768, <i>&theta;</i><sub><i>-</i></sub> = 47.1734&deg;; <i>&lambda;</i><sub><i>+</i></sub> = 133.3922, <i>&theta;</i><sub><i>+</i></sub> =&nbsp;&ndash; 42.8266&deg;</p>
+<p class="western">The gradient vector (<i>&lambda;</i><sub><i>+&nbsp;</i></sub> ∡ <i> &theta;<sub>+</sub></i>) is about at right angles to the edge of the large arrow, oriented at an incline of about 42&deg; in the original image. The contour vector is about five degrees more vertical than the edge; such variances are not surprising in vicinity of the touch point, where noise and blurring have altered the original contours.</p>
+</li>
+<li>
+<p>(97, 80): <i>&lambda;</i><sub>&ndash;</sub><sub>.</sub> = 1.6937, <i>&theta;</i><sub>&ndash;</sub> = 89.2603&deg;; <i>&lambda;</i><sub><i>+</i></sub> = 381.9644, <i>&theta;</i><sub><i>+</i></sub> =&nbsp;&ndash; 0.7397&deg;</p>
+<p>In spite of noise and blurring, | <i>&lambda;</i><sub><i>+</i></sub><i>&nbsp;</i><i>&ndash; </i><i>&lambda;</i><i>&ndash; </i>| indicates a much stronger edge in this locale; The edge of the arrow is still clearly visible through the noise and the strength of the edge is reflected by the magnitude of | <i>&lambda;</i><sub><i>+</i></sub><i> </i><i>\u2500</i><i> </i><i>&lambda;</i><sub><i>\u2500</i></sub><i> </i>|. The gradient vector is only a fraction of a degree off from the perpendicular of the arrow edge, exactly 0&deg; in the original.</p>
+</li>
+<li>
+<p>(40,176): <i>&lambda;</i><sub>&ndash;</sub><sub>.</sub> = 6.4406, <i>&theta;</i><sub>&ndash;</sub> = -4.2089&deg;; <i>&lambda;</i><sub><i>+</i></sub> = 55.2893, <i>&theta;</i><sub><i>+</i></sub> = 85.7911&deg;</p>
+<p>Compared to the previous sample, the contrast between the leftmost olive green arrow and the cyan background is much lower, and the smaller magnitudes of the eigenvalues reflect this. Though small, the gradient vector is only a fraction of a degree off from the edge perpendicular.</p>
+</li>
+<li>
+<p>(120,230) <i>&lambda;</i><sub>&ndash;</sub><sub>.</sub> = 5.4507 <i>&theta;</i><sub>&ndash;</sub> = -37.1577 &deg;; <i>&lambda;</i><sub><i>+</i></sub> = 7.5314, <i>&theta;</i><sub><i>+</i></sub> = 52.8423&deg;</p>
+<p>This sample, far from any features in the original, exhibits only very small gradient and contour vectors, just two percent of the largest vector at pixel (97, 80). While the data indicates an edge oriented around 142&deg;, the small magnitude of | <i>&lambda;</i><sub><i>+</i></sub><i> </i><i>\u2500</i><i> </i><i>&lambda;</i><sub><i>\u2500</i></sub> | suggests this is a spurious reading.</p>
+</li>
+</ol></ol></td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/command_reference/diffusiontensors/dift-004.png" title="dift-004.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="300px" width="300px" /></td>
+<td>
+<p>Given structure tensors and command parameters, we compute the smoothing magnitudes for the four points, harnessing the relationships that are given in the previous section. These magnitudes scale unit vectors with the same orientation as the input structure tensors and form <i>smoothing vectors.</i></p>
+<p>The diagrams on the left depict the smoothing vectors at each of the reference points and are drawn at a larger scale than the previous diagram, approximately at the ratio of 2,421:1.</p>
+<p>These vectors instruct -smooth to diffuse the associated image pixel in an anisotropic way. In the first case, at pixel (155,51), diffusion will proceed at the relative magnitude of 0.03123 along an orientation of 47.1734&deg;. The <i>amplitude</i> parameter given to -smooth scales these magnitudes to their working values. The overall tensor field embodies similar instructions for every pixel in the corrupted image, and, in aggregate constitute a <i>smoothing geometry</i>.</p>
+<p>The smoothing vectors for the four reference pixels are:</p>
+<ol>
+<li>
+<p>(155,51): <i>s</i><sub><i>&ndash;</i></sub><sub>.</sub> = 0.03123, <i>&theta;</i><sub><i>&ndash;</i></sub> = 47.1734&deg;, <i>s</i><sub><i>+</i></sub> = 0.000009589, <i>&theta;</i><sub><i>+</i></sub> = &ndash; 42.8266&deg;</p>
+</li>
+<li>
+<p>(97,80): <i>s</i><sub><i>&ndash;</i></sub><sub>.</sub> = 0.0155, <i>&theta;</i><sub><i>&ndash;</i></sub> = 89.2603&deg;, <i>s</i><sub><i>+</i></sub> = 0.00006394, <i>&theta;</i><sub><i>+</i></sub> = &ndash; 0.7397&deg;</p>
+</li>
+<li>
+<p>(40,176):<i> </i><i>s</i><sub><i>&ndash;</i></sub><sub>.</sub> = 0.05517, <i>&theta;</i><sub><i>&ndash;</i></sub> = -4.2089&deg;, <i>s</i><sub><i>+</i></sub> = 0.000009589, <i>&theta;</i><sub><i>+</i></sub> = 85.7911&deg;</p>
+</li>
+<li>
+<p>(120, 230): <i>s</i><sub><i>&ndash;</i></sub><sub>.</sub> = 0.1578, <i>&theta;</i><sub><i>&ndash;</i></sub> = 52.8423&deg;, <i>s</i><sub><i>+</i></sub> = 0.002123, <i>&theta;</i><sub><i>+</i></sub> = 142.8423&deg;</p>
+</li>
+</ol></td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/command_reference/diffusiontensors/dift-005.png" title="dift-005.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="300" width="300" /></td>
+<td>
+<p>-diffusiontensors calls -<a target="_parent" href="_eigen2tensor.shtml">eigen2tensors</a>. This command recomposes tensor fields from image pairs. The pair consists of a two channel image of eigenvalues and a two channel image of unit vectors; it produces a single tensor field encoding a smoothing geometry. This is passed as a parameter to -smooth.</p>
+<p>In the present case, the two channel eigenvalue image contains the smoothing values; the unit vectors have been carried forward unchanged from the tensor field produced by -structuretensors. This operation gives rise to diffusion tensors for each of the reference points:</p>
+<ol>
+<li><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"> <semantics> <mstyle mathsize="9pt"> <mrow> <msub> <mstyle mathvariant="bold"> <mi>T</mi> </mstyle> <mrow> <mo fence="true" stretchy="false">[</mo> <mrow> <mn>155,51</mn> </mrow> <mo fence="true" stretchy="false">]</mo> </mrow> </msub> <mo stretchy="false">=</mo> <mrow> <mo fence="true" stretchy="true">[</mo> <mrow> <mtable> <mtr> <mtd> <mn>0.009152</mn> </mtd> <mtd> <mrow> <mo stretchy="false">&acirc;</mo> <mn>0.01521</mn> </mrow> </mtd> </mtr> <mtr> <mtd> <mrow> <mo stretchy="false">&acirc;</mo> <mn>0.01521</mn> </mrow> </mtd> <mtd> <mn>0.0253360</mn> </mtd> </mtr> </mtable> </mrow> <mo fence="true" stretchy="true">]</mo> </mrow> </mrow> </mstyle> <annotation encoding="StarMath 5.0">size 9 { {bold T}_[ 155,51 ] = left [ matrix {0.009152 # -0.01521 ## -0.01521 # 0.0253360 } right ] }</annotation> </semantics> </math></li>
+<li><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"> <semantics> <mstyle mathsize="9pt"> <mrow> <msub> <mstyle mathvariant="bold"> <mi>T</mi> </mstyle> <mrow> <mo fence="true" stretchy="false">[</mo> <mrow> <mn>97,80</mn> </mrow> <mo fence="true" stretchy="false">]</mo> </mrow> </msub> <mo stretchy="false">=</mo> <mrow> <mo fence="true" stretchy="true">[</mo> <mrow> <mtable> <mtr> <mtd> <mn>0.00001078</mn> </mtd> <mtd> <mrow> <mo stretchy="false">&acirc;</mo> <mn>0.0003918</mn> </mrow> </mtd> </mtr> <mtr> <mtd> <mrow> <mo stretchy="false">&acirc;</mo> <mn>0.0003918</mn> </mrow> </mtd> <mtd> <mn>0.0156</mn> </mtd> </mtr> </mtable> </mrow> <mo fence="true" stretchy="true">]</mo> </mrow> </mrow> </mstyle> <annotation encoding="StarMath 5.0">size 9 { {bold T}_[ 97,80 ] = left [ matrix {0.00001078 # -0.0003918 ## -0.0003918 # 0.0156} right ] }</annotation> </semantics> </math></li>
+<li><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"> <semantics> <mstyle mathsize="9pt"> <mrow> <msub> <mstyle mathvariant="bold"> <mi>T</mi> </mstyle> <mrow> <mo fence="true" stretchy="false">[</mo> <mrow> <mn>40,176</mn> </mrow> <mo fence="true" stretchy="false">]</mo> </mrow> </msub> <mo stretchy="false">=</mo> <mrow> <mo fence="true" stretchy="true">[</mo> <mrow> <mtable> <mtr> <mtd> <mn>0.0556</mn> </mtd> <mtd> <mn>0.005292</mn> </mtd> </mtr> <mtr> <mtd> <mn>0.005292</mn> </mtd> <mtd> <mn>0.0005718</mn> </mtd> </mtr> </mtable> </mrow> <mo fence="true" stretchy="true">]</mo> </mrow> </mrow> </mstyle> <annotation encoding="StarMath 5.0">size 9 { {bold T}_[ 40,176 ] = left [ matrix { 0.0556 # 0.005292 ## 0.005292 # 0.0005718 } right ] }</annotation> </semantics> </math></li>
+<li><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"> <semantics> <mstyle mathsize="9pt"> <mrow> <msub> <mstyle mathvariant="bold"> <mi>T</mi> </mstyle> <mrow> <mo fence="true" stretchy="false">[</mo> <mrow> <mn>120,230</mn> </mrow> <mo fence="true" stretchy="false">]</mo> </mrow> </msub> <mo stretchy="false">=</mo> <mrow> <mo fence="true" stretchy="true">[</mo> <mrow> <mtable> <mtr> <mtd> <mn>0.07325</mn> </mtd> <mtd> <mn>0.07467</mn> </mtd> </mtr> <mtr> <mtd> <mn>0.07467</mn> </mtd> <mtd> <mn>0.07992</mn> </mtd> </mtr> </mtable> </mrow> <mo fence="true" stretchy="true">]</mo> </mrow> </mrow> </mstyle> <annotation encoding="StarMath 5.0">size 9 { {bold T}_[ 120,230 ] = left [ matrix {0.07325 # 0.07467 ## 0.07467 # 0.07992} right ] }</annotation> </semantics> </math></li>
+</ol></td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/command_reference/diffusiontensors/dift-006.png" title="dift-006.png" class="img_block" style="margin: 3px; border: 0px solid #808080;" height="300" width="300" /></td>
+<td>
+<p>The -smooth command blurs images through diffusion under the control of a given tensor field. In a sense, this command places over each pixel in the image an elliptic diffusion kernel, taken from the tensor field and which has been tailored to the pixel's immediate environment by -diffusiontensors. This gives rise to three broad behaviors:</p>
+<ol>
+<li>Should there be a strong gradient in the environment, the kernel is very eccentric but also not particularly large. It is oriented along the contour lines of the edge. Over the course of the command's run, the color value of the pixel will &ldquo;bleed out&rdquo; into neighboring pixels, the diffusion rate and pattern set by the values of s+ and s‒. Since, due to the strength of the local gradient, these values are not large, the diffusion will be very small. In short, the command adapts to strong edges and leaves them more or less alone.</li>
+<li>If the gradient is distinct enough to be distinguished from noise, but only just barely, the kernel is still markedly eccentric and oriented along the contour lines of the edge, but the values of s+ and s‒ are much larger. Over the course of the command's run, the color value of the central pixel will bleed out at faster rates than the previous case, and anisotropically, diffusing most strongly in the direction of &theta;‒ more or less collinear to the tightest contour lines in the neighborhood of the pixel. This tends to smear noise along, but not across, edges. In this case, the command adapts to weak edges by selectively smoothing along the edge.</li>
+<li>If there are no strong gradients in the neighborhood &ndash; a low contrast image region &ndash; the values &lambda;+, &lambda;─ tend to zero, the denominators of the contour and smoothing gradients tend to one, as do s+ and s‒. This gives rise to less elliptic diffusion kernels. Without a strong directional bias, these kind of kernels behave more like conventional, symmetric blurring kernels. Over the course of the command's run, the color value of the central pixel bleeds more or less uniformly in all directions. In the absence of edges, this is just the kind of smoothing needed; areas with uniform color and luminosity blur in an omnidirectional way, spreading irregularities in all directions.</li>
+</ol>
+<p>In practice, we place the <a target="_parent" href="_smooth.shtml">-smooth</a> command in a <a target="_parent" href="_repeat.shtml">-repeat</a> 5 &hellip;<a target="_parent" href="http://gmic.eu/reference.shtml#done">-done</a> loop, so that we may apply the diffusion map to a number of intermediary stages. For each stage we use:</p>
+<ol>
+<li>amplitude: 800</li>
+<li>spatial discretization (dl): 0.8 (default)</li>
+<li>angular discretization (da): 30&deg; (default)</li>
+<li>diffusion precision: 2 (default)</li>
+<li>interpolation: nearest neighbor (default)</li>
+<li>Gaussian fast appoximation: enabled (default)</li>
+</ol></td>
+</tr>
+</tbody>
+</table>
+<p></p>
+<p>Neither -diffusiontensors nor -smooth can conjure image information wholly lost to noise. We harnessed -plasma to corrupt the image, which blurs as well as perturbs, so, from a spectral point of view, part of the image was destroyed by a low pass filter. Gone irretrievably are sharp corners and edges.</p>
+<p><img src="http://www.particularart.com/static/media/uploads/command_reference/diffusiontensors/dift-007.png" title="dift-007.png" class="img_block" style="margin: 3px; border: 0px solid #808080; float: left;" height="200" width="400" />Within those limitations, -diffusiontensors recovered almost all information still manifest in the image. We could filter out most of the salt-and-pepper racket and recover areas of constant tone. Our reconstructed image looks like a somewhat blurred version of the original, the variance, one speculates, not too different from the blurring component in -plasma.</p>
+<p>Comparing a magnified bit of the output with the pristine original illustrates some of the inner workings of -diffusiontensor and -smooth. The edges of the smoothed image seem to have shadowy, thin lines, quite unlike the softer regions in the interiors of shapes. These are footprints of very elliptical smoothing kernels, diffusing their pixels along thin, edge hugging paths. If the image hadn't been so terribly shot up with noise, these artifacts would be not nearly so manifest. Had we pushed the anisotropy parameter near its limits of one, these artifacts would start to look a little bit like curling hair strands; often these look quite lovely.</p>
+<p><em>Garry Osgood</em></p>
+
+
+
+   
+</body></html>

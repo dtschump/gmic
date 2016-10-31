@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="tutorial.css">
+<script type="text/javascript" src="highslide/highslide.js"></script>
+<link rel="stylesheet" type="text/css" href="highslide/highslide.css" />
+<script type="text/javascript">
+hs.graphicsDir = 'highslide/graphics/';
+hs.wrapperClassName = 'wide-border';
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<body>
+
+
+      
+
+
+
+<h1 id="">-if&nbsp;&hellip;&nbsp;-elif&nbsp;&hellip;&nbsp;-else&nbsp;&hellip;&nbsp;-endif</h1>
+<div id="FigureOne" style="float: left; width: 325px; height: 325; border: none; padding: 0in;" dir="ltr"><img title="ifeif_kid.png" src="http://www.particularart.com/static/media/uploads/command_reference/ifendif/ifeif_kid.png" name="ifendif_kid" style="margin: 3px; border: 0px solid #808080; float: left;" height="300" width="300" />
+<p style="font-size: x-small; line-height: 100%;"><i> Figure 1: Perhaps a few more <tt>-elif</tt>'s might help</i></p>
+</div>
+<p>An<tt>-if&nbsp;&hellip;&nbsp;-elif&nbsp;&hellip;&nbsp;-else &nbsp;&hellip;&nbsp;-endif</tt> series executes at most one block of commands when its corresponding <em>condition</em> proves to be true. If no condition proves to be true then commands within an<tt>-else&nbsp;&hellip;&nbsp;-endif </tt>block, if defined, execute. Lacking this default course, and without any condition prevailing, no action occurs.</p>
+<p>The format of the command is:</p>
+<p><code>-if &lt;condition&gt;&nbsp;&hellip;&nbsp;-elif &lt;condition&gt;&nbsp;&hellip;&nbsp;-else &nbsp;&hellip;&nbsp;-endif</code></p>
+<p>At least one block of zero or more commands resides between the <tt>-if &lt;condition&gt;&nbsp;&hellip;&nbsp;-endif</tt> delimiters; one or more <tt>-elif &lt;condition&gt;</tt> commands within this block sub-divides it into a series of blocks. In this case, <tt>-if &lt;condition&gt;</tt> marks the beginning of the first block, while one or more following <tt>-elif &lt;condition&gt;</tt> commands mark the second and subsequent blocks. The G'MIC interpreter tests the conditions corresponding to each block in order of appearance until a <tt>&lt;condition&gt;</tt> is found to be true, and the commands in the corresponding block executes, or all the blocks are exhausted. If present, a final <tt>-else&nbsp;&hellip;&nbsp;-endif</tt> block establishes a default course of action to take when none of the other conditions are true. In any case, if a block of commands executes, subsequent blocks if any, are ignored and the G'MIC interpreter resumes with the commands following the <tt>-endif</tt> block.</p>
+<p>In this final <tt>-else&nbsp;&hellip;&nbsp;-endif</tt> block, it is illegal to insert <tt>-if &lt;condition&gt;&nbsp;&hellip;&nbsp;-elif &lt;condition&gt;&nbsp;</tt>without matching <tt>-endif</tt> commands. That is, within the <tt> -else&nbsp;&hellip;&nbsp;-endif</tt> block, one can only <i>nest</i> a new series of conditional actions, not extend the existing series.</p>
+<p>The <tt><em>&lt;condition&gt;</em></tt> is an argument reducing to either a numeral or a string. If the numeral is non-zero or the string resolves to a existing file (boolean true), the commands, if any, of the following block execute. The G'MIC interpreter then resumes with the commands following <tt>-endif</tt>. A zero condition or a file that cannot be found (boolean false) bars execution of the following command block and the G'MIC interpreter goes on to test the condition of the next <tt>-elif</tt> command, or, in its absence, execute the final <tt>-else&nbsp;&hellip;&nbsp;-endif</tt> block, or, in the absence of that, resumes execution of commands following <tt>-endif</tt>.</p>
+<h2 id="Examples">Examples</h2>
+<table rules="all" class="table table-striped" style="width: 100%;" border="1" cellpadding="0" cellspacing="0"><colgroup><col width="40%" /> <col width="60%" /></colgroup>
+<tbody>
+<tr><th>Code</th><th>Discussion</th></tr>
+<tr>
+<td><tt>gmic \<br /> -if 'myimage.png' \<br /> &nbsp;&nbsp;&nbsp;-echo[] 'Have the image.' \<br /> -endif \</tt></td>
+<td>A basic conditional with one command block. This pipeline echoes a report only if a file called <tt>myimage.png</tt> can be found in the shell's current directory.</td>
+</tr>
+<tr>
+<td><tt>gmic \<br /> -if 'turbofig-3.svg' \<br /> &nbsp;&nbsp;&nbsp;-if 'turbofig-4.svg' \<br /> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-echo[] 'Got them both!' \<br /> &nbsp;&nbsp;&nbsp;-endif \<br /> -endif</tt></td>
+<td>Two basic conditionals, one nested in the other. Echoes a report only if two particular files exist in the current directory.</td>
+</tr>
+<tr>
+<td><tt>gmic \<br /> -if 'primary.jpg' \<br /> &nbsp;&nbsp;&nbsp;-input 'primary.jpg' \<br /> -elif 'secondary.jpg' \<br /> &nbsp;&nbsp;&nbsp;-input 'secondary.jpg' \<br /> -else \<br /> -echo[]'Neither primary nor secondary found. \<br /> -endif \</tt></td>
+<td>A conditional with two command blocks and a default action. The script tries to input <tt>primary.jpg</tt> first, otherwise <tt>secondary.jpg</tt>; otherwise it raises a warning.</td>
+</tr>
+<tr>
+<td><tt>gmic \<br /> -if 'myimage.png' \<br /> &nbsp;&nbsp;&nbsp;-input 'myimage.png' \<br /> &nbsp;&nbsp;&nbsp;-if '{iM==im}' \<br /> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-echo[]'Image lacks details.' \<br /> &nbsp;&nbsp;&nbsp;-else \<br /> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-echo[]'Image has details.' \<br /> &nbsp;&nbsp;&nbsp;-endif \<br /> -else \<br p="" /> &nbsp;&nbsp;&nbsp;-echo 'Image does not exist.' \<br /> -endif </tt></td>
+<td>Another example of a nested <tt>-if&nbsp;&hellip;&nbsp;-endif</tt> block. This pipeline first checks the existence of <tt>myimage.png</tt> and, should it exist, the nested conditional block reports if it has 'details' of some sort, assuming that a difference between the maximum and minimum intensities of images indicates details; otherwise the nested block reports a 'lack of details'. The outer conditional reports that myimage.png does not exist if the file is not in the shell's current directory.</td>
+</tr>
+</tbody>
+</table>
+
+
+
+   
+</body></html>

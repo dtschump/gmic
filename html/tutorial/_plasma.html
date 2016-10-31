@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="tutorial.css">
+<script type="text/javascript" src="highslide/highslide.js"></script>
+<link rel="stylesheet" type="text/css" href="highslide/highslide.css" />
+<script type="text/javascript">
+hs.graphicsDir = 'highslide/graphics/';
+hs.wrapperClassName = 'wide-border';
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<body>
+
+
+      
+
+
+
+<h1>-plasma</h1>
+<p><img src="http://www.particularart.com/static/media/uploads/command_reference/plasma/clouds.png" title="Blue skies, smiling at me; nothing but blue skies do I see." class="img_block" style="margin: 3px; border: 0px solid #808080; float: left;" height="300" width="300" />Plasma blends and perturbs an input image based on the<a target="_parent" href="http://en.wikipedia.org/wiki/Diamond-square_algorithm"> Diamond-Square Algorithm</a> producing an effect similar to hovering smoke, fog, thin altostratus cloud formations and other undulating hazes. Also see its cousin, <a target="_parent" href="_turbulence.shtml"> -turbulence</a>.</p>
+<p>G'MIC's implementation samples, blends, and perturbs either images or constant color fields (including black), in the latter case generating cloud-like patterns. Gray scale plasma patterns are often used as height maps for three dimensional mountainous terrain.</p>
+<p>As a sampling and blending algorithm, the command tends to preserve the local average intensity within imagery, but with a randomizing component, also introduces visual roughness. Thus plasma shares attributes with both blurring and noisemaking filters, often to singular effect.</p>
+<p>The algorithm proceeds in discrete stages from initially coarse- to fine-scale grids, the number of such being set by the <i>scale</i> parameter. At each stage, the algorithm samples the existing image at the current grid intersection points, blends these data into a set of interpolated points, then randomly perturbs these, the intensity of such controlled by <i>scale</i>, <i>alpha</i> and <i>beta</i> (see 'How the Parameters Interact', below). The new sample points, added to those present at the start of a stage, together compose the finer-mesh sampling grid of the next stage. When the fineness of the grid reaches pixel dimensions, the algorithm ceases.</p>
+<p><img src="http://www.particularart.com/static/media/uploads/command_reference/plasma/plasmagrid.png" title="Diamond-Square grids" class="img_block" style="margin: 3px; border: 0px solid #808080; float: left;" height="200" width="200" />The Diamond-Square algorithm draws its name from the formation of its sampling grid, which, at a particular stage, consists of horizontally and vertically aligned cells with sides of length <i>d</i>, (the &ldquo;squares&rdquo;) and a slightly finer grid with sides <i>d </i><i>&frasl;&nbsp;&radic;2</i> orientated at 45&deg; (the &ldquo;diamonds&rdquo;). The two sampling and blending grids operate in concert to minimize the formation of horizontally and vertically aligned artifacts that would be otherwise present with grids of a single orientation. The finer grid, consisting of the side midpoints and center points of the coarser grid, combine together with the square grid to form the <i>d /2</i> square grid of the next stage, from which the next stage diamond grid is derived.</p>
+<p>The format of the command is:</p>
+<p><code>plasma _alpha,_beta,_scale</code></p>
+<ol>
+<li><i>_alpha</i>: Controls perturbation effects in a scale-dependent way. These decrease as the algorithm progresses from coarse to fine grids. Use a non-negative floating point value.</li>
+<li><i>_beta:</i> Controls perturbation effects independent of scale. The effect of this component remains constant as the algorithm progresses. Use a non-negative floating point value</li>
+<li>_<i>scale</i>: Controls the size of features relative to overall image size and establishes the number of stages through which the algorithm progresses. A positive integer, <i>_scale</i> can range from zero to thirty one, but the useful range is dependent on the size of the input image. See 'How the Parameters Interact', below.</li>
+</ol>
+<h2>How the Parameters Interact</h2>
+<p>The Diamond-Square algorithm employs a combination of:</p>
+<ol>
+<li>averaging of grid points at one scale to arrive at the values of intermediary grid points for the next finer scale, a kind of interpolating, or blurring, effect, and</li>
+<li>perturbing the new intermediary grid point values with randomly derived offsets, these scaled by an amount set by <i>scale</i>, <i>alpha</i> and <i>beta</i>. A roughening effect.</li>
+</ol>
+<p>Beginning with a coarse-mesh grid, the Diamond-Square algorithm progresses through a series of grids, sample-averaging and perturbing the results at ever-so-finer scales, stopping at the 1 pixel scale.</p>
+<p><i>Scale</i> sets the number of grids which the algorithm uses, and from which follows directly the coarseness of the initial grid:</p>
+<p><i>d = 2<sup>s</sup> for <i>d</i>, length of sides of the initial grid, in pixels, and <i>s, scale</i>, given as a parameter.</i></p>
+<p>For large <i>scale</i> parameters, the mesh of the initial grid is very coarse, sample points are far apart and are averaged over a wide distance. Consequently, the very first samples tend to influence pixels over a very wide area and form the basis for large features. A large <i>scale</i> parameter also means that the algorithm will operate over many stages, each with sample points half the distance apart from each other as the previous grid, so that details arising from random perturbations occur at many scales, giving rise to nuanced effects.</p>
+<p>On the other hand, small <i>scale</i> parameters lead to initial grids that are already fine, so the range of influence that grid points have is limited and feature size in the final image is small. The number of grids that the algorithm runs through is also small, so the algorithm stops after only a few iterations, further limiting large-scale effects. A scale of one operating over a constant color field is barely distinguishable from random noise.</p>
+<p><i>Scale, alpha</i> and <i>beta</i> together establish the perturbation amount at each stage, <i>i</i>, of the algorithm, an amount that generally gets smaller as the algorithm progresses through ever finer grids, though the amount of decay depends on particular choices of the three parameters. Here are the relationships among them:</p>
+<p style="text-align: center;"><img src="http://www.particularart.com/static/media/uploads/command_reference/plasma/params.png" height="95" width="170" /></p>
+<p>As the algorithm progresses through the grids, <i>i</i>, from 1 to <i>s</i>, it computes a perturbation offset, <i>P<sub>i</sub></i>, which it adds to each new intermediary grid point. <i>P<sub>i</sub></i>, in turn, arises from a scaled decay factor, the product of <i>alpha,</i> the first parameter from the command line, and a grid-dependent scale factor, <i>d<sub>i</sub></i>. To this component, the algorithm adds a scale independent factor, <i>beta</i>, the second parameter from the command line. The grid-dependent decay factor, <i>d<sub>i</sub></i> begins as a relatively large factor, when the initial coarse grids are in play, but it decreases by powers of two as the finer grids come into play.</p>
+<ol>
+<li>If both <i>alpha</i> and <i>beta</i> are zero, <i>P<sub>i</sub></i> is zero and no random perturbations take place at any scale. the Diamond-square algorithm becomes a wholly averaging mechanism.</li>
+<li>For non-zero <i>alpha</i>, the scale dependent part of <i>P<sub>i</sub></i> is in play. A very small <i>alpha</i> can throttle this scale dependent factor, just as a very large <i>alpha</i> can make it dominant.</li>
+<li>For non-zero <i>beta</i>, the scale independent part of <i>P<sub>i</sub></i> is in play. This component does not change as the algorithm progresses through the grids, it furnishes a constant kind of noise that is present at all scales, a noise that dominates for <i>beta</i> larger than <i>alpha</i>.</li>
+</ol>
+<h3>Plasma Scale and Image Size</h3>
+<p>The size of the image virtually places a cap on the effect of <i>scale</i>. A normal plasma has a near-zero, perhaps slightly positive average. That is, the minimum value of a plasma-generated image is nearly equal in magnitude to the maximum value, and of opposite sign. But as one increases scale without increasing the size of the image, there comes a point when the features in the image do not grow larger. That is because the coarsest grids are larger than the image size itself &ndash; recall that these grow by powers of two.</p>
+<p>Instead, excessive scale shows up as an image bias. Both the image minimum and maximum grow in tandem. For really excessive values of scale, both the image minimum and maximum will be on the order of a million or ten million, yet be separated by a difference of only a hundred or so. When experimenting with plasmas, keep track of image minima and maxima: if they are not nearly equal and opposite, chances are that scale is uselessly large.</p>
+<h3 class="western">Repeating Plasmas Using -srand</h3>
+<p>From time to time, you may need to exactly repeat a particular plasma, which, at first blush, may seem well nigh impossible, given all the randomness of the Diamond-Square algorithm. The randomness, however, is of the pseudo sort, and is, in fact, a wholly deterministic process which spits out number sequences that exhibit statistical properties akin to randomness, but if you can figure out how to dive into a particular spot in the sequence &ndash; say, the <i>i</i>-th position &ndash; you'll notice that <i>i + 1</i> is always the same. Ditto <i>i + </i><i>2, </i><span style="font-style: normal;">and</span><i> </i><i>i + </i><i>7</i><i>,</i><i>593,452,</i><span style="font-style: normal;"> for that matter.</span></p>
+<p>The G'MIC command that lets you dive into a particular spot in the pseudo-random sequence is <a target="_parent" href="http://gmic.eu/reference.shtml#srand">-srand,</a> which seeds G'MIC's random number generator. Given that the random number generator is completely deterministic, feeding it a particular seed will start it off on a particular sequence and that sequence <i>always</i> follows from that particular seed. You can use the number that you feed to -srand as an identifier for a particular plasma. That, and a particular <i>scale</i> value, gives rise to a pattern which <i>alpha</i> and <i>beta</i> can modify, but not entirely obliterate.</p>
+<p>Among other things, this aspect of -plasma furnishes a great way to investigate the effects of the various plasma parameters. Let's look at a range of <i>beta's</i> shall we?</p>
+<p><code>gmic -repeat 5 -srand 123456 100,100,1,1 -plasma[-1] 1,'{$&gt;}',6 -done -d -append x -n[-1] 0,255 -o[-1] betatest.png</code></p>
+<p style="text-align: center;"><img src="http://www.particularart.com/static/media/uploads/command_reference/plasma/betatest.png" title="betatest" style="margin: 3px; border: 0px solid #808080;" height="100" width="500" /></p>
+<p>The one bit of Mysterious Notation in this pipeline, <span style="font-family: Nimbus Mono L,monospace;" face="Nimbus Mono L, monospace">'{$&gt;}'</span>, is one of G'MIC's many, many substitution expressions, this one representing the current value of an overarching -repeat...-done loop. Armed with this bit, it should be fairly clear that as we loop, 0, 1, 2, 3, 4, 5 and 6 are successively substituted for the '<span style="font-family: Nimbus Mono L,monospace;" face="Nimbus Mono L, monospace">{$&gt;}</span>' expression &ndash; we are running the same plasma command with the same parameters, <i>alpha 1</i>, <i>scale 6</i>, except <i>beta</i>, which ascends from 0 to 6 with each loop. The other matter of note is the invocation of -srand at the top of the loop, essentially conjuring up plasma number '123456', which broadly composes a particular plasma, varying only with the beta parameter. Armed with this technique you are free to investigate other parameters on your own.</p>
+<h3>Plasma is a Dataset: Pay Heed to Image Minima and Maxima</h3>
+<p>Even the most experienced G'MIC scripter will save out a pretty plasma from time to time, only to find it turning out black in Gimp or other paint programs. <a target="_parent" href="images-as-datasets.shtml">Plasmas are datasets</a>! Unless scale happens to be too large for a given image size, plasmas tend to have the same average as their input images. Should the input image be dark or black, then roughly half the pixels in the image will be 'blacker than black', so far as paint programs are concerned.</p>
+<p>`Tis generally a good idea to insert -display commands here and there and pay close attention to G'MIC's <a target="_parent" href="basics.shtml">summary lines</a>; in all likelihood, you will need to -normalize the image before passing the results to the bitmap editor of your choice.&nbsp;</p>
+<h2 class="western">Examples</h2>
+<p>Plasma is both a rendering and a filtering command. If given an image, the command will blend and perturb it in one atomic operation, giving rise to results akin to applying noise to an image, and then blurring it.</p>
+<p>But not <i>quite</i> akin to noise, as plasma, unlike noise, can exhibit structure at different scales and an enchanting ability to mimic traditional artistic processes, notably brush strokes on canvas. Of course, given that many traditional painters spend much of their time on developing their brush work, my association of such to mere randomness has now pretty much alienated all the traditionalists out there, leaving &mdash; oh what? &mdash; one or two <i>digerati</i> here and there. So now that the room has been cleared, lets look at some practical examples.</p>
+<table class="table table-striped" style="border-color: #808080; border-width: 1px;" border="1">
+<tbody>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/command_reference/plasma/tinternabbey_small.png" height="212" width="300" /></td>
+<td><a target="_parent" href="http://en.wikipedia.org/wiki/Tintern_Abbey">Tintern Abbey</a>, Monmouthshire, Wales</td>
+<td>&nbsp;</td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/command_reference/plasma/tinternabbey_small_01.png" height="212" width="300" /></td>
+<td>We change the color model to Hue-saturation-luminance and inject the same plasma-generated pattern, '781123' in each of the channels, varying the parameters. Quite apart from the plasma command, we also adjust the hue, saturation and luminance range to obtain a low saturated color image compressed into the red, yellow, yellow-green end of the color wheel. These machinations are reminiscent of the photographic <a target="_parent" href="http://en.wikipedia.org/wiki/Pictorialism">Pictorialists</a> of the early twentieth century. They played with darkroom chemistry, we play with bits. Similar ambitions, though.</td>
+<td><code>gmic -srand 781123<br />&nbsp;&nbsp;tinternabbey_small.png<br />&nbsp;&nbsp;-remove_opacity[-1] -rgb2hsl[-1]<br />&nbsp;&nbsp;-split[-1] c<br />&nbsp;&nbsp;-plasma[-3] 1,2,2<br />&nbsp;&nbsp;-srand 781123 -plasma[-2] 0.01,0.01,3<br />&nbsp;&nbsp;-srand 781123 -plasma[-1] 0.01,0.01,2<br />&nbsp;&nbsp;-normalize[-3] 10,70<br />&nbsp;&nbsp;-normalize[-2] 0.0,0.5<br />&nbsp;&nbsp;-normalize[-1] 0.3,0.8<br />&nbsp;&nbsp;-append[-3,-2,-1] c -hsl2rgb[-1]</code></td>
+</tr>
+<tr>
+<td width="256"><img src="http://www.particularart.com/static/media/uploads/command_reference/plasma/tinternabbey_small_02.png" height="212" width="300" /></td>
+<td>One of the nice aspects of the multi-scale noise of plasma, is the almost always interesting response that the anisotropic smoothing command gives when it tries to trace edges through the plasma. The two commands, <code>-plasma</code> and <code>-smooth</code> working in tandem give rise to a tremendous range of pseudo brush-work.<br /> We also made recourse to <a target="_parent" href="_gradient.shtml"><code>-gradient</code></a>, <a target="_parent" href="_direction2rgb.shtml"><code>-direction2rgb</code></a> and friends to generate color accent edges, giving a sense of pseudo-depth to our pseudo brush work.</td>
+<td><code>-smooth 70,0,1.0,5.0,0.5,3,3,2,2,0<br />&nbsp;&nbsp;--sharpen[-1] 80 -gradient[-1]<br />&nbsp;&nbsp;-append[-2,-1] c -blur[-1] 2<br />&nbsp;&nbsp;-direction2rgb[-1] -*[-1] -1<br />&nbsp;&nbsp;-normalize[-1] -0.1,0<br />&nbsp;&nbsp;-exp[-1] -apply_channels[-1] \"-mul 0.3\",12<br />&nbsp;&nbsp;-normalize[-1] 0,1 -*[-2,-1]</code></td>
+</tr>
+</tbody>
+</table>
+<p><em>Garry Osgood</em></p>
+<p style="font-size: small;"><em>Image: <a target="_parent" href="http://commons.wikimedia.org/wiki/File:Tintern_Abbey_east_end_columns.JPG" class="highslide" onclick="return hs.expand(this)">Tintern Abbey</a> by <a target="_parent" href="http://commons.wikimedia.org/wiki/User:NotFromUtrecht">NotFromUtrecht</a>, <a target="_parent" href="http://commons.wikimedia.org/wiki/Main_Page">Wikimedia Commons</a></em></p>
+
+
+
+   
+</body></html>
