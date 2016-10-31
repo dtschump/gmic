@@ -196,7 +196,7 @@ if [ "$DIST" != "Ubuntu 16.04.1 LTS" ] || [ "$BITS" != "x86_64" ] ; then
     if [ "$CODENAME" == "ubuntu_yakkety" ]; then
         zip -j -r -9 ../$PLU2 src/gmic_gimp README &&
             cd .. &&
-            cp -f $PLU2 $SF_HOME/work/src/
+            cp -f $PLU2 $PAK $SF_HOME/work/src/
     elif [ "$CODENAME" == "debian_wheezy" ]; then
         zip -j -r -9 ../$PLU src/gmic_gimp README &&
             cd src && make clean && make GMIC_STATIC_CLI_PATH=/usr/lib/${PARCH}-linux-gnu static && mv gmic ../ &&
