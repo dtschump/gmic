@@ -175,6 +175,7 @@ if [ "$DIST" != "Ubuntu 16.04.1 LTS" ] || [ "$BITS" != "x86_64" ] ; then
     TARFILE=gmic_${VERSION}${SUFFIX}.tar
     PAK=gmic_${VERSION}${SUFFIX}_${CODENAME}_${ARCH}.deb
     PLU=gmic_gimp_${VERSION}${SUFFIX}_linux${BITS}.zip
+    PLU2=gmic_gimp_${VERSION}${SUFFIX}_yakkety${BITS}.zip
     STA=gmic_static_${VERSION}${SUFFIX}_linux${BITS}.zip
     DIR=gmic-${VERSION}${SUFFIX}
     while [ ! -f deb_${TARFILE}.gz ]; do sleep 10; done
@@ -192,6 +193,11 @@ if [ "$DIST" != "Ubuntu 16.04.1 LTS" ] || [ "$BITS" != "x86_64" ] ; then
         dpkg-buildpackage -d -j3 -rfakeroot;
     mv ../gmic_${VERSION}_${ARCH}.deb ../$PAK
 
+    if [ "$CODENAME" == "ubuntu_yakkety" ]; then
+        zip -j -r -9 ../$PLU2 src/gmic_gimp README &&
+            cd .. &&
+            cp -f $PLU2 $SF_HOME/work/src/
+    fi
     if [ "$CODENAME" == "debian_wheezy" ]; then
         zip -j -r -9 ../$PLU src/gmic_gimp README &&
             cd src && make clean && make GMIC_STATIC_CLI_PATH=/usr/lib/${PARCH}-linux-gnu static && mv gmic ../ &&

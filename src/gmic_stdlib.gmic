@@ -4290,20 +4290,22 @@ _update_server_binaries :
   file1=gmic_$1_debian_jessie_i386.deb
   file2=gmic_$1_debian_wheezy_amd64.deb
   file3=gmic_$1_debian_wheezy_i386.deb
-  file4=gmic_$1_ubuntu_xenial_amd64.deb
-  file5=gmic_$1_ubuntu_trusty_i386.deb
-  file6=gmic_$1_ubuntu_vivid_amd64.deb
-  file7=gmic_$1_win32.zip
-  file8=gmic_$1_win64.zip
-  file9=gmic_gimp_$1_linux32.zip
-  file10=gmic_gimp_$1_linux64.zip
-  file11=gmic_gimp_$1_win32.exe
-  file12=gmic_gimp_$1_win32.zip
-  file13=gmic_gimp_$1_win64.exe
-  file14=gmic_gimp_$1_win64.zip
-  file15=gmic_static_$1_linux32.zip
-  file16=gmic_static_$1_linux64.zip
-  N=17
+  file4=gmic_$1_ubuntu_yakkety_amd64.deb
+  file5=gmic_$1_ubuntu_xenial_amd64.deb
+  file6=gmic_$1_ubuntu_trusty_i386.deb
+  file7=gmic_$1_ubuntu_vivid_amd64.deb
+  file8=gmic_$1_win32.zip
+  file9=gmic_$1_win64.zip
+  file10=gmic_gimp_$1_linux32.zip
+  file11=gmic_gimp_$1_linux64.zip
+  file12=gmic_gimp_$1_yakkety64.zip
+  file13=gmic_gimp_$1_win32.exe
+  file14=gmic_gimp_$1_win32.zip
+  file15=gmic_gimp_$1_win64.exe
+  file16=gmic_gimp_$1_win64.zip
+  file17=gmic_static_$1_linux32.zip
+  file18=gmic_static_$1_linux64.zip
+  N=19
   t0=$|
   -v + -e[] "- Waiting for binary files to be build." -v -
   -do

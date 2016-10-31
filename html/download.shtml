@@ -61,7 +61,8 @@
                     <a href="http://gmic.eu/files/prerelease/gmic_ubuntu_trusty_amd64.deb"><font size="3">G'MIC for Ubuntu 14.04 LTS <i>Trusty</i> (64 bits)</font></a><br/>
                     deb file<br/>
                     alternative1: <a href="http://gmic.eu/files/prerelease/gmic_ubuntu_vivid_amd64.deb">for Ubuntu 15.04 <i>Vivid</i> (64 bits)</a><br/>
-                    alternative2: <a href="http://gmic.eu/files/prerelease/gmic_ubuntu_xenial_amd64.deb">for Ubuntu 16.04 <i>Xenial</i> (64 bits)</a><br/><br/></td>
+                    alternative2: <a href="http://gmic.eu/files/prerelease/gmic_ubuntu_xenial_amd64.deb">for Ubuntu 16.04 <i>Xenial</i> (64 bits)</a><br/>
+                    alternative3: <a href="http://gmic.eu/files/prerelease/gmic_ubuntu_yakkety_amd64.deb">for Ubuntu 16.10 <i>Yakkety</i> (64 bits)</a><br/><br/></td>
                 </tr>
                 <tr>
                   <td><a href="http://gmic.eu/files/prerelease/gmic_ubuntu_trusty_i386.deb"><img alt="" src="img/download_ubuntu32.png" border="0"></img></a></td><td>&nbsp;&nbsp;</td>

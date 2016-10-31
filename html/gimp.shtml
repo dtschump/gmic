@@ -47,7 +47,8 @@
                 <tr>
                   <td><a href="http://gmic.eu/files/prerelease/gmic_gimp_linux64.zip"><img alt="" src="img/download_linux64.png" border="0"></img></a></td><td>&nbsp;&nbsp;</td>
                   <td><a href="http://gmic.eu/files/prerelease/gmic_gimp_linux64.zip"><font size="3">G'MIC plug-in for Linux (64bits)</font></a><br/>
-                    zip file<br/><br/></td>
+                    zip file<br/>
+                    alternative1: <a href="http://gmic.eu/files/prerelease/gmic_gimp_yakkety64.zip">G'MIC plug-in for Ubuntu 16.10 <i>Yakkety</i> (64 bits)</a><br/><br/></td>
                 </tr>
                 <tr>
                   <td><a href="http://gmic.eu/files/prerelease/gmic_gimp_linux32.zip"><img alt="" src="img/download_linux32.png" border="0"></img></a></td><td>&nbsp;&nbsp;</td>
