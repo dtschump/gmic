@@ -26,13 +26,13 @@ option(ENABLE_ZLIB "Add support for data compression via Zlib" ON)
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/modules)
 set(CMAKE_POSITION_INDEPENDENT_CODE True)
 
-set(COMPILE_FLAGS " -Dgmic_build -Dcimg_use_vt100 -Dgmic_is_parallel -Dcimg_use_abort ")
+set(COMPILE_FLAGS "-Dgmic_build -Dcimg_use_vt100 -Dgmic_is_parallel -Dcimg_use_abort ")
 IF(MINGW)
-  SET(COMPILE_FLAGS " ${COMPILE_FLAGS} -std=gnu++11")
+  SET(COMPILE_FLAGS "${COMPILE_FLAGS} -std=gnu++11")
 ELSEIF(APPLE)
-   SET(COMPILE_FLAGS " ${COMPILE_FLAGS} -mmacosx-version-min=10.8 -std=c++11 -stdlib=libc++ -Wno-error=c++11-narrowing -Wc++11-extensions  -fpermissive")
+   SET(COMPILE_FLAGS "${COMPILE_FLAGS} -mmacosx-version-min=10.8 -std=c++11 -stdlib=libc++ -Wno-error=c++11-narrowing -Wc++11-extensions  -fpermissive")
 ELSE(MINGW)
-  SET(COMPILE_FLAGS " ${COMPILE_FLAGS} -std=gnu++11 -Wno-error=narrowing -fno-ipa-sra -fpermissive")
+  SET(COMPILE_FLAGS "${COMPILE_FLAGS} -std=gnu++11 -Wno-error=narrowing -fno-ipa-sra -fpermissive")
 ENDIF(MINGW)
 
 IF(NOT "${PRERELEASE_TAG}" STREQUAL "")
@@ -45,8 +45,8 @@ set(EXTRA_LIBRARIES)
 # OpenMP support
 if(ENABLE_OPENMP)
   if(NOT APPLE)
-    set(COMPILE_FLAGS " ${COMPILE_FLAGS} -fopenmp -Dcimg_use_openmp ")
-    set(EXTRA_LIBRARIES "-lgomp ${EXTRA_LIBRARIES}")
+    set(COMPILE_FLAGS "${COMPILE_FLAGS} -fopenmp -Dcimg_use_openmp ")
+    set(EXTRA_LIBRARIES "${EXTRA_LIBRARIES} -lgomp")
   endif(NOT APPLE)
 endif(ENABLE_OPENMP)
 
@@ -56,9 +56,9 @@ if(ENABLE_ZLIB)
   find_package (ZLIB)
 endif(ENABLE_ZLIB)
 if(ZLIB_FOUND)
-  set(COMPILE_FLAGS " ${COMPILE_FLAGS} -Dcimg_use_zlib ")
+  set(COMPILE_FLAGS "${COMPILE_FLAGS} -Dcimg_use_zlib ")
   include_directories(${ZLIB_INCLUDE_DIRS})
-  link_directories(${ZLIB_LIBRARY_DIRS})  
+  link_directories(${ZLIB_LIBRARY_DIRS})
 endif(ZLIB_FOUND)
 
 
@@ -67,20 +67,20 @@ if(ENABLE_X)
   find_package (X11)
 endif(ENABLE_X)
 if(X11_FOUND)
-  set(COMPILE_FLAGS " ${COMPILE_FLAGS} -Dcimg_display=1 -Dcimg_appname=\\\"gmic\\\" ")
+  set(COMPILE_FLAGS "${COMPILE_FLAGS} -Dcimg_display=1 -Dcimg_appname=\\\"gmic\\\" ")
   include_directories(${X11_INCLUDE_DIR})
   include_directories(${X11_INCLUDE_DIRS})
-  link_directories(${X11_LIBRARY_DIR})  
-  link_directories(${X11_LIBRARY_DIRS})  
+  link_directories(${X11_LIBRARY_DIR})
+  link_directories(${X11_LIBRARY_DIRS})
 else(X11_FOUND)
-  set(COMPILE_FLAGS " ${COMPILE_FLAGS} -Dcimg_display=0 -Dcimg_appname=\\\"gmic\\\" ")
+  set(COMPILE_FLAGS "${COMPILE_FLAGS} -Dcimg_display=0 -Dcimg_appname=\\\"gmic\\\" ")
 endif(X11_FOUND)
 message( "X11_INCLUDE_DIR: " ${X11_INCLUDE_DIR} )
 message( "X11_INCLUDE_DIRs: " ${X11_INCLUDE_DIRs} )
 message( "X11_LIBRARY_DIR: " ${X11_LIBRARY_DIR} )
 message( "X11_LIBRARY_DIRS: " ${X11_LIBRARY_DIRS} )
 if(X11_XShm_FOUND)
-  set(COMPILE_FLAGS " ${COMPILE_FLAGS} -Dcimg_use_xshm ")
+  set(COMPILE_FLAGS "${COMPILE_FLAGS} -Dcimg_use_xshm ")
 endif(X11_XShm_FOUND)
 
 
@@ -88,11 +88,11 @@ if(ENABLE_FFTW)
   pkg_check_modules(FFTW3 fftw3>=3.0)
 endif(ENABLE_FFTW)
 if(FFTW3_FOUND)
-  set(COMPILE_FLAGS " ${COMPILE_FLAGS} -Dcimg_use_fftw3 ")
+  set(COMPILE_FLAGS "${COMPILE_FLAGS} -Dcimg_use_fftw3 ")
   include_directories(${FFTW3_INCLUDE_DIRS})
-  link_directories(${FFTW3_LIBRARY_DIRS})  
-  if(APPLE) 
-    set(COMPILE_FLAGS " ${COMPILE_FLAGS} -Dcimg_use_fftw3_singlethread")
+  link_directories(${FFTW3_LIBRARY_DIRS})
+  if(APPLE)
+    set(COMPILE_FLAGS "${COMPILE_FLAGS} -Dcimg_use_fftw3_singlethread")
   else(APPLE)
   	set(EXTRA_LIBRARIES "${EXTRA_LIBRARIES} -lfftw3_threads")
   endif(APPLE)
@@ -103,9 +103,9 @@ if(ENABLE_OPENCV)
   pkg_check_modules(OPENCV opencv)
 endif(ENABLE_OPENCV)
 if(OPENCV_FOUND)
-  set(COMPILE_FLAGS " ${COMPILE_FLAGS} -Dcimg_use_opencv ")
+  set(COMPILE_FLAGS "${COMPILE_FLAGS} -Dcimg_use_opencv ")
   include_directories(${OPENCV_INCLUDE_DIRS})
-  link_directories(${OPENCV_LIBRARY_DIRS})  
+  link_directories(${OPENCV_LIBRARY_DIRS})
 endif(OPENCV_FOUND)
 
 
@@ -113,9 +113,9 @@ if(ENABLE_GRAPHICSMAGICK)
   pkg_check_modules(GRAPHICSMAGICK GraphicsMagick++)
 endif(ENABLE_GRAPHICSMAGICK)
 if(GRAPHICSMAGICK_FOUND)
-  set(COMPILE_FLAGS " ${COMPILE_FLAGS} -Dcimg_use_magick ")
+  set(COMPILE_FLAGS "${COMPILE_FLAGS} -Dcimg_use_magick ")
   include_directories(${GRAPHICSMAGICK_INCLUDE_DIRS})
-  link_directories(${GRAPHICSMAGICK_LIBRARY_DIRS})  
+  link_directories(${GRAPHICSMAGICK_LIBRARY_DIRS})
 endif(GRAPHICSMAGICK_FOUND)
 
 
@@ -123,9 +123,9 @@ if(ENABLE_TIFF)
   find_package (TIFF)
 endif(ENABLE_TIFF)
 if(TIFF_FOUND)
-  set(COMPILE_FLAGS " ${COMPILE_FLAGS} -Dcimg_use_tiff ")
+  set(COMPILE_FLAGS "${COMPILE_FLAGS} -Dcimg_use_tiff ")
   include_directories(${TIFF_INCLUDE_DIRS})
-  link_directories(${TIFF_LIBRARY_DIRS})  
+  link_directories(${TIFF_LIBRARY_DIRS})
 endif(TIFF_FOUND)
 
 
@@ -133,9 +133,9 @@ if(ENABLE_PNG)
   find_package (PNG)
 endif(ENABLE_PNG)
 if(PNG_FOUND)
-  set(COMPILE_FLAGS " ${COMPILE_FLAGS} -Dcimg_use_png ")
+  set(COMPILE_FLAGS "${COMPILE_FLAGS} -Dcimg_use_png ")
   include_directories(${PNG_INCLUDE_DIRS})
-  link_directories(${PNG_LIBRARY_DIRS})  
+  link_directories(${PNG_LIBRARY_DIRS})
 endif(PNG_FOUND)
 
 
@@ -143,9 +143,9 @@ if(ENABLE_JPEG)
   find_package (JPEG)
 endif(ENABLE_JPEG)
 if(JPEG_FOUND)
-  set(COMPILE_FLAGS " ${COMPILE_FLAGS} -Dcimg_use_jpeg ")
+  set(COMPILE_FLAGS "${COMPILE_FLAGS} -Dcimg_use_jpeg ")
   include_directories(${JPEG_INCLUDE_DIRS})
-  link_directories(${JPEG_LIBRARY_DIRS})  
+  link_directories(${JPEG_LIBRARY_DIRS})
 endif(JPEG_FOUND)
 
 
@@ -153,9 +153,9 @@ if(ENABLE_OPENEXR)
   pkg_check_modules(OPENEXR OpenEXR)
 endif(ENABLE_OPENEXR)
 if(OPENEXR_FOUND)
-  set(COMPILE_FLAGS " ${COMPILE_FLAGS} -Dcimg_use_openexr ")
+  set(COMPILE_FLAGS "${COMPILE_FLAGS} -Dcimg_use_openexr ")
   include_directories(${OPENEXR_INCLUDE_DIRS})
-  link_directories(${OPENEXR_LIBRARY_DIRS})  
+  link_directories(${OPENEXR_LIBRARY_DIRS})
 endif(OPENEXR_FOUND)
 
 
@@ -189,9 +189,9 @@ if(NOT CMAKE_BUILD_TYPE)
     "Choose the type of build, options are: Debug Release RelWithDebInfo."
     FORCE)
 endif(NOT CMAKE_BUILD_TYPE)
-SET(CMAKE_CXX_FLAGS_DEBUG " -O0 -g -ansi -pedantic -Dcimg_verbosity=3 ${COMPILE_FLAGS}") 
-SET(CMAKE_CXX_FLAGS_RELEASE " -O3 -mtune=generic ${COMPILE_FLAGS}") 
-SET(CMAKE_CXX_FLAGS_RELWITHDEBINFO " -O3 -g -mtune=generic ${COMPILE_FLAGS}") 
+SET(CMAKE_CXX_FLAGS_DEBUG " -O0 -g -ansi -pedantic -Dcimg_verbosity=3 ${COMPILE_FLAGS}")
+SET(CMAKE_CXX_FLAGS_RELEASE " -O3 -mtune=generic ${COMPILE_FLAGS}")
+SET(CMAKE_CXX_FLAGS_RELWITHDEBINFO " -O3 -g -mtune=generic ${COMPILE_FLAGS}")
 
 
 # source files
@@ -228,9 +228,9 @@ if(BUILD_LIB)
   ENDIF(NOT APPLE)
   target_link_libraries(libgmic
     ${X11_LIBRARIES}
-    ${TIFF_LIBRARIES} 
-    ${PNG_LIBRARIES} 
-    ${JPEG_LIBRARIES} 
+    ${TIFF_LIBRARIES}
+    ${PNG_LIBRARIES}
+    ${JPEG_LIBRARIES}
     ${GRAPHICSMAGICK_LIBRARIES}
     ${OPENEXR_LIBRARIES}
     ${OPENCV_LIBRARIES}
@@ -250,9 +250,9 @@ if(BUILD_LIB_STATIC)
   set_target_properties(libgmicstatic PROPERTIES OUTPUT_NAME "gmic")
   target_link_libraries(libgmicstatic
     ${X11_LIBRARIES}
-    ${TIFF_LIBRARIES} 
-    ${PNG_LIBRARIES} 
-    ${JPEG_LIBRARIES} 
+    ${TIFF_LIBRARIES}
+    ${PNG_LIBRARIES}
+    ${JPEG_LIBRARIES}
     ${GRAPHICSMAGICK_LIBRARIES}
     ${OPENEXR_LIBRARIES}
     ${OPENCV_LIBRARIES}
@@ -272,9 +272,9 @@ if(BUILD_CLI)
   set_target_properties(gmic PROPERTIES COMPILE_FLAGS " -Dgmic_main ")
   target_link_libraries(gmic
     ${X11_LIBRARIES}
-    ${TIFF_LIBRARIES} 
-    ${PNG_LIBRARIES} 
-    ${JPEG_LIBRARIES} 
+    ${TIFF_LIBRARIES}
+    ${PNG_LIBRARIES}
+    ${JPEG_LIBRARIES}
     ${GRAPHICSMAGICK_LIBRARIES}
     ${OPENEXR_LIBRARIES}
     ${OPENCV_LIBRARIES}
@@ -282,32 +282,32 @@ if(BUILD_CLI)
     ${FFTW3_LIBRARIES}
     ${EXTRA_LIBRARIES}
     )
-  
+
   INSTALL(TARGETS gmic RUNTIME DESTINATION bin)
 endif(BUILD_CLI)
 
 
 # GIMP plug-in
 if(BUILD_PLUGIN)
-  pkg_check_modules(GIMP gimp-2.0) 
+  pkg_check_modules(GIMP gimp-2.0)
   if (GIMP_FOUND)
-    pkg_check_modules(GIMPUI gimpui-2.0) 
+    pkg_check_modules(GIMPUI gimpui-2.0)
     if (GIMPUI_FOUND)
       include_directories(${GIMP_INCLUDE_DIRS})
-      link_directories(${GIMP_LIBRARY_DIRS})  
+      link_directories(${GIMP_LIBRARY_DIRS})
       include_directories(${GIMPUI_INCLUDE_DIRS})
-      link_directories(${GIMPUI_LIBRARY_DIRS})  
-      
+      link_directories(${GIMPUI_LIBRARY_DIRS})
+
       add_executable(gmic_gimp ${CLI_Includes} ${CLI_Sources} ./src/gmic_gimp.cpp)
       add_dependencies(gmic_gimp gmic_extra_headers)
-     
+
       set_target_properties(gmic_gimp PROPERTIES COMPILE_FLAGS " -Dgmic_gimp")
-      
-      target_link_libraries(gmic_gimp 
+
+      target_link_libraries(gmic_gimp
 	${X11_LIBRARIES}
-	${TIFF_LIBRARIES} 
-	${PNG_LIBRARIES} 
-	${JPEG_LIBRARIES} 
+	${TIFF_LIBRARIES}
+	${PNG_LIBRARIES}
+	${JPEG_LIBRARIES}
     ${GRAPHICSMAGICK_LIBRARIES}
 	${OPENEXR_LIBRARIES}
     ${OPENCV_LIBRARIES}
@@ -317,7 +317,7 @@ if(BUILD_PLUGIN)
 	${GIMPUI_LIBRARIES}
 	${EXTRA_LIBRARIES}
 	)
-      
+
       if (PLUGIN_INSTALL_PREFIX)
         INSTALL(TARGETS gmic_gimp RUNTIME DESTINATION ${PLUGIN_INSTALL_PREFIX})
         INSTALL(FILES ${CMAKE_SOURCE_DIR}/resources/gmic_film_cluts.gmz DESTINATION ${PLUGIN_INSTALL_PREFIX})
@@ -325,7 +325,7 @@ if(BUILD_PLUGIN)
         INSTALL(TARGETS gmic_gimp RUNTIME DESTINATION ${GIMP_PREFIX}/lib/gimp/2.0/plug-ins)
         INSTALL(FILES ${CMAKE_SOURCE_DIR}/resources/gmic_film_cluts.gmz DESTINATION ${GIMP_PREFIX}/lib/gimp/2.0/plug-ins)
       endif  (PLUGIN_INSTALL_PREFIX)
-      
+
     endif (GIMPUI_FOUND)
   endif (GIMP_FOUND)
 endif(BUILD_PLUGIN)
