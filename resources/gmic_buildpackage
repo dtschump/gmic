@@ -197,8 +197,7 @@ if [ "$DIST" != "Ubuntu 16.04.1 LTS" ] || [ "$BITS" != "x86_64" ] ; then
         zip -j -r -9 ../$PLU2 src/gmic_gimp README &&
             cd .. &&
             cp -f $PLU2 $SF_HOME/work/src/
-    fi
-    if [ "$CODENAME" == "debian_wheezy" ]; then
+    elif [ "$CODENAME" == "debian_wheezy" ]; then
         zip -j -r -9 ../$PLU src/gmic_gimp README &&
             cd src && make clean && make GMIC_STATIC_CLI_PATH=/usr/lib/${PARCH}-linux-gnu static && mv gmic ../ &&
             cd .. && rm -rf man src zart debian && cd .. &&
