@@ -1,0 +1,150 @@
+# This is the http://travis-ci.org configuration file for G'MIC
+#
+# To configure coverity_scan (which does not work because gmic crashes coverity):
+# - get the COVERITY_SCAN_TOKEN from the project page on scan.coverity.com
+# - fill in the notification_email below
+
+env:
+  global:
+   # The next declaration is the encrypted COVERITY_SCAN_TOKEN, created
+   #   via the "travis encrypt" command using the project repo's public key
+   - secure: "****visit the project page on scan.coverity.com to get the token****"
+   # Coverity run condition (avoid matrix multiple runs), need customized
+   # build script. Need an update if new matrix cases.
+   - coverity_scan_run_condition='"$CC" = gcc -a "$TRAVIS_OS_NAME" != osx'
+   # Coverity script test mode (if true no uploading, avoid reaching the quota)
+   # usual processing: false.
+   - coverity_scan_script_test_mode=false
+   # We build both with the base gcc version , and with gcc 4.9
+  matrix:
+   - GCC_VERSION=
+   - GCC_VERSION=4.9
+
+os:
+  - linux
+#  - osx
+
+language: cpp
+
+compiler:
+  - gcc
+  - clang
+
+addons:
+  apt:
+    sources:
+    # kubuntu-ppa/backports contains OpenCV
+    - kubuntu-ppa-backports
+    # ubuntu-toolchain-r/test contains recent versions of gcc
+    - ubuntu-toolchain-r-test
+    # otto-kesselgulasch/gimp contains gimp-2.8
+    - otto-kesselgulasch-gimp
+    packages:
+    - libcv-dev
+    - libcvaux-dev
+    - libhighgui-dev
+    - libopencv-dev
+    - libfftw3-dev
+    - zlib1g-dev
+    - libpng-dev
+    - libjpeg-dev
+    - libtiff-dev
+    - libcurl4-openssl-dev
+    - libgimp2.0-dev
+    - libqt4-dev
+  coverity_scan:
+    # customized build script URL
+    # TRAVIS_REPO_SLUG: owner_name/repo_name of repository currently being built
+    # TRAVIS_BRANCH: name of the branch currently being built
+    build_script_url: https://raw.githubusercontent.com/$TRAVIS_REPO_SLUG/$TRAVIS_BRANCH/.travis-coverity-scan-build.sh
+    # project metadata
+    project:
+      name: $TRAVIS_REPO_SLUG
+    # Where email notification of build analysis results will be sent
+    #notification_email: scan_notifications@example.com
+    # Commands to prepare for build_command
+    #build_command_prepend: ./configure
+    # This command will be added as an argument to "cov-build" to compile
+    # the project for analysis
+    build_command: "make -C src NO_SRIPDLIB=1 gimp cli lib"
+    # Pattern to match selecting branches that will run analysis
+    branch_pattern: coverity_scan
+
+matrix:
+  exclude:
+    # clang on linux goes over the Travis 3GB memory limit
+    - os: linux
+      compiler: clang
+    # base gcc on osx does not exist (it is clang, actually)
+    - os: osx
+      compiler: gcc
+      env: GCC_VERSION=
+    # we only test the base version of clang
+    - compiler: clang
+      env: GCC_VERSION=4.9
+  fast_finish: true
+
+# Travis CI has 1.5 cores per VM, take advantage of it
+# (but GMIC uses too much memory to enable parallel build - there is a 3GB memory limit on Travis)
+#env:
+#  - MAKEFLAGS="-j 2"
+
+
+# linux: opencv is in kubuntu-ppa/backports
+# osx: opencv is in homebrew/science
+before_install:
+  - date -u
+  - uname -a
+  - make -C src CImg.h gmic_stdlib.h
+  - if [ -z "$TRAVIS_OS_NAME" -o "$TRAVIS_OS_NAME" = "linux" ]; then
+        sudo
+        sudo add-apt-repository -y ppa:kubuntu-ppa/backports;
+        if [ "$CC" = "gcc" -a ! -z "$GCC_VERSION" -a ! "$GCC_VERSION" = "base" ]; then
+            sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test;
+        fi;
+        sudo add-apt-repository -y ppa:otto-kesselgulasch/gimp;
+        sudo apt-get update;
+    fi;
+  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then
+        brew tap homebrew/science;
+        brew update;
+    fi;
+
+# We don't "apt-get upgrade" or "brew upgrade", because it takes up too much time
+# Note that Homebrew doe not have a gimp recipe
+install:
+  - if [ -z "$TRAVIS_OS_NAME" -o "$TRAVIS_OS_NAME" = "linux" ]; then
+        sudo apt-get install libcv-dev libcvaux-dev libhighgui-dev libopencv-dev libfftw3-dev zlib1g-dev libpng-dev libjpeg-dev libtiff-dev libcurl4-openssl-dev libx11-dev libgimp2.0-dev libqt4-dev;
+        if [ "$CC" = "gcc" -a ! -z "$GCC_VERSION" ]; then
+            sudo apt-get install gcc-${GCC_VERSION} g++-${GCC_VERSION};
+            sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-${GCC_VERSION} 90;
+            sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-${GCC_VERSION} 90;
+        fi;
+    fi;
+  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then
+        brew install opencv fftw libpng jpeg libtiff curl qt;
+        if [ "$CC" = "gcc" -a ! -z "$GCC_VERSION" ]; then
+            echo installing `echo $GCC_VERSION|tr -d .`;
+            brew install gcc`echo $GCC_VERSION|tr -d .`;
+        fi;
+    fi;
+
+# don't build the gimp plugin (requires a recent gimp version)
+script:
+  - if [[ ${COVERITY_SCAN_BRANCH} == 1 ]];
+    then
+      echo "Don't build on coverty_scan branch.";
+      exit 0;
+    fi;
+  # if GCC_VERSION is not defined, we assume it is GCC 4.6.3, which does not accept -std=c++11
+  - if [ "$CC" = "clang" ]; then
+        OMPFLAGS="OPENMP_CFLAGS= OPENMP_LIBS=";
+    fi;
+    if [ -z "$TRAVIS_OS_NAME" -o "$TRAVIS_OS_NAME" = "linux" ]; then
+        GIMP=gimp;
+    fi;
+    if [ "$CC" = "gcc" -a ! -z "$GCC_VERSION" ]; then
+        CXX="${CXX}-${GCC_VERSION}";
+    fi;
+    ${CXX} --version;
+    travis_wait make -C src $OMPFLAGS NO_SRIPDLIB=1 NO_STDLIB=1 CC="${CXX}" OPT_CFLAGS=-O0 $GIMP cli lib;

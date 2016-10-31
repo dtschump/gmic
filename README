@@ -1,0 +1,116 @@
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+
+                        _____   _   __  __ _____ _____
+                       / ____| | | |  \/  |_   _/ ____|
+                      | |  __  |_| | \  / | | || |
+                      | | |_ |     | |\/| | | || |
+                      | |__| |     | |  | |_| || |____
+                       \_____|     |_|  |_|_____\_____|
+
+                      GREYC's Magic for Image Computing
+
+                             ( http://gmic.eu )
+
+                                    _gmic_version
+
+--------------------------------------------------------------------------------
+
+# In a nutshell
+#---------------
+
+ G'MIC is a full-featured open-source framework for image processing, distributed
+ under the CeCILL license (GPL compatible).
+ It provides several different user interfaces to convert/manipulate/filter/
+ visualize generic image datasets, ranging from 1d scalar signals to 3d+t
+ sequences of multi-spectral volumetric images, thus including 2d color images.
+
+ These user interfaces are:
+
+ 1 - A command-line interface gmic, to use the G'MIC image processing features
+     from a shell. In this setting, G'MIC may be seen as a friendly companion to
+     the ImageMagick or GraphicsMagick software suites.
+
+ 2 - A small, portable, thread-safe and multi-threaded, C++ image processing
+     library libgmic, to be linked to third-party applications. Its simple API
+     allows programmers to add all G'MIC features in their own software without
+     much efforts (a C API is provided as well).
+
+ 3 - A plug-in gmic_gimp, to bring G'MIC capabilities to the image retouching
+     software GIMP. More than 450 filters are already available, sorted by
+     category (Artistic, Black & white, Colors, Contours, Deformations,
+     Degradations, Details, Film emulation, Frames, Layers, Light & shadows,
+     Patterns, Rendering, Repair, Sequences, etc.).
+
+ 4 - A web service G'MIC Online, to allow users applying image processing
+     algorithms on their images, directly from a web browser.
+
+ 5 - A Qt-based interface ZArt, for real-time processing of video streaming
+     coming from webcams or video files.
+
+ G'MIC is an open framework: the default script language can be extended with
+ custom G'MIC-written commands, defining thus new image available filters or
+ effects. By the way, it already contains a substantial set of pre-defined image
+ processing algorithms and pipelines (more than 1000).
+
+ G'MIC has been designed with portability in mind, and runs on different
+ platforms (Windows, Unix, MacOSX). It is distributed under the CeCILL license
+ (GPL-compatible). Since 2008, it has been developed in the Image Team of the
+ GREYC laboratory, in Caen/France, by permanent researchers working in the field
+ of image processing on a daily basis.
+
+ Purchasing commercial licenses for using G'MIC in closed-source
+ applications is possible. Contact us if you are interested in getting one.
+
+# Project Manager and main developer
+#-----------------------------------
+
+  David Tschumperlé  ( http://tschumperle.users.greyc.fr/ )
+
+  A complete list of contributors is available on the project web page:
+
+                           http://gmic.eu
+
+# Institution
+#-------------
+
+ GREYC Image / CNRS UMR 6072 / FRANCE
+
+ Team web page: https://www.greyc.fr/image
+
+# License
+#---------
+
+ The C++ source code of G'MIC is distributed under the CECILL v.2.0 license
+ (file 'CeCILL.rtf'). This License is a Free-Software copyleft license,
+ compatible with the GPL (using those files in a distributed closed-source
+ project is then forbidden).
+
+ Purchasing proprietary licenses for using G'MIC in closed-source applications
+ is possible. Contact us if you are interested in getting one.
+
+ The CeCiLL v.2.0 license ( http://www.cecill.info/index.en.html ) have been
+ created under the supervision of the three biggest research institutions on
+ computer sciences in France:
+
+   - CNRS  ( http://www.cnrs.fr/ )
+   - CEA   ( http://www.cea.fr/ )
+   - INRIA ( http://www.inria.fr/ )
+
+# More information online
+#-------------------------
+
+  - Home page : http://gmic.eu
+  - G'MIC Online Service : https://gmicol.greyc.fr
+
+  - Google+ group: https://plus.google.com/117441237982283011318/posts
+  - Pixls.us forum: https://discuss.pixls.us/c/software/gmic
+  - Flickr forum: http://www.flickr.com/groups/gmic/discuss
+  - GimpChat forum: http://gimpchat.com/viewforum.php?f=28
+
+  - Tutorial page: http://gmic.eu/tutorial
+  - Reference documentation: http://gmic.eu/reference.shtml
+  - G'MIC wiki: https://github.com/dtschump/gmic-community/wiki
+
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------

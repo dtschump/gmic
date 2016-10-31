@@ -1,0 +1,120 @@
+#@gmic
+#
+#  File        : hello_world.gmic
+#                ( G'MIC command file )
+#
+#  Description : Hello world example written as a G'MIC script.
+#                ( http://gmic.eu )
+#
+#  Copyright   : David Tschumperle
+#                ( http://tschumperle.users.greyc.fr/ )
+#
+#  License     : CeCILL v2.0
+#                ( http://www.cecill.info/licences/Licence_CeCILL_V2-en.html )
+#
+#  This software is governed by the CeCILL  license under French law and
+#  abiding by the rules of distribution of free software.  You can  use,
+#  modify and/ or redistribute the software under the terms of the CeCILL
+#  license as circulated by CEA, CNRS and INRIA at the following URL
+#  "http://www.cecill.info".
+#
+#  As a counterpart to the access to the source code and  rights to copy,
+#  modify and redistribute granted by the license, users are provided only
+#  with a limited warranty  and the software's author,  the holder of the
+#  economic rights,  and the successive licensors  have only  limited
+#  liability.
+#
+#  In this respect, the user's attention is drawn to the risks associated
+#  with loading,  using,  modifying and/or developing or reproducing the
+#  software by the user in light of its specific status of free software,
+#  that may mean  that it is complicated to manipulate,  and  that  also
+#  therefore means  that it is reserved for developers  and  experienced
+#  professionals having in-depth computer knowledge. Users are therefore
+#  encouraged to load and test the software's suitability as regards their
+#  requirements in conditions enabling the security of their systems and/or
+#  data to be ensured and,  more generally, to use and operate it in the
+#  same conditions as regards security.
+#
+#  The fact that you are presently reading this means that you have had
+#  knowledge of the CeCILL license and that you accept its terms.
+#
+
+#-------------------------------------------------------
+# How to test this G'MIC code snippet?
+#
+# On a terminal, type :
+#
+# $ gmic http://gmic.eu/snippet/hello_world.gmic -hello
+#
+#-------------------------------------------------------
+hello :
+  -verbose -  # Make console output silent
+  -local[]    # Start a new empty environment
+
+  # Create a 480x300 color background image.
+  -input[background] 480,300,1,3,"
+   y<0.75*h?
+     (a = y/h/0.75; [32*a,96*a,165*a] ):
+     (a = (y - 0.75*h)/0.25/h; [255*a,128*a,0] )"                       # Specify formula to create color gradient
+  -text. "Try mouse buttons... Keys ESC or Q to quit",5,{h-18},13,1,255  # Add small notice at the bottom
+
+  # Create text sprites (normal and mirrored versions).
+  -input[text_color] 0 -text. " Hello\nWorld !",0,0,54,1,128,255,64,1 # RGBA text sprite
+  -split. c,-3 -dilate. 5 -name. text_mask  # Divide into two images : RGB (text_color) and dilated A (text_mask)
+  --mirror. y -name. text_mask_shadow       # Get mirrored version of the text mask for the shadow
+  -input[text_color_shadow] 100%,100%,1,3   # RGB sprite for shadow sprite (with default color: black)
+
+  # Initialize motion variables.
+  x={(w#$background-w)/2}  # Position 'x' is initially at the middle of the background
+  y={(h#$background-h)/2}  # Position 'y' is initially at the middle of the background
+  vy=0 vx=0                # Define x and y velocities
+  ax=0 ay=0                # Define x and y accelerations
+
+  # Start animation loop.
+  -do
+    --image[background] [text_color],$x,$y,0,0,1,[text_mask]             # Draw text in background and returns it as a new image
+    y_shadow={1.5*h-$y-h#$text_color_shadow}                             # Compute the location for drawing the shadow
+    -image. [text_color_shadow],$x,$y_shadow,0,0,0.3,[text_mask_shadow]  # Draw shadow of the text sprite as well
+    -window. -1,-1,0,"Hello World Demo"                                  # Update window content with created frame
+    -remove.                                                             # Remove the animation frame
+
+    # Manage sprite motion and collisions.
+    x+=$vx vx+=$ax           # Compute new x-position and x-velocity
+    y+=$vy vy+={0.5+$ay}     # Compute new y-position and y-velocity (add 0.5 for the gravity!)
+
+    -if {$x<=0" || "$x+w#$text_color>=w#$background} # Detect collision with left and right borders
+      x={max(0,min($x,w#$background-w#$text_color))} # Constrain the x-coordinates to stay inside image
+      vx={-$vx}                                      # Revert the x-velocity
+    -endif
+    -if {$y+h#$text_color>0.75*h#$background}        # Detect collision with the ground
+      vy=-12                                         # Set new y-velocity (for bouncing)
+    -endif
+
+    ax*=0.5 ay*=0.5                                  # Decrease motion acceleration
+
+    # Manage mouse events
+    -if {{*,b}&1}                       # Left mouse button -> Set new random accelerations
+      vx=0 vy=0
+      ax={u(-5,5)} ay={u(-5,5)}
+    -endif
+    -if {{*,-b}&2}                      # Right mouse button -> Change sprite color
+      -repeat {text_color,s}
+        -shared[text_color] $>          # Color is changed by random normalizations of all color channels independently
+        -normalize. 0,{u(64,255)}
+        -remove.
+      -done
+    -endif
+
+    -wait[0] 20                            # Wait a little bit to slow down animation (20ms)
+  -while {!{*,ESC}" && "!{*,Q}" && "{*}}   # Continue until keys 'ESC' or 'Q' have been pressed and window stays opened
+
+  -remove    # Remove all images used for the demo
+  -endlocal  # End local environment (is empty at this point)
+  -verbose + # Go back to previous level of verbosity
+
+
+# Local Variables:
+# mode: sh
+# End:
+#
+# (End of G'MIC custom commands)

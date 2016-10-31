@@ -1,0 +1,64 @@
+#!/bin/sh
+set -e
+
+# Manage different versions of libGraphicsMagick++
+# if [ ! -f /usr/lib/libGraphicsMagick++.so.1 ]
+# then
+#     if [ -f /usr/lib/libGraphicsMagick++.so ]
+#     then
+#         ln -s /usr/lib/libGraphicsMagick++.so /usr/lib/libGraphicsMagick++.so.1
+#     elif [ -f /usr/lib/libGraphicsMagick++.so.2 ]
+#     then
+#         ln -s /usr/lib/libGraphicsMagick++.so.2 /usr/lib/libGraphicsMagick++.so.1
+#     elif [ -f /usr/lib/libGraphicsMagick++.so.3 ]
+#     then
+#         ln -s /usr/lib/libGraphicsMagick++.so.3 /usr/lib/libGraphicsMagick++.so.1
+#     fi
+# fi
+
+# Manage different versions of libGraphicsMagick
+# if [ ! -f /usr/lib/libGraphicsMagick.so.1 ]
+# then
+#     if [ -f /usr/lib/libGraphicsMagick.so ]
+#     then
+#         ln -s /usr/lib/libGraphicsMagick.so /usr/lib/libGraphicsMagick.so.1
+#     elif [ -f /usr/lib/libGraphicsMagick.so.2 ]
+#     then
+#         ln -s /usr/lib/libGraphicsMagick.so.2 /usr/lib/libGraphicsMagick.so.1
+#     elif [ -f /usr/lib/libGraphicsMagick.so.3 ]
+#     then
+#         ln -s /usr/lib/libGraphicsMagick.so.3 /usr/lib/libGraphicsMagick.so.1
+#     fi
+# fi
+
+# # Manage different versions of libcv.
+# if [ ! -f /usr/lib/libcv.so.2.1 ]
+# then
+#     if [ -f /usr/lib/libcv.so ]
+#     then
+#         ln -s /usr/lib/libcv.so /usr/lib/libcv.so.2.1
+#     elif [ -f /usr/lib/libcv.so.1 ]
+#     then
+#         ln -s /usr/lib/libcv.so.1 /usr/lib/libcv.so.2.1
+#     elif [ -f /usr/lib/libcv.so.4 ]
+#     then
+#         ln -s /usr/lib/libcv.so.4 /usr/lib/libcv.so.2.1
+#     fi
+# fi
+
+# # Manage different versions of libhighgui.
+# if [ ! -f /usr/lib/libhighgui.so.2.1 ]
+# then
+#     if [ -f /usr/lib/libhighgui.so ]
+#     then
+#         ln -s /usr/lib/libhighgui.so /usr/lib/libhighgui.so.2.1
+#     elif [ -f /usr/lib/libhighgui.so.1 ]
+#     then
+#         ln -s /usr/lib/libhighgui.so.1 /usr/lib/libhighgui.so.2.1
+#     elif [ -f /usr/lib/libhighgui.so.4 ]
+#     then
+#         ln -s /usr/lib/libhighgui.so.4 /usr/lib/libhighgui.so.2.1
+#     fi
+# fi
+
+exit 0

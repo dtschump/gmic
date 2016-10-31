@@ -1,0 +1,22 @@
+#!/bin/bash
+#
+# A simple script to push both CImg and G'MIC updates on the git repo.
+#
+COM="."
+if [ -n "$*" ]; then COM="$*"; fi
+
+echo -e "\n  ** CImg\n"
+cd $HOME/work/src/CImg
+git commit -uno -am "$COM"
+git push
+
+echo -e "\n  ** gmic\n"
+cd $HOME/work/src/gmic
+git commit -uno -am "$COM"
+git push
+
+echo -e "\n  ** gmic-community\n"
+cd $HOME/work/src/gmic-community
+git pull
+git commit -uno -am "$COM"
+git push

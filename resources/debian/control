@@ -1,0 +1,29 @@
+Source: gmic
+Section: graphics
+Priority: optional
+Maintainer: Bernd Zeimetz <bzed@debian.org>
+Build-Depends: debhelper (>= 7.0.50),
+ libgimp2.0-dev (>= 2.4),
+ libx11-dev, libxrandr-dev, libfftw3-dev | fftw3-dev,
+ libcurl3 | libcurl4,
+ libopenexr-dev, libqt4-core,
+ libopencv-core2.4 | libopencv-core2.3,
+ libopencv-video2.4 | libopencv-video2.3,
+ libopencv-highgui2.4 | libopencv-highgui2.3
+Standards-Version: 3.9.2
+Homepage: http://gmic.eu/
+Vcs-Git: git://git.debian.org/collab-maint/gmic.git
+Vcs-Browser: http://git.debian.org/?p=collab-maint/gmic.git
+
+Package: gmic
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Enhances : gimp
+Description: GREYC's Magic for Image Computing
+ G'MIC is a full-featured open-source framework for image processing.
+ It provides several different user interfaces to convert/manipulate/filter/visualize
+ generic image datasets, ranging from 1d scalar signals to 3d+t sequences of
+ multi-spectral volumetric images, including 2d color images.
+ .
+ This package contains the command-line tool (gmic), the plug-in for gimp (gmic_gimp),
+ the library file (libgmic) and the webcam gui (zart).

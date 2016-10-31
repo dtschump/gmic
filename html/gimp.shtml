@@ -1,0 +1,865 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<!--#include file="header.html" -->
+
+<div id="bloc_option"><div id="top_vert"><div id="text_top">G'MIC for GIMP</div></div>
+  <div id="center"><div id="text_centre_intro">
+
+      <table><tr>
+          <td valign="top">
+            <center>
+              <div><a href="img/gmicky_wilber_large.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gmicky_wilber_small.jpg"/></a>
+                <div class="highslide-caption"><i><b>Gmicky</b>, the G'MIC mascot, artwork by <a href="http://www.mahvin.com/">Mahvin</a>.</i></div></div><br/>
+              <font size="-2"><i><b>Gmicky</b>, the G'MIC mascot<br/>
+                  (artwork by <a href="http://www.mahvin.com/">Mahvin</a>)</i></font><br/>
+
+              <hr noshade="noshade" size="1" width="90%"></hr>
+
+            </center>
+          </td>
+          <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+
+          <td valign="top">
+            <b><font color="#000066">G'MIC</font></b> has been made available as an easy-to-use plug-in for <a href="http://www.gimp.org">GIMP</a>.
+            It extends this retouching software capabilities by offering a large number of pre-defined image filters and effects.
+            Of course, the plug-in is highly customizable and it is possible to add your own custom <b><font color="#000066">G'MIC</font></b>-written
+            filters in it.<br/><br/>
+
+            Here you will find pre-compiled binaries of the plug-in for common architectures. Pick one archive below, and run the installer or unzip the file contents
+            into your <a href="http://www.gimp.org">GIMP</a> plug-in directory.
+            If you want to build the plug-in directly from the source, <a href="download.shtml#source">follow these instructions</a>.
+            <br/><br/>
+
+            <hr noshade="noshade" size="1" width="90%"></hr>
+            <font size="-1">
+              <table align="center" border="0" cellpadding="2" cellspacing="0" width="80%">
+                <tr>
+                  <td><a href="http://gmic.eu/files/prerelease/gmic_gimp_win64.exe"><img alt="" src="img/download_win64.png" border="0"></img></a></td><td>&nbsp;&nbsp;</td>
+                  <td><a href="http://gmic.eu/files/prerelease/gmic_gimp_win64.exe"><font size="3">G'MIC plug-in for Windows (64bits)</font></a><br/>
+                    installer, alternative: <a href="http://gmic.eu/files/prerelease/gmic_gimp_win64.zip">zip file</a><br/><br/></td>
+                </tr>
+                <tr>
+                  <td><a href="http://gmic.eu/files/prerelease/gmic_gimp_win32.exe"><img alt="" src="img/download_win32.png" border="0"></img></a></td><td>&nbsp;&nbsp;</td>
+                  <td><a href="http://gmic.eu/files/prerelease/gmic_gimp_win32.exe"><font size="3">G'MIC plug-in for Windows (32bits)</font></a><br/>
+                    installer, alternative: <a href="http://gmic.eu/files/prerelease/gmic_gimp_win32.zip">zip file</a><br/><br/></td>
+                </tr>
+                <tr>
+                  <td><a href="http://gmic.eu/files/prerelease/gmic_gimp_linux64.zip"><img alt="" src="img/download_linux64.png" border="0"></img></a></td><td>&nbsp;&nbsp;</td>
+                  <td><a href="http://gmic.eu/files/prerelease/gmic_gimp_linux64.zip"><font size="3">G'MIC plug-in for Linux (64bits)</font></a><br/>
+                    zip file<br/><br/></td>
+                </tr>
+                <tr>
+                  <td><a href="http://gmic.eu/files/prerelease/gmic_gimp_linux32.zip"><img alt="" src="img/download_linux32.png" border="0"></img></a></td><td>&nbsp;&nbsp;</td>
+                  <td><a href="http://gmic.eu/files/prerelease/gmic_gimp_linux32.zip"><font size="3">G'MIC plug-in for Linux (32bits)</font></a><br/>
+                    zip file<br/><br/></td>
+                </tr>
+                <tr>
+                  <td><a href="http://karo03.bplaced.de/gmic/release/"><img alt="" src="img/download_macosx.png" border="0"></img></a></td><td>&nbsp;&nbsp;</td>
+                  <td><a href="http://karo03.bplaced.de/gmic/release/"><font size="3">G'MIC plug-in for Mac Intel</font></a><br/>
+                    dmg file<br/><br/></td>
+                </tr>
+                <!-- <tr> -->
+                <!--   <td><a href="http://gmic.eu/files/prerelease"><img alt="" src="img/download_prerelease.png" border="0"></img></a></td><td>&nbsp;&nbsp;</td> -->
+                <!--   <td><a href="http://gmic.eu/files/prerelease"><font size="3">G'MIC plug-in pre-release for testing</font></a><br/> -->
+                <!--     source and Windows/Linux installers/binaries<br/><br/></td> -->
+                <!-- </tr> -->
+              </table>
+            </font>
+            <hr noshade="noshade" size="1" width="90%"></hr>
+
+            <br/>
+            The <b><font color="#000066">G'MIC</font></b> plug-in should be then available from the <b>Filters/G'MIC..</b> menu entry.
+            <ul>
+              <li><b>On Unix</b>, the plug-in directory is usually located at <b>$HOME/.gimp-2.x/plug-ins/</b>.<br/>
+                The plug-in requires these libraries installed on your system: <b>libfftw, libfftw_threads, libpng, zlib</b>.
+                Use your package manager to fit these dependancies.<br/><br/></li>
+              <li><b>On Windows</b>, an installer is provided and installs all the required files automatically.<br/></li>
+            </ul>
+            A <a href="gimp_filters.txt">list of all plug-in filters</a> is available in ascii format (built automatically everyday).<br/>
+            Check also <a href="https://jpfleury.github.io/gfo-demos/">this gallery</a>, generated by <i>Jean-Philippe Fleury</i>, which shows the effect of most of the available filters on different images.
+
+            <br/><br/>
+            <font size="-1"><b>Note:</b> <i>This plug-in is the logical sequel of our previous
+                <b>GREYCstoration</b> software,
+                dedicated to image denoising and regularization.
+                Actually, <b><font color="#000066">G'MIC</font></b> provides all the <b>GREYCstoration</b>
+                features (through the filter entries <b>Repair/Smooth [anisotropic]</b> and <b>Repair/Smooth [patch-based]</b>), but also much much more.
+                As the development of <b>GREYCstoration</b> has been
+                discontinued, we highly encourage former users of <b>GREYCstoration</b> to switch to <b><font color="#000066">G'MIC</font></b> indeed.
+              </i>
+            </font>
+
+          </td>
+      </tr></table>
+
+
+  </div></div><div id="footer"><img alt="" src="images/footer.jpg" /></div></div>
+
+<div id="bloc_option"><div id="top_vert"><div id="text_top">Screenshots</div></div>
+  <div id="center"><div id="text_centre_intro">
+
+      Below are some screenshots of the <b><font color="#000066">G'MIC</font></b> plug-in for <a href="http://www.gimp.org">GIMP</a> in action.
+      Most of the available filters are displayed here, section by section. Click to enlarge an image.<br/>
+      Check also our specific <a href="http://www.flickr.com/groups/gmic/pool/show/">Flickr slideshow</a> for more examples on what can be accomplished
+      with this <b><font color="#000066">G'MIC</font></b> plug-in for <a href="http://www.gimp.org">GIMP</a>.<br/><br/>
+
+      <h3>Arrays & Frames</h3>
+      <center><table cellpadding="2" border="0" cellspacing="0">
+          <tr>
+            <td><center><div><a href="img/gimp_shot1.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot1.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot2.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot2.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot3.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot3.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot4.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot4.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot5.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot5.jpg"/></a></div></center></td>
+          </tr>
+          <tr>
+            <td><center>Array [regular]</center></td>
+            <td><center>Array [faded]</center></td>
+            <td><center>Array [mirrored]</center></td>
+            <td><center>Array [random]</center></td>
+            <td><center>Array [random colors]</center></td>
+          </tr>
+          <tr>
+            <td><center><div><a href="img/gimp_shot6.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot6.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot7.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot7.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot8.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot8.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot9.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot9.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot10.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot10.jpg"/></a></div></center></td>
+          </tr>
+          <tr>
+            <td><center>Tileable rotation</center></td>
+            <td><center>Tiled rotation</center></td>
+            <td><center>Tiled normalization</center></td>
+            <td><center>Tiled random shift</center></td>
+            <td><center>Tiled parameterization</center></td>
+          </tr>
+          <tr>
+            <td><center><div><a href="img/gimp_shot11.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot11.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot12.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot12.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot13.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot13.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot14.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot14.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot15.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot15.jpg"/></a></div></center></td>
+          </tr>
+          <tr>
+            <td><center>Tiled isolation</center></td>
+            <td><center>Grid</center></td>
+            <td><center>Taquin</center></td>
+            <td><center>Random pattern</center></td>
+            <td><center>Frame [regular]</center></td>
+          </tr>
+          <tr>
+            <td><center><div><a href="img/gimp_shot16.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot16.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot17.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot17.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot18.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot18.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot19.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot19.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot20.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot20.jpg"/></a></div></center></td>
+          </tr>
+          <tr>
+            <td><center>Frame [cube]</center></td>
+            <td><center>Frame [pattern]</center></td>
+            <td><center>Frame [fuzzy]</center></td>
+            <td><center>Frame [round]</center></td>
+            <td><center>Tunnel</center></td>
+          </tr>
+          <tr>
+            <td><center><div><a href="img/gimp_shot250.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot250.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot251.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot251.jpg"/></a></div></center></td>
+          </tr>
+          <tr>
+            <td><center>Droste</center></td>
+            <td><center>Frame [painting]</center></td>
+          </tr>
+      </table></center>
+
+      <h3>Artistic</h3>
+      <center><table cellpadding="2" border="0" cellspacing="0">
+          <tr>
+            <td><center><div><a href="img/gimp_shot21.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot21.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot22.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot22.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot23.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot23.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot24.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot24.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot25.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot25.jpg"/></a></div></center></td>
+          </tr>
+          <tr>
+            <td><center>Cartoon</center></td>
+            <td><center>Cubism</center></td>
+            <td><center>Ellipsionism</center></td>
+            <td><center>Graphic boost</center></td>
+            <td><center>Graphic novel</center></td>
+          </tr>
+          <tr>
+            <td><center><div><a href="img/gimp_shot26.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot26.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot27.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot27.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot28.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot28.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot29.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot29.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot30.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot30.jpg"/></a></div></center></td>
+          </tr>
+          <tr>
+            <td><center>Kaleidoscope</center></td>
+            <td><center>Kuwahara</center></td>
+            <td><center>Lylejk's painting</center></td>
+            <td><center>Morphology painting</center></td>
+            <td><center>Old photograph</center></td>
+          </tr>
+          <tr>
+            <td><center><div><a href="img/gimp_shot31.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot31.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot32.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot32.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot33.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot33.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot34.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot34.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot35.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot35.jpg"/></a></div></center></td>
+          </tr>
+          <tr>
+            <td><center>Painting</center></td>
+            <td><center>Pen drawing</center></td>
+            <td><center>Photoillustration</center></td>
+            <td><center>Polaroid</center></td>
+            <td><center>Random color ellipses</center></td>
+          </tr>
+          <tr>
+            <td><center><div><a href="img/gimp_shot36.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot36.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot37.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot37.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot38.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot38.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot39.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot39.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot40.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot40.jpg"/></a></div></center></td>
+          </tr>
+          <tr>
+            <td><center>Reflection</center></td>
+            <td><center>Rodilius</center></td>
+            <td><center>Rotoidoscope</center></td>
+            <td><center>Soft glow</center></td>
+            <td><center>Tetris effect</center></td>
+          </tr>
+          <tr>
+            <td><center><div><a href="img/gimp_shot41.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot41.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot42.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot42.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot43.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot43.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot261.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot261.jpg"/></a></div></center></td>
+          </tr>
+          <tr>
+            <td><center>Watercolor</center></td>
+            <td><center>Warhol</center></td>
+            <td><center>Whirl drawing</center></td>
+            <td><center>Poster edges</center></td>
+          </tr>
+      </table></center>
+
+      <h3>Black &amp; White</h3>
+      <center><table cellpadding="2" border="0" cellspacing="0">
+          <tr>
+            <td><center><div><a href="img/gimp_shot44.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot44.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot45.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot45.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot46.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot46.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot47.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot47.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot48.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot48.jpg"/></a></div></center></td>
+          </tr>
+          <tr>
+            <td><center>Charcoal</center></td>
+            <td><center>Hard sketch</center></td>
+            <td><center>Hough sketch</center></td>
+            <td><center>Ink wash</center></td>
+            <td><center>Pencil</center></td>
+          </tr>
+          <tr>
+            <td><center><div><a href="img/gimp_shot49.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot49.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot50.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot50.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot51.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot51.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot52.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot52.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot67.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot67.jpg"/></a></div></center></td>
+          </tr>
+          <tr>
+            <td><center>Sketch</center></td>
+            <td><center>Stamp</center></td>
+            <td><center>Stencil</center></td>
+            <td><center>Steampunk-Pencil</center></td>
+            <td><center>Black &amp; White</center></td>
+          </tr>
+          <tr>
+            <td><center><div><a href="img/gimp_shot262.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot262.jpg"/></a></div></center></td>
+          </tr>
+          <tr>
+            <td><center>Pencil portrait</center></td>
+          </tr>
+      </table></center>
+
+      <h3>Colors</h3>
+      <center><table cellpadding="2" border="0" cellspacing="0">
+          <tr>
+            <td><center><div><a href="img/gimp_shot53.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot53.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot54.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot54.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot55.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot55.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot56.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot56.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot57.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot57.jpg"/></a></div></center></td>
+          </tr>
+          <tr>
+            <td><center>Mixer [RGB]</center></td>
+            <td><center>Mixer [YCbCr]</center></td>
+            <td><center>Mixer [HSV]</center></td>
+            <td><center>Mixer [Lab]</center></td>
+            <td><center>Mixer [CMYK]</center></td>
+          </tr>
+          <tr>
+            <td><center><div><a href="img/gimp_shot58.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot58.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot59.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot59.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot60.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot60.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot61.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot61.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot62.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot62.jpg"/></a></div></center></td>
+          </tr>
+          <tr>
+            <td><center>Equalize HSV</center></td>
+            <td><center>Boost / Fade</center></td>
+            <td><center>Color balance</center></td>
+            <td><center>Channel processing</center></td>
+            <td><center>Decompose channels</center></td>
+          </tr>
+          <tr>
+            <td><center><div><a href="img/gimp_shot63.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot63.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot64.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot64.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot65.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot65.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot66.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot66.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot252.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot252.jpg"/></a></div></center></td>
+          </tr>
+          <tr>
+            <td><center>Curves</center></td>
+            <td><center>Curves [RGB]</center></td>
+            <td><center>Curves [YCbCr]</center></td>
+            <td><center>Curves [Lab]</center></td>
+            <td><center>Lomo</center></td>
+          </tr>
+          <tr>
+            <td><center><div><a href="img/gimp_shot68.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot68.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot69.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot69.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot70.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot70.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot71.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot71.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot72.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot72.jpg"/></a></div></center></td>
+          </tr>
+          <tr>
+            <td><center>Sepia</center></td>
+            <td><center>Abstraction</center></td>
+            <td><center>Vintage style</center></td>
+            <td><center>60's Cinema</center></td>
+            <td><center>Metallic look</center></td>
+          </tr>
+          <tr>
+            <td><center><div><a href="img/gimp_shot73.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot73.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot74.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot74.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot75.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot75.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot76.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot76.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot77.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot77.jpg"/></a></div></center></td>
+          </tr>
+          <tr>
+            <td><center>Colormap</center></td>
+            <td><center>B &amp; W recolorize</center></td>
+            <td><center>B &amp; W dithering</center></td>
+            <td><center>Tone mapping</center></td>
+            <td><center>Tone mapping [fast]</center></td>
+          </tr>
+          <tr>
+            <td><center><div><a href="img/gimp_shot78.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot78.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot79.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot79.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot80.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot80.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot81.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot81.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot82.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot82.jpg"/></a></div></center></td>
+          </tr>
+          <tr>
+            <td><center>Local normalization</center></td>
+            <td><center>Select color</center></td>
+            <td><center>Replace color</center></td>
+            <td><center>User-defined</center></td>
+            <td><center>Gradient [linear]</center></td>
+          </tr>
+          <tr>
+            <td><center><div><a href="img/gimp_shot83.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot83.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot84.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot84.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot253.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot253.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot219.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot219.jpg"/></a></div></center></td>
+          </tr>
+          <tr>
+            <td><center>Gradient [radial]</center></td>
+            <td><center>Gradient [corners]</center></td>
+            <td><center>Colormap</center></td>
+            <td><center>Discrete color square</center></td>
+          </tr>
+      </table></center>
+
+      <h3>Contours</h3>
+      <center><table cellpadding="2" border="0" cellspacing="0">
+          <tr>
+            <td><center><div><a href="img/gimp_shot85.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot85.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot86.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot86.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot87.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot87.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot88.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot88.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot89.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot89.jpg"/></a></div></center></td>
+          </tr>
+          <tr>
+            <td><center>Curvature</center></td>
+            <td><center>Difference of gaussians</center></td>
+            <td><center>Distance transform</center></td>
+            <td><center>Edges</center></td>
+            <td><center>Edges offsets</center></td>
+          </tr>
+          <tr>
+            <td><center><div><a href="img/gimp_shot90.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot90.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot91.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot91.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot92.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot92.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot93.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot93.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot94.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot94.jpg"/></a></div></center></td>
+          </tr>
+          <tr>
+            <td><center>Laplacian</center></td>
+            <td><center>Local orientation</center></td>
+            <td><center>Gradient norm</center></td>
+            <td><center>Gradient RGB</center></td>
+            <td><center>Isophotes</center></td>
+          </tr>
+          <tr>
+            <td><center><div><a href="img/gimp_shot95.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot95.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot96.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot96.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot97.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot97.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot98.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot98.jpg"/></a></div></center></td>
+          </tr>
+          <tr>
+            <td><center>Morphological filter</center></td>
+            <td><center>Segmentation</center></td>
+            <td><center>Skeleton</center></td>
+            <td><center>Thin edges</center></td>
+          </tr>
+      </table></center>
+
+      <h3>Deformations</h3>
+      <center><table cellpadding="2" border="0" cellspacing="0">
+          <tr>
+            <td><center><div><a href="img/gimp_shot99.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot99.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot100.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot100.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot101.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot101.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot102.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot102.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot103.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot103.jpg"/></a></div></center></td>
+          </tr>
+          <tr>
+            <td><center>Cartesian transform</center></td>
+            <td><center>Euclidean - Polar</center></td>
+            <td><center>Fish-eye</center></td>
+            <td><center>Flower</center></td>
+            <td><center>Perspective</center></td>
+          </tr>
+          <tr>
+            <td><center><div><a href="img/gimp_shot104.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot104.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot105.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot105.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot106.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot106.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot107.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot107.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot108.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot108.jpg"/></a></div></center></td>
+          </tr>
+          <tr>
+            <td><center>Random</center></td>
+            <td><center>Ripple</center></td>
+            <td><center>Sphere</center></td>
+            <td><center>Polar transform</center></td>
+            <td><center>Twirl</center></td>
+          </tr>
+          <tr>
+            <td><center><div><a href="img/gimp_shot109.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot109.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot110.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot110.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot111.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot111.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot112.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot112.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot260.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot260.jpg"/></a></div></center></td>
+          </tr>
+          <tr>
+            <td><center>Water</center></td>
+            <td><center>Wave</center></td>
+            <td><center>Wind</center></td>
+            <td><center>Zoom</center></td>
+            <td><center>Raindrops</center></td>
+          </tr>
+      </table></center>
+
+      <h3>Degradations</h3>
+      <center><table cellpadding="2" border="0" cellspacing="0">
+          <tr>
+            <td><center><div><a href="img/gimp_shot113.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot113.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot114.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot114.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot115.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot115.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot116.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot116.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot117.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot117.jpg"/></a></div></center></td>
+          </tr>
+          <tr>
+            <td><center>Additive noise</center></td>
+            <td><center>Angular blur</center></td>
+            <td><center>Bandpass filter</center></td>
+            <td><center>Bayer filter</center></td>
+            <td><center>Gaussian blur</center></td>
+          </tr>
+          <tr>
+            <td><center><div><a href="img/gimp_shot118.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot118.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot119.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot119.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot120.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot120.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot121.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot121.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot122.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot122.jpg"/></a></div></center></td>
+          </tr>
+          <tr>
+            <td><center>Lens blur</center></td>
+            <td><center>Linear blur</center></td>
+            <td><center>Old-movie stripes</center></td>
+            <td><center>Oldschool 8-bits</center></td>
+            <td><center>Radial blur</center></td>
+          </tr>
+          <tr>
+            <td><center><div><a href="img/gimp_shot123.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot123.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot124.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot124.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot125.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot125.jpg"/></a></div></center></td>
+          </tr>
+          <tr>
+            <td><center>Random shade stripes</center></td>
+            <td><center>Spread noise</center></td>
+            <td><center>Visible watermark</center></td>
+          </tr>
+      </table></center>
+
+      <h3>Enhancements</h3>
+      <center><table cellpadding="2" border="0" cellspacing="0">
+          <tr>
+            <td><center><div><a href="img/gimp_shot126.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot126.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot127.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot127.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot128.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot128.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot129.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot129.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot130.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot130.jpg"/></a></div></center></td>
+          </tr>
+          <tr>
+            <td><center>Smooth [anisotropic]</center></td>
+            <td><center>Smooth [bilateral]</center></td>
+            <td><center>Deinterlace</center></td>
+            <td><center>Sharpen [deconvolve]</center></td>
+            <td><center>Dynamic Range Increase</center></td>
+          </tr>
+          <tr>
+            <td><center><div><a href="img/gimp_shot131.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot131.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot132.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot132.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot133.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot133.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot134.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot134.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot135.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot135.jpg"/></a></div></center></td>
+          </tr>
+          <tr>
+            <td><center>Smoth [diffusion]</center></td>
+            <td><center>High Pass</center></td>
+            <td><center>Remove hot pixels</center></td>
+            <td><center>Sharpen [inverse diffusion]</center></td>
+            <td><center>Smooth [mean-curvature]</center></td>
+          </tr>
+          <tr>
+            <td><center><div><a href="img/gimp_shot136.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot136.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot137.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot137.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot138.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot138.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot139.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot139.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot140.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot140.jpg"/></a></div></center></td>
+          </tr>
+          <tr>
+            <td><center>Smooth [median]</center></td>
+            <td><center>Sharpen [octave sharpening]</center></td>
+            <td><center>Smooth [patch-based]</center></td>
+            <td><center>Inpaint region</center></td>
+            <td><center>Sharpen [shock filters]</center></td>
+          </tr>
+          <tr>
+            <td><center><div><a href="img/gimp_shot141.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot141.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot142.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot142.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot143.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot143.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot144.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot144.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot257.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot257.jpg"/></a></div></center></td>
+          </tr>
+          <tr>
+            <td><center>Upscale [diffusion]</center></td>
+            <td><center>Solidify</center></td>
+            <td><center>Smooth [total-variation]</center></td>
+            <td><center>Sharpen [unsharp mask]</center></td>
+            <td><center>Smooth [wavelets]</center></td>
+          </tr>
+      </table></center>
+
+      <h3>Layers</h3>
+      <center><table cellpadding="2" border="0" cellspacing="0">
+          <tr>
+            <td><center><div><a href="img/gimp_shot263.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot263.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot152.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot152.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot154.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot154.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot164.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot164.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot171.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot171.jpg"/></a></div></center></td>
+          </tr>
+          <tr>
+            <td><center>Blend [standard]</center></td>
+            <td><center>Blend [edges]</center></td>
+            <td><center>Blend [fade]</center></td>
+            <td><center>Blend [median]</center></td>
+            <td><center>Blend [shape average]</center></td>
+          </tr>
+          <tr>
+            <td><center><div><a href="img/gimp_shot176.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot176.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot177.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot177.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot178.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot178.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot179.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot179.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot180.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot180.jpg"/></a></div></center></td>
+          </tr>
+          <tr>
+            <td><center>Transfer colors</center></td>
+            <td><center>Transparent difference</center></td>
+            <td><center>Align layers</center></td>
+            <td><center>Tiles to layers</center></td>
+            <td><center>Layers to tiles</center></td>
+          </tr>
+          <tr>
+            <td><center><div><a href="img/gimp_shot181.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot181.jpg"/></a></div></center></td>
+          </tr>
+          <tr>
+            <td><center>Split tones</center></td>
+          </tr>
+      </table></center>
+
+      <h3>Lights & Shadows</h3>
+      <center><table cellpadding="2" border="0" cellspacing="0">
+          <tr>
+            <td><center><div><a href="img/gimp_shot182.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot182.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot183.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot183.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot184.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot184.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot185.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot185.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot186.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot186.jpg"/></a></div></center></td>
+          </tr>
+          <tr>
+            <td><center>Contrast swiss mask</center></td>
+            <td><center>Dodge and Burn</center></td>
+            <td><center>Drop shadow</center></td>
+            <td><center>Light glow</center></td>
+            <td><center>Light patch</center></td>
+          </tr>
+          <tr>
+            <td><center><div><a href="img/gimp_shot187.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot187.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot188.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot188.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot189.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot189.jpg"/></a></div></center></td>
+          </tr>
+          <tr>
+            <td><center>Light rays</center></td>
+            <td><center>Relief light</center></td>
+            <td><center>Shadow patch</center></td>
+          </tr>
+      </table></center>
+
+      <h3>Patterns</h3>
+      <center><table cellpadding="2" border="0" cellspacing="0">
+          <tr>
+            <td><center><div><a href="img/gimp_shot190.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot190.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot191.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot191.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot192.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot192.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot193.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot193.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot194.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot194.jpg"/></a></div></center></td>
+          </tr>
+          <tr>
+            <td><center>Canvas</center></td>
+            <td><center>Canvas texture</center></td>
+            <td><center>Chessboard</center></td>
+            <td><center>Cracks</center></td>
+            <td><center>Dices</center></td>
+          </tr>
+          <tr>
+            <td><center><div><a href="img/gimp_shot195.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot195.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot196.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot196.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot197.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot197.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot198.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot198.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot199.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot199.jpg"/></a></div></center></td>
+          </tr>
+          <tr>
+            <td><center>Dots</center></td>
+            <td><center>Hearts</center></td>
+            <td><center>Lissajous</center></td>
+            <td><center>Marble</center></td>
+            <td><center>Mosaic</center></td>
+          </tr>
+          <tr>
+            <td><center><div><a href="img/gimp_shot200.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot200.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot201.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot201.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot202.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot202.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot203.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot203.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot204.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot204.jpg"/></a></div></center></td>
+          </tr>
+          <tr>
+            <td><center>Paper texture</center></td>
+            <td><center>Plaid</center></td>
+            <td><center>Plasma</center></td>
+            <td><center>Polka dots</center></td>
+            <td><center>Puzzle</center></td>
+          </tr>
+          <tr>
+            <td><center><div><a href="img/gimp_shot205.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot205.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot206.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot206.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot207.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot207.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot208.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot208.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot209.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot209.jpg"/></a></div></center></td>
+          </tr>
+          <tr>
+            <td><center>Rorschach</center></td>
+            <td><center>Sierpinski triangle</center></td>
+            <td><center>Snowflake</center></td>
+            <td><center>Sponge</center></td>
+            <td><center>Stained glass</center></td>
+          </tr>
+          <tr>
+            <td><center><div><a href="img/gimp_shot210.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot210.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot211.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot211.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot212.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot212.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot213.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot213.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot214.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot214.jpg"/></a></div></center></td>
+          </tr>
+          <tr>
+            <td><center>Stencil</center></td>
+            <td><center>Superformula</center></td>
+            <td><center>Truchet</center></td>
+            <td><center>Turbulence</center></td>
+            <td><center>Whirls</center></td>
+          </tr>
+          <tr>
+            <td><center><div><a href="img/gimp_shot254.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot254.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot256.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot256.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot259.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot259.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot264.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot264.jpg"/></a></div></center></td>
+          </tr>
+          <tr>
+            <td><center>Maze</center></td>
+            <td><center>Dithering</center></td>
+            <td><center>Lava</center></td>
+            <td><center>Weave</center></td>
+          </tr>
+      </table></center>
+
+      <h3>Presets / Testing</h3>
+      <center><table cellpadding="2" border="0" cellspacing="0">
+          <tr>
+            <td><center><div><a href="img/gimp_shot215.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot215.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot216.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot216.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot217.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot217.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot218.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot218.jpg"/></a></div></center></td>
+          </tr>
+          <tr>
+            <td><center>PhotoComiX smoothing</center></td>
+            <td><center>Thin brush smoothing</center></td>
+            <td><center>Lylejk's stencil</center></td>
+            <td><center>Beauty Retouch</center></td>
+          </tr>
+      </table></center>
+
+      <h3>Rendering</h3>
+      <center><table cellpadding="2" border="0" cellspacing="0">
+          <tr>
+            <td><center><div><a href="img/gimp_shot220.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot220.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot221.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot221.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot222.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot222.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot223.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot223.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot224.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot224.jpg"/></a></div></center></td>
+          </tr>
+          <tr>
+            <td><center>3d conversion</center></td>
+            <td><center>3d colored object</center></td>
+            <td><center>3d elevation</center></td>
+            <td><center>3d extrusion</center></td>
+            <td><center>3d image object</center></td>
+          </tr>
+          <tr>
+            <td><center><div><a href="img/gimp_shot225.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot225.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot226.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot226.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot227.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot227.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot228.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot228.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot229.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot229.jpg"/></a></div></center></td>
+          </tr>
+          <tr>
+            <td><center>3d lathing</center></td>
+            <td><center>3d random objects</center></td>
+            <td><center>Equation plot</center></td>
+            <td><center>Mandelbrot / Julia sets</center></td>
+            <td><center>Maze</center></td>
+          </tr>
+          <tr>
+            <td><center><div><a href="img/gimp_shot230.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot230.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot249.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot249.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot255.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot255.jpg"/></a></div></center></td>
+          </tr>
+          <tr>
+            <td><center>Rainbow</center></td>
+            <td><center>Quick copyright</center></td>
+            <td><center>Shade bobs</center></td>
+          </tr>
+      </table></center>
+
+      <h3>Sequences</h3>
+      <center><table cellpadding="2" border="0" cellspacing="0">
+          <tr>
+            <td><center><div><a href="img/gimp_shot231.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot231.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot232.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot232.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot233.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot233.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot234.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot234.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot235.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot235.jpg"/></a></div></center></td>
+          </tr>
+          <tr>
+            <td><center>3d elevation</center></td>
+            <td><center>3d extrusion</center></td>
+            <td><center>3d image object</center></td>
+            <td><center>Anisotropic smoothing</center></td>
+            <td><center>B &amp; W pencil</center></td>
+          </tr>
+          <tr>
+            <td><center><div><a href="img/gimp_shot236.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot236.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot237.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot237.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot238.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot238.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot239.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot239.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot240.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot240.jpg"/></a></div></center></td>
+          </tr>
+          <tr>
+            <td><center>B &amp; W stencil</center></td>
+            <td><center>Cartoon</center></td>
+            <td><center>Edges</center></td>
+            <td><center>Edges on fire</center></td>
+            <td><center>Lava lamp</center></td>
+          </tr>
+          <tr>
+            <td><center><div><a href="img/gimp_shot241.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot241.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot242.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot242.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot243.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot243.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot244.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot244.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot245.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot245.jpg"/></a></div></center></td>
+          </tr>
+          <tr>
+            <td><center>Lissajous</center></td>
+            <td><center>Morphological filter</center></td>
+            <td><center>Polaroid</center></td>
+            <td><center>Rodilius</center></td>
+            <td><center>Soft glow</center></td>
+          </tr>
+          <tr>
+            <td><center><div><a href="img/gimp_shot258.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot258.jpg"/></a></div></center></td>
+          </tr>
+          <tr>
+            <td><center>3d tiles</center></td>
+          </tr>
+      </table></center>
+
+      <h3>Spectral handling</h3>
+      <center><table cellpadding="2" border="0" cellspacing="0">
+          <tr>
+            <td><center><div><a href="img/gimp_shot246.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot246.jpg"/></a></div></center></td>
+          </tr>
+          <tr>
+            <td><center>Fourier analysis</center></td>
+          </tr>
+      </table></center>
+
+      <h3>Various</h3>
+      <center><table cellpadding="2" border="0" cellspacing="0">
+          <tr>
+            <td><center><div><a href="img/gimp_shot247.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot247.jpg"/></a></div></center></td>
+            <td><center><div><a href="img/gimp_shot248.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/thumb_gimp_shot248.jpg"/></a></div></center></td>
+          </tr>
+          <tr>
+            <td><center>Custom code</center></td>
+            <td><center>Histogram analysis</center></td>
+          </tr>
+      </table></center>
+
+
+  </div></div><div id="footer"><img src="images/footer.jpg" /></div></div>
+
+<!--#include file="copyright.html" -->
+<!--#include file="footer.html" -->

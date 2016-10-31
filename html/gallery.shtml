@@ -1,0 +1,362 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!--#include file="header.html" -->
+ <div id="bloc_option"><div id="top_bleu"><div id="text_top">Image Gallery</div></div>
+ <div id="center"><div id="text_centre_intro">
+ All the images below have been processed by the command line version <b><a href="documentation.shtml">gmic</a></b>
+ of <b><font color="#000066">G'MIC</font></b>, from a set of initial 2D color images (displayed on the first row).<br/>
+ Click on an image to zoom-in. The corresponding <b><font color="#000066">G'MIC</font></b> command used to generate the image appears as a caption.
+ This gallery is intended to show the flexibility and the genericity of the <b><font color="#000066">G'MIC</font></b> language.
+ Remember, you can easily define your own image filters and effects by writting
+ your custom <b><font color="#000066">G'MIC</font></b> <a href="http://gmic.eu/gmic_stdlib.gmic">command file</a>,
+ and eventually put them directly in <a href="http://www.gimp.org">GIMP</a> afterwards.
+
+ <ul>
+ <li>See also the <a href="gimp.shtml">GIMP plug-in page</a> to see various screenshots of what <b><font color="#000066">G'MIC</font></b> can do.</li>
+ <li>See also the <a href="reference.shtml">G'MIC reference page</a> to have processing examples of almost all <b><font color="#000066">G'MIC</font></b> commands
+ (scroll down there to view example images).</li>
+ <li>See also the <a href="http://www.flickr.com/groups/gmic/pool/">Flickr slideshow</a>, showing uses of the <a href="gimp.shtml">G'MIC plug-in</a>
+ by various artists.</li>
+ </ul>
+ <b>Copyrights : </b> All pictures have been shot by <a href="http://tschumperle.users.greyc.fr/">David Tschumperl&eacute;</a>.<br/><br/>
+<center><table cellpadding="1" border="0" cellspacing="2">
+<tr>
+ <td width="135"><center><div><a href="img/gallery_000000.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000000.png"/></a><div class="highslide-caption">gmic chloe.jpg  </div></div></center></td>
+ <td width="144"><center><div><a href="img/gallery_000001.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000001.png"/></a><div class="highslide-caption">gmic fawn.jpg  </div></div></center></td>
+ <td width="171"><center><div><a href="img/gallery_000002.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000002.png"/></a><div class="highslide-caption">gmic house.jpg  </div></div></center></td>
+ <td width="96"><center><div><a href="img/gallery_000003.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000003.png"/></a><div class="highslide-caption">gmic statue.jpg  </div></div></center></td>
+ <td width="171"><center><div><a href="img/gallery_000004.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000004.png"/></a><div class="highslide-caption">gmic beach.jpg  </div></div></center></td>
+</tr>
+<tr bgcolor="">
+<td width="135"><center><font size="1">gmic chloe.jpg  </font></center></td>
+<td width="144"><center><font size="1">gmic fawn.jpg  </font></center></td>
+<td width="171"><center><font size="1">gmic house.jpg  </font></center></td>
+<td width="96"><center><font size="1">gmic statue.jpg  </font></center></td>
+<td width="171"><center><font size="1">gmic beach.jpg  </font></center></td>
+</tr>
+<tr>
+ <td width=""><center><div><a href="img/gallery_000005.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000005.png"/></a><div class="highslide-caption">gmic chloe.jpg -luminance</div></div></center></td>
+ <td width=""><center><div><a href="img/gallery_000006.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000006.png"/></a><div class="highslide-caption">gmic fawn.jpg -solarize</div></div></center></td>
+ <td width=""><center><div><a href="img/gallery_000007.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000007.png"/></a><div class="highslide-caption">gmic house.jpg -negative</div></div></center></td>
+ <td width=""><center><div><a href="img/gallery_000008.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000008.png"/></a><div class="highslide-caption">gmic statue.jpg -select_color 100,0,0,0 -n 0,255</div></div></center></td>
+ <td width=""><center><div><a href="img/gallery_000009.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000009.png"/></a><div class="highslide-caption">gmic beach.jpg -array_fade 4,4</div></div></center></td>
+</tr>
+<tr bgcolor="">
+<td width="135"><center><font size="1">gmic chloe.jpg -luminance</font></center></td>
+<td width="144"><center><font size="1">gmic fawn.jpg -solarize</font></center></td>
+<td width="171"><center><font size="1">gmic house.jpg -negative</font></center></td>
+<td width="96"><center><font size="1">gmic statue.jpg -select_color 100,0,0,0 -n 0,255</font></center></td>
+<td width="171"><center><font size="1">gmic beach.jpg -array_fade 4,4</font></center></td>
+</tr>
+<tr>
+ <td width=""><center><div><a href="img/gallery_000010.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000010.png"/></a><div class="highslide-caption">gmic chloe.jpg --mirror. x -fade_x 40,60</div></div></center></td>
+ <td width=""><center><div><a href="img/gallery_000011.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000011.png"/></a><div class="highslide-caption">gmic fawn.jpg -shift_tiles 20,20</div></div></center></td>
+ <td width=""><center><div><a href="img/gallery_000012.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000012.png"/></a><div class="highslide-caption">gmic house.jpg -fisheye 40</div></div></center></td>
+ <td width=""><center><div><a href="img/gallery_000013.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000013.png"/></a><div class="highslide-caption">gmic statue.jpg -fisheye 50</div></div></center></td>
+ <td width=""><center><div><a href="img/gallery_000014.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000014.png"/></a><div class="highslide-caption">gmic beach.jpg -shade_stripes ,</div></div></center></td>
+</tr>
+<tr bgcolor="">
+<td width="135"><center><font size="1">gmic chloe.jpg --mirror. x -fade_x 40,60</font></center></td>
+<td width="144"><center><font size="1">gmic fawn.jpg -shift_tiles 20,20</font></center></td>
+<td width="171"><center><font size="1">gmic house.jpg -fisheye 40</font></center></td>
+<td width="96"><center><font size="1">gmic statue.jpg -fisheye 50</font></center></td>
+<td width="171"><center><font size="1">gmic beach.jpg -shade_stripes ,</font></center></td>
+</tr>
+<tr>
+ <td width=""><center><div><a href="img/gallery_000015.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000015.png"/></a><div class="highslide-caption">gmic chloe.jpg -shade_stripes 40,1</div></div></center></td>
+ <td width=""><center><div><a href="img/gallery_000016.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000016.png"/></a><div class="highslide-caption">gmic fawn.jpg -tetris 10</div></div></center></td>
+ <td width=""><center><div><a href="img/gallery_000017.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000017.png"/></a><div class="highslide-caption">gmic house.jpg -blur 1 -gradient_orientation 2 -+ -n 0,255 -smooth 60,0,1,1,3</div></div></center></td>
+ <td width=""><center><div><a href="img/gallery_000018.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000018.png"/></a><div class="highslide-caption">gmic statue.jpg -flower 30,5</div></div></center></td>
+ <td width=""><center><div><a href="img/gallery_000019.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000019.png"/></a><div class="highslide-caption">gmic beach.jpg -water 30,1.5</div></div></center></td>
+</tr>
+<tr bgcolor="">
+<td width="135"><center><font size="1">gmic chloe.jpg -shade_stripes 40,1</font></center></td>
+<td width="144"><center><font size="1">gmic fawn.jpg -tetris 10</font></center></td>
+<td width="171"><center><font size="1">gmic house.jpg -blur 1 -gradient_orientation 2 -+ -n 0,255 -smooth 60,0,1,1,3</font></center></td>
+<td width="96"><center><font size="1">gmic statue.jpg -flower 30,5</font></center></td>
+<td width="171"><center><font size="1">gmic beach.jpg -water 30,1.5</font></center></td>
+</tr>
+<tr>
+ <td width=""><center><div><a href="img/gallery_000020.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000020.png"/></a><div class="highslide-caption">gmic chloe.jpg -wave 4,0.4</div></div></center></td>
+ <td width=""><center><div><a href="img/gallery_000021.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000021.png"/></a><div class="highslide-caption">gmic fawn.jpg -wave 15,0.2</div></div></center></td>
+ <td width=""><center><div><a href="img/gallery_000022.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000022.png"/></a><div class="highslide-caption">gmic house.jpg -deform 10</div></div></center></td>
+ <td width=""><center><div><a href="img/gallery_000023.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000023.png"/></a><div class="highslide-caption">gmic statue.jpg -light_patch 4,0.7,1.7</div></div></center></td>
+ <td width=""><center><div><a href="img/gallery_000024.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000024.png"/></a><div class="highslide-caption">gmic beach.jpg -mosaic 50</div></div></center></td>
+</tr>
+<tr bgcolor="">
+<td width="135"><center><font size="1">gmic chloe.jpg -wave 4,0.4</font></center></td>
+<td width="144"><center><font size="1">gmic fawn.jpg -wave 15,0.2</font></center></td>
+<td width="171"><center><font size="1">gmic house.jpg -deform 10</font></center></td>
+<td width="96"><center><font size="1">gmic statue.jpg -light_patch 4,0.7,1.7</font></center></td>
+<td width="171"><center><font size="1">gmic beach.jpg -mosaic 50</font></center></td>
+</tr>
+<tr>
+ <td width=""><center><div><a href="img/gallery_000025.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000025.png"/></a><div class="highslide-caption">gmic chloe.jpg -sponge 13</div></div></center></td>
+ <td width=""><center><div><a href="img/gallery_000026.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000026.png"/></a><div class="highslide-caption">gmic fawn.jpg -hearts 15</div></div></center></td>
+ <td width=""><center><div><a href="img/gallery_000027.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000027.png"/></a><div class="highslide-caption">gmic house.jpg -color_ellipses 1400,10,0.07</div></div></center></td>
+ <td width=""><center><div><a href="img/gallery_000028.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000028.png"/></a><div class="highslide-caption">gmic statue.jpg -whirls 3</div></div></center></td>
+ <td width=""><center><div><a href="img/gallery_000029.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000029.png"/></a><div class="highslide-caption">gmic beach.jpg -edges 15 -n 0,255</div></div></center></td>
+</tr>
+<tr bgcolor="">
+<td width="135"><center><font size="1">gmic chloe.jpg -sponge 13</font></center></td>
+<td width="144"><center><font size="1">gmic fawn.jpg -hearts 15</font></center></td>
+<td width="171"><center><font size="1">gmic house.jpg -color_ellipses 1400,10,0.07</font></center></td>
+<td width="96"><center><font size="1">gmic statue.jpg -whirls 3</font></center></td>
+<td width="171"><center><font size="1">gmic beach.jpg -edges 15 -n 0,255</font></center></td>
+</tr>
+<tr>
+ <td width=""><center><div><a href="img/gallery_000030.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000030.png"/></a><div class="highslide-caption">gmic chloe.jpg -to_rgba -gimp_reflect 50,1,110,160,190,64,0,1.5,0,-3.30,7,1.5 -display_rgba</div></div></center></td>
+ <td width=""><center><div><a href="img/gallery_000031.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000031.png"/></a><div class="highslide-caption">gmic fawn.jpg -transform_polar R-r</div></div></center></td>
+ <td width=""><center><div><a href="img/gallery_000032.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000032.png"/></a><div class="highslide-caption">gmic house.jpg -drawing 200</div></div></center></td>
+ <td width=""><center><div><a href="img/gallery_000033.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000033.png"/></a><div class="highslide-caption">gmic statue.jpg -draw_whirl 100</div></div></center></td>
+ <td width=""><center><div><a href="img/gallery_000034.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000034.png"/></a><div class="highslide-caption">gmic beach.jpg -texturize_paper</div></div></center></td>
+</tr>
+<tr bgcolor="">
+<td width="135"><center><font size="1">gmic chloe.jpg -to_rgba -gimp_reflect 50,1,110,160,190,64,0,1.5,0,-3.30,7,1.5 -display_rgba</font></center></td>
+<td width="144"><center><font size="1">gmic fawn.jpg -transform_polar R-r</font></center></td>
+<td width="171"><center><font size="1">gmic house.jpg -drawing 200</font></center></td>
+<td width="96"><center><font size="1">gmic statue.jpg -draw_whirl 100</font></center></td>
+<td width="171"><center><font size="1">gmic beach.jpg -texturize_paper</font></center></td>
+</tr>
+<tr>
+ <td width=""><center><div><a href="img/gallery_000035.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000035.png"/></a><div class="highslide-caption">gmic chloe.jpg -stencilbw 30</div></div></center></td>
+ <td width=""><center><div><a href="img/gallery_000036.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000036.png"/></a><div class="highslide-caption">gmic fawn.jpg -glow 4</div></div></center></td>
+ <td width=""><center><div><a href="img/gallery_000037.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000037.png"/></a><div class="highslide-caption">gmic house.jpg -ditheredbw</div></div></center></td>
+ <td width=""><center><div><a href="img/gallery_000038.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000038.png"/></a><div class="highslide-caption">gmic statue.jpg -blur_angular 10</div></div></center></td>
+ <td width=""><center><div><a href="img/gallery_000039.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000039.png"/></a><div class="highslide-caption">gmic beach.jpg -blur_radial 10</div></div></center></td>
+</tr>
+<tr bgcolor="">
+<td width="135"><center><font size="1">gmic chloe.jpg -stencilbw 30</font></center></td>
+<td width="144"><center><font size="1">gmic fawn.jpg -glow 4</font></center></td>
+<td width="171"><center><font size="1">gmic house.jpg -ditheredbw</font></center></td>
+<td width="96"><center><font size="1">gmic statue.jpg -blur_angular 10</font></center></td>
+<td width="171"><center><font size="1">gmic beach.jpg -blur_radial 10</font></center></td>
+</tr>
+<tr>
+ <td width=""><center><div><a href="img/gallery_000040.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000040.png"/></a><div class="highslide-caption">gmic chloe.jpg -repeat 3 --deform[0] 10 -done -+ -n 0,255</div></div></center></td>
+ <td width=""><center><div><a href="img/gallery_000041.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000041.png"/></a><div class="highslide-caption">gmic fawn.jpg -flood 50%,50%,0,50,0,0.7,155,100,255</div></div></center></td>
+ <td width=""><center><div><a href="img/gallery_000042.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000042.png"/></a><div class="highslide-caption">gmic house.jpg --mirror x --mirror y -* -equalize 255 -n 0,255</div></div></center></td>
+ <td width=""><center><div><a href="img/gallery_000043.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000043.png"/></a><div class="highslide-caption">gmic statue.jpg -kaleidoscope 0.5,0.5,50,20</div></div></center></td>
+ <td width=""><center><div><a href="img/gallery_000044.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000044.png"/></a><div class="highslide-caption">gmic beach.jpg -noise 40 -cut 0,255 --meancurvature_flow. 20 -sharpen. 100 -a x</div></div></center></td>
+</tr>
+<tr bgcolor="">
+<td width="135"><center><font size="1">gmic chloe.jpg -repeat 3 --deform[0] 10 -done -+ -n 0,255</font></center></td>
+<td width="144"><center><font size="1">gmic fawn.jpg -flood 50%,50%,0,50,0,0.7,155,100,255</font></center></td>
+<td width="171"><center><font size="1">gmic house.jpg --mirror x --mirror y -* -equalize 255 -n 0,255</font></center></td>
+<td width="96"><center><font size="1">gmic statue.jpg -kaleidoscope 0.5,0.5,50,20</font></center></td>
+<td width="171"><center><font size="1">gmic beach.jpg -noise 40 -cut 0,255 --meancurvature_flow. 20 -sharpen. 100 -a x</font></center></td>
+</tr>
+<tr>
+ <td width=""><center><div><a href="img/gallery_000045.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000045.png"/></a><div class="highslide-caption">gmic chloe.jpg -gradient_norm -sqrt -n 0,255</div></div></center></td>
+ <td width=""><center><div><a href="img/gallery_000046.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000046.png"/></a><div class="highslide-caption">gmic fawn.jpg -to_rgba -rotate_tiles 15,5,5 -display_rgba</div></div></center></td>
+ <td width=""><center><div><a href="img/gallery_000047.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000047.png"/></a><div class="highslide-caption">gmic house.jpg -taquin 5</div></div></center></td>
+ <td width=""><center><div><a href="img/gallery_000048.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000048.png"/></a><div class="highslide-caption">gmic statue.jpg img/chloe.jpg -drop_shadow. 3 -rotate. 55 -blend alpha</div></div></center></td>
+ <td width=""><center><div><a href="img/gallery_000049.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000049.png"/></a><div class="highslide-caption">gmic beach.jpg . -deform 10 -morph 4,0.05 -a x</div></div></center></td>
+</tr>
+<tr bgcolor="">
+<td width="135"><center><font size="1">gmic chloe.jpg -gradient_norm -sqrt -n 0,255</font></center></td>
+<td width="144"><center><font size="1">gmic fawn.jpg -to_rgba -rotate_tiles 15,5,5 -display_rgba</font></center></td>
+<td width="171"><center><font size="1">gmic house.jpg -taquin 5</font></center></td>
+<td width="96"><center><font size="1">gmic statue.jpg img/chloe.jpg -drop_shadow. 3 -rotate. 55 -blend alpha</font></center></td>
+<td width="171"><center><font size="1">gmic beach.jpg . -deform 10 -morph 4,0.05 -a x</font></center></td>
+</tr>
+<tr>
+ <td width=""><center><div><a href="img/gallery_000050.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000050.png"/></a><div class="highslide-caption">gmic chloe.jpg -polaroid 20 -drop_shadow 3,3 -rotate 10,1 -display_rgba</div></div></center></td>
+ <td width=""><center><div><a href="img/gallery_000051.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000051.png"/></a><div class="highslide-caption">gmic fawn.jpg --plasma 10,10 -n. 0.5,2.5 -n 0,255 -and -equalize 256</div></div></center></td>
+ <td width=""><center><div><a href="img/gallery_000052.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000052.png"/></a><div class="highslide-caption">gmic house.jpg 100%,100% -mandelbrot. -1.17229,-0.3038,-1.15209,-0.2836,1000 -map. 0 -*[-2] 1.5 -+ -n 0,255</div></div></center></td>
+ <td width=""><center><div><a href="img/gallery_000053.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000053.png"/></a><div class="highslide-caption">gmic statue.jpg --edges 15 -n 0,255 -fade_y 30,70</div></div></center></td>
+ <td width=""><center><div><a href="img/gallery_000054.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000054.png"/></a><div class="highslide-caption">gmic beach.jpg -split_tiles 5,5 -blur 8 -sharpen 1000 -equalize 255 -append_tiles 5,5</div></div></center></td>
+</tr>
+<tr bgcolor="">
+<td width="135"><center><font size="1">gmic chloe.jpg -polaroid 20 -drop_shadow 3,3 -rotate 10,1 -display_rgba</font></center></td>
+<td width="144"><center><font size="1">gmic fawn.jpg --plasma 10,10 -n. 0.5,2.5 -n 0,255 -and -equalize 256</font></center></td>
+<td width="171"><center><font size="1">gmic house.jpg 100%,100% -mandelbrot. -1.17229,-0.3038,-1.15209,-0.2836,1000 -map. 0 -*[-2] 1.5 -+ -n 0,255</font></center></td>
+<td width="96"><center><font size="1">gmic statue.jpg --edges 15 -n 0,255 -fade_y 30,70</font></center></td>
+<td width="171"><center><font size="1">gmic beach.jpg -split_tiles 5,5 -blur 8 -sharpen 1000 -equalize 255 -append_tiles 5,5</font></center></td>
+</tr>
+<tr>
+ <td width=""><center><div><a href="img/gallery_000055.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000055.png"/></a><div class="highslide-caption">gmic chloe.jpg -imagecube3d -*3d 256 -r3d 1,1,0,60 512,512,1,3 -plasma. 10,10 -n. 0,128 -m3d 5 -db3d 0 -object3d[1] [0],50%,50% -k[1] -n 0,255</div></div></center></td>
+ <td width=""><center><div><a href="img/gallery_000056.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000056.png"/></a><div class="highslide-caption">gmic fawn.jpg -warp_perspective 0.3,0.9,0.5</div></div></center></td>
+ <td width=""><center><div><a href="img/gallery_000057.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000057.png"/></a><div class="highslide-caption">gmic house.jpg -rodilius ,</div></div></center></td>
+ <td width=""><center><div><a href="img/gallery_000058.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000058.png"/></a><div class="highslide-caption">gmic statue.jpg -blur 3 -gradient2rgb 1</div></div></center></td>
+ <td width=""><center><div><a href="img/gallery_000059.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000059.png"/></a><div class="highslide-caption">gmic beach.jpg -normalize_local 80,7</div></div></center></td>
+</tr>
+<tr bgcolor="">
+<td width="135"><center><font size="1">gmic chloe.jpg -imagecube3d -*3d 256 -r3d 1,1,0,60 512,512,1,3 -plasma. 10,10 -n. 0,128 -m3d 5 -db3d 0 -object3d[1] [0],50%,50% -k[1] -n 0,255</font></center></td>
+<td width="144"><center><font size="1">gmic fawn.jpg -warp_perspective 0.3,0.9,0.5</font></center></td>
+<td width="171"><center><font size="1">gmic house.jpg -rodilius ,</font></center></td>
+<td width="96"><center><font size="1">gmic statue.jpg -blur 3 -gradient2rgb 1</font></center></td>
+<td width="171"><center><font size="1">gmic beach.jpg -normalize_local 80,7</font></center></td>
+</tr>
+<tr>
+ <td width=""><center><div><a href="img/gallery_000060.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000060.png"/></a><div class="highslide-caption">gmic chloe.jpg -normalize_local 80,3</div></div></center></td>
+ <td width=""><center><div><a href="img/gallery_000061.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000061.png"/></a><div class="highslide-caption">gmic fawn.jpg -normalize_local 80,7</div></div></center></td>
+ <td width=""><center><div><a href="img/gallery_000062.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000062.png"/></a><div class="highslide-caption">gmic house.jpg -normalize_local 80,6,2</div></div></center></td>
+ <td width=""><center><div><a href="img/gallery_000063.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000063.png"/></a><div class="highslide-caption">gmic statue.jpg -isophotes 4 -dilate 3 -i[0] (0;255^0;255^100;100) -r[0] [1],[1],1,3,3 -blend alpha</div></div></center></td>
+ <td width=""><center><div><a href="img/gallery_000064.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000064.png"/></a><div class="highslide-caption">gmic beach.jpg -crop 30%,30%,70%,70% -resize 200%,200%,1,100%,5 -frame_fuzzy 30,30</div></div></center></td>
+</tr>
+<tr bgcolor="">
+<td width="135"><center><font size="1">gmic chloe.jpg -normalize_local 80,3</font></center></td>
+<td width="144"><center><font size="1">gmic fawn.jpg -normalize_local 80,7</font></center></td>
+<td width="171"><center><font size="1">gmic house.jpg -normalize_local 80,6,2</font></center></td>
+<td width="96"><center><font size="1">gmic statue.jpg -isophotes 4 -dilate 3 -i[0] (0;255^0;255^100;100) -r[0] [1],[1],1,3,3 -blend alpha</font></center></td>
+<td width="171"><center><font size="1">gmic beach.jpg -crop 30%,30%,70%,70% -resize 200%,200%,1,100%,5 -frame_fuzzy 30,30</font></center></td>
+</tr>
+<tr>
+ <td width=""><center><div><a href="img/gallery_000065.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000065.png"/></a><div class="highslide-caption">gmic chloe.jpg -cartoon ,</div></div></center></td>
+ <td width=""><center><div><a href="img/gallery_000066.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000066.png"/></a><div class="highslide-caption">gmic fawn.jpg -cartoon ,</div></div></center></td>
+ <td width=""><center><div><a href="img/gallery_000067.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000067.png"/></a><div class="highslide-caption">gmic house.jpg -cartoon ,</div></div></center></td>
+ <td width=""><center><div><a href="img/gallery_000068.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000068.png"/></a><div class="highslide-caption">gmic statue.jpg -cartoon ,</div></div></center></td>
+ <td width=""><center><div><a href="img/gallery_000069.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000069.png"/></a><div class="highslide-caption">gmic beach.jpg -cartoon ,</div></div></center></td>
+</tr>
+<tr bgcolor="">
+<td width="135"><center><font size="1">gmic chloe.jpg -cartoon ,</font></center></td>
+<td width="144"><center><font size="1">gmic fawn.jpg -cartoon ,</font></center></td>
+<td width="171"><center><font size="1">gmic house.jpg -cartoon ,</font></center></td>
+<td width="96"><center><font size="1">gmic statue.jpg -cartoon ,</font></center></td>
+<td width="171"><center><font size="1">gmic beach.jpg -cartoon ,</font></center></td>
+</tr>
+<tr>
+ <td width=""><center><div><a href="img/gallery_000070.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000070.png"/></a><div class="highslide-caption">gmic chloe.jpg -resize2dx 300 -m3d 2 -elevation3d 0.3 -f3d 200 -snapshot3d 400,1.5</div></div></center></td>
+ <td width=""><center><div><a href="img/gallery_000071.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000071.png"/></a><div class="highslide-caption">gmic fawn.jpg -resize2dx 300 -m3d 2 -elevation3d 0.3 -f3d 200 -snapshot3d 400,1.5</div></div></center></td>
+ <td width=""><center><div><a href="img/gallery_000072.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000072.png"/></a><div class="highslide-caption">gmic house.jpg -resize2dx 300 -m3d 2 -elevation3d 0.3 -f3d 200 -snapshot3d 400,1.5</div></div></center></td>
+ <td width=""><center><div><a href="img/gallery_000073.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000073.png"/></a><div class="highslide-caption">gmic statue.jpg -resize2dx 300 -m3d 2 -elevation3d 0.3 -f3d 200 -snapshot3d 400,1.5</div></div></center></td>
+ <td width=""><center><div><a href="img/gallery_000074.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000074.png"/></a><div class="highslide-caption">gmic beach.jpg -resize2dx 300 -m3d 2 -elevation3d 0.3 -f3d 200 -snapshot3d 400,1.5</div></div></center></td>
+</tr>
+<tr bgcolor="">
+<td width="135"><center><font size="1">gmic chloe.jpg -resize2dx 300 -m3d 2 -elevation3d 0.3 -f3d 200 -snapshot3d 400,1.5</font></center></td>
+<td width="144"><center><font size="1">gmic fawn.jpg -resize2dx 300 -m3d 2 -elevation3d 0.3 -f3d 200 -snapshot3d 400,1.5</font></center></td>
+<td width="171"><center><font size="1">gmic house.jpg -resize2dx 300 -m3d 2 -elevation3d 0.3 -f3d 200 -snapshot3d 400,1.5</font></center></td>
+<td width="96"><center><font size="1">gmic statue.jpg -resize2dx 300 -m3d 2 -elevation3d 0.3 -f3d 200 -snapshot3d 400,1.5</font></center></td>
+<td width="171"><center><font size="1">gmic beach.jpg -resize2dx 300 -m3d 2 -elevation3d 0.3 -f3d 200 -snapshot3d 400,1.5</font></center></td>
+</tr>
+<tr>
+ <td width=""><center><div><a href="img/gallery_000075.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000075.png"/></a><div class="highslide-caption">gmic chloe.jpg -topographic_map 16,2</div></div></center></td>
+ <td width=""><center><div><a href="img/gallery_000076.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000076.png"/></a><div class="highslide-caption">gmic fawn.jpg -topographic_map 16,2</div></div></center></td>
+ <td width=""><center><div><a href="img/gallery_000077.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000077.png"/></a><div class="highslide-caption">gmic house.jpg -topographic_map 16,2</div></div></center></td>
+ <td width=""><center><div><a href="img/gallery_000078.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000078.png"/></a><div class="highslide-caption">gmic statue.jpg -topographic_map 16,2</div></div></center></td>
+ <td width=""><center><div><a href="img/gallery_000079.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000079.png"/></a><div class="highslide-caption">gmic beach.jpg -topographic_map 16,2</div></div></center></td>
+</tr>
+<tr bgcolor="">
+<td width="135"><center><font size="1">gmic chloe.jpg -topographic_map 16,2</font></center></td>
+<td width="144"><center><font size="1">gmic fawn.jpg -topographic_map 16,2</font></center></td>
+<td width="171"><center><font size="1">gmic house.jpg -topographic_map 16,2</font></center></td>
+<td width="96"><center><font size="1">gmic statue.jpg -topographic_map 16,2</font></center></td>
+<td width="171"><center><font size="1">gmic beach.jpg -topographic_map 16,2</font></center></td>
+</tr>
+<tr>
+ <td width=""><center><div><a href="img/gallery_000080.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000080.png"/></a><div class="highslide-caption">gmic chloe.jpg --blur 10 -curvature. -norm. -+. 0.01 -/ -equalize 255 -n 0,255</div></div></center></td>
+ <td width=""><center><div><a href="img/gallery_000081.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000081.png"/></a><div class="highslide-caption">gmic fawn.jpg --blur 10 -curvature. -norm. -+. 0.01 -/ -equalize 255 -n 0,255</div></div></center></td>
+ <td width=""><center><div><a href="img/gallery_000082.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000082.png"/></a><div class="highslide-caption">gmic house.jpg --blur 10 -curvature. -norm. -+. 0.01 -/ -equalize 255 -n 0,255</div></div></center></td>
+ <td width=""><center><div><a href="img/gallery_000083.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000083.png"/></a><div class="highslide-caption">gmic statue.jpg --blur 10 -curvature. -norm. -+. 0.01 -/ -equalize 255 -n 0,255</div></div></center></td>
+ <td width=""><center><div><a href="img/gallery_000084.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000084.png"/></a><div class="highslide-caption">gmic beach.jpg --blur 10 -curvature. -norm. -+. 0.01 -/ -equalize 255 -n 0,255</div></div></center></td>
+</tr>
+<tr bgcolor="">
+<td width="135"><center><font size="1">gmic chloe.jpg --blur 10 -curvature. -norm. -+. 0.01 -/ -equalize 255 -n 0,255</font></center></td>
+<td width="144"><center><font size="1">gmic fawn.jpg --blur 10 -curvature. -norm. -+. 0.01 -/ -equalize 255 -n 0,255</font></center></td>
+<td width="171"><center><font size="1">gmic house.jpg --blur 10 -curvature. -norm. -+. 0.01 -/ -equalize 255 -n 0,255</font></center></td>
+<td width="96"><center><font size="1">gmic statue.jpg --blur 10 -curvature. -norm. -+. 0.01 -/ -equalize 255 -n 0,255</font></center></td>
+<td width="171"><center><font size="1">gmic beach.jpg --blur 10 -curvature. -norm. -+. 0.01 -/ -equalize 255 -n 0,255</font></center></td>
+</tr>
+<tr>
+ <td width=""><center><div><a href="img/gallery_000085.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000085.png"/></a><div class="highslide-caption">gmic chloe.jpg -blur 1 -pencilbw 0.3</div></div></center></td>
+ <td width=""><center><div><a href="img/gallery_000086.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000086.png"/></a><div class="highslide-caption">gmic fawn.jpg -blur 1 -pencilbw 0.3</div></div></center></td>
+ <td width=""><center><div><a href="img/gallery_000087.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000087.png"/></a><div class="highslide-caption">gmic house.jpg -blur 1 -pencilbw 0.3</div></div></center></td>
+ <td width=""><center><div><a href="img/gallery_000088.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000088.png"/></a><div class="highslide-caption">gmic statue.jpg -blur 1 -pencilbw 0.3</div></div></center></td>
+ <td width=""><center><div><a href="img/gallery_000089.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000089.png"/></a><div class="highslide-caption">gmic beach.jpg -blur 1 -pencilbw 0.3</div></div></center></td>
+</tr>
+<tr bgcolor="">
+<td width="135"><center><font size="1">gmic chloe.jpg -blur 1 -pencilbw 0.3</font></center></td>
+<td width="144"><center><font size="1">gmic fawn.jpg -blur 1 -pencilbw 0.3</font></center></td>
+<td width="171"><center><font size="1">gmic house.jpg -blur 1 -pencilbw 0.3</font></center></td>
+<td width="96"><center><font size="1">gmic statue.jpg -blur 1 -pencilbw 0.3</font></center></td>
+<td width="171"><center><font size="1">gmic beach.jpg -blur 1 -pencilbw 0.3</font></center></td>
+</tr>
+<tr>
+ <td width=""><center><div><a href="img/gallery_000090.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000090.png"/></a><div class="highslide-caption">gmic chloe.jpg -old_photo -drop_shadow 3,3 -rotate -5,1 -display_rgba</div></div></center></td>
+ <td width=""><center><div><a href="img/gallery_000091.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000091.png"/></a><div class="highslide-caption">gmic fawn.jpg -old_photo -drop_shadow 3,3 -rotate -10,1 -display_rgba</div></div></center></td>
+ <td width=""><center><div><a href="img/gallery_000092.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000092.png"/></a><div class="highslide-caption">gmic house.jpg -old_photo -drop_shadow 3,3 -rotate -15,1 -display_rgba</div></div></center></td>
+ <td width=""><center><div><a href="img/gallery_000093.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000093.png"/></a><div class="highslide-caption">gmic statue.jpg -old_photo -drop_shadow 3,3 -rotate -20,1 -display_rgba</div></div></center></td>
+ <td width=""><center><div><a href="img/gallery_000094.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000094.png"/></a><div class="highslide-caption">gmic beach.jpg -old_photo -drop_shadow 3,3 -rotate -25,1 -display_rgba</div></div></center></td>
+</tr>
+<tr bgcolor="">
+<td width="135"><center><font size="1">gmic chloe.jpg -old_photo -drop_shadow 3,3 -rotate -5,1 -display_rgba</font></center></td>
+<td width="144"><center><font size="1">gmic fawn.jpg -old_photo -drop_shadow 3,3 -rotate -10,1 -display_rgba</font></center></td>
+<td width="171"><center><font size="1">gmic house.jpg -old_photo -drop_shadow 3,3 -rotate -15,1 -display_rgba</font></center></td>
+<td width="96"><center><font size="1">gmic statue.jpg -old_photo -drop_shadow 3,3 -rotate -20,1 -display_rgba</font></center></td>
+<td width="171"><center><font size="1">gmic beach.jpg -old_photo -drop_shadow 3,3 -rotate -25,1 -display_rgba</font></center></td>
+</tr>
+<tr>
+ <td width=""><center><div><a href="img/gallery_000095.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000095.png"/></a><div class="highslide-caption">gmic chloe.jpg -erode 10 --erode 3 -- -equalize 255 -smooth 40,0,1,1,3 -normalize 0,255 -negative</div></div></center></td>
+ <td width=""><center><div><a href="img/gallery_000096.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000096.png"/></a><div class="highslide-caption">gmic fawn.jpg -erode 10 --erode 3 -- -equalize 255 -smooth 60,0,1,1,3 -normalize 0,255 -negative</div></div></center></td>
+ <td width=""><center><div><a href="img/gallery_000097.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000097.png"/></a><div class="highslide-caption">gmic house.jpg -erode 10 --erode 3 -- -equalize 255 -smooth 80,0,1,1,3 -normalize 0,255 -negative</div></div></center></td>
+ <td width=""><center><div><a href="img/gallery_000098.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000098.png"/></a><div class="highslide-caption">gmic statue.jpg -erode 10 --erode 3 -- -equalize 255 -smooth 100,0,1,1,3 -normalize 0,255 -negative</div></div></center></td>
+ <td width=""><center><div><a href="img/gallery_000099.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000099.png"/></a><div class="highslide-caption">gmic beach.jpg -erode 10 --erode 3 -- -equalize 255 -smooth 120,0,1,1,3 -normalize 0,255 -negative</div></div></center></td>
+</tr>
+<tr bgcolor="">
+<td width="135"><center><font size="1">gmic chloe.jpg -erode 10 --erode 3 -- -equalize 255 -smooth 40,0,1,1,3 -normalize 0,255 -negative</font></center></td>
+<td width="144"><center><font size="1">gmic fawn.jpg -erode 10 --erode 3 -- -equalize 255 -smooth 60,0,1,1,3 -normalize 0,255 -negative</font></center></td>
+<td width="171"><center><font size="1">gmic house.jpg -erode 10 --erode 3 -- -equalize 255 -smooth 80,0,1,1,3 -normalize 0,255 -negative</font></center></td>
+<td width="96"><center><font size="1">gmic statue.jpg -erode 10 --erode 3 -- -equalize 255 -smooth 100,0,1,1,3 -normalize 0,255 -negative</font></center></td>
+<td width="171"><center><font size="1">gmic beach.jpg -erode 10 --erode 3 -- -equalize 255 -smooth 120,0,1,1,3 -normalize 0,255 -negative</font></center></td>
+</tr>
+<tr>
+ <td width=""><center><div><a href="img/gallery_000100.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000100.png"/></a><div class="highslide-caption">gmic chloe.jpg -light_relief ,</div></div></center></td>
+ <td width=""><center><div><a href="img/gallery_000101.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000101.png"/></a><div class="highslide-caption">gmic fawn.jpg -light_relief ,</div></div></center></td>
+ <td width=""><center><div><a href="img/gallery_000102.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000102.png"/></a><div class="highslide-caption">gmic house.jpg -light_relief ,</div></div></center></td>
+ <td width=""><center><div><a href="img/gallery_000103.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000103.png"/></a><div class="highslide-caption">gmic statue.jpg -light_relief ,</div></div></center></td>
+ <td width=""><center><div><a href="img/gallery_000104.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000104.png"/></a><div class="highslide-caption">gmic beach.jpg -light_relief ,</div></div></center></td>
+</tr>
+<tr bgcolor="">
+<td width="135"><center><font size="1">gmic chloe.jpg -light_relief ,</font></center></td>
+<td width="144"><center><font size="1">gmic fawn.jpg -light_relief ,</font></center></td>
+<td width="171"><center><font size="1">gmic house.jpg -light_relief ,</font></center></td>
+<td width="96"><center><font size="1">gmic statue.jpg -light_relief ,</font></center></td>
+<td width="171"><center><font size="1">gmic beach.jpg -light_relief ,</font></center></td>
+</tr>
+<tr>
+ <td width=""><center><div><a href="img/gallery_000105.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000105.png"/></a><div class="highslide-caption">gmic chloe.jpg --warhol 2 -fade_radial 50,70</div></div></center></td>
+ <td width=""><center><div><a href="img/gallery_000106.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000106.png"/></a><div class="highslide-caption">gmic fawn.jpg --warhol 3 -fade_radial 50,70</div></div></center></td>
+ <td width=""><center><div><a href="img/gallery_000107.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000107.png"/></a><div class="highslide-caption">gmic house.jpg --warhol 4 -fade_radial 50,70</div></div></center></td>
+ <td width=""><center><div><a href="img/gallery_000108.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000108.png"/></a><div class="highslide-caption">gmic statue.jpg --warhol 5 -fade_radial 50,70</div></div></center></td>
+ <td width=""><center><div><a href="img/gallery_000109.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000109.png"/></a><div class="highslide-caption">gmic beach.jpg --warhol 6 -fade_radial 50,70</div></div></center></td>
+</tr>
+<tr bgcolor="">
+<td width="135"><center><font size="1">gmic chloe.jpg --warhol 2 -fade_radial 50,70</font></center></td>
+<td width="144"><center><font size="1">gmic fawn.jpg --warhol 3 -fade_radial 50,70</font></center></td>
+<td width="171"><center><font size="1">gmic house.jpg --warhol 4 -fade_radial 50,70</font></center></td>
+<td width="96"><center><font size="1">gmic statue.jpg --warhol 5 -fade_radial 50,70</font></center></td>
+<td width="171"><center><font size="1">gmic beach.jpg --warhol 6 -fade_radial 50,70</font></center></td>
+</tr>
+<tr>
+ <td width=""><center><div><a href="img/gallery_000110.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000110.png"/></a><div class="highslide-caption">gmic chloe.jpg --sketchbw , -reverse -blend overlay</div></div></center></td>
+ <td width=""><center><div><a href="img/gallery_000111.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000111.png"/></a><div class="highslide-caption">gmic fawn.jpg --sketchbw , -reverse -blend overlay</div></div></center></td>
+ <td width=""><center><div><a href="img/gallery_000112.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000112.png"/></a><div class="highslide-caption">gmic house.jpg --mirror x -append x -map_sphere ,</div></div></center></td>
+ <td width=""><center><div><a href="img/gallery_000113.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000113.png"/></a><div class="highslide-caption">gmic statue.jpg --mirror x -append x -map_sphere ,</div></div></center></td>
+ <td width=""><center><div><a href="img/gallery_000114.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000114.png"/></a><div class="highslide-caption">gmic beach.jpg -gimp_painting 2,1.5,2</div></div></center></td>
+</tr>
+<tr bgcolor="">
+<td width="135"><center><font size="1">gmic chloe.jpg --sketchbw , -reverse -blend overlay</font></center></td>
+<td width="144"><center><font size="1">gmic fawn.jpg --sketchbw , -reverse -blend overlay</font></center></td>
+<td width="171"><center><font size="1">gmic house.jpg --mirror x -append x -map_sphere ,</font></center></td>
+<td width="96"><center><font size="1">gmic statue.jpg --mirror x -append x -map_sphere ,</font></center></td>
+<td width="171"><center><font size="1">gmic beach.jpg -gimp_painting 2,1.5,2</font></center></td>
+</tr>
+<tr>
+ <td width=""><center><div><a href="img/gallery_000115.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000115.png"/></a><div class="highslide-caption">gmic chloe.jpg -focale3d 800 -remove 512,512,1,3 -chessboard 64,64,0,0,15,1,${-RGB},${-RGB} --imagecube3d -mul3d[-1] 230 -rotate3d[-1] 1,1,0.5,50 -mode3d 3 -object3d[-2] [-1],50%,50%,0 -remove[-1] -gimp_painting 1,1.5,2 -equalize. 256</div></div></center></td>
+ <td width=""><center><div><a href="img/gallery_000116.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000116.png"/></a><div class="highslide-caption">gmic fawn.jpg --histogram 256 -display_graph. {0,w},{0,h},3 -to_rgba[-1] -mul[-1] 0.5 -blend alpha</div></div></center></td>
+ <td width=""><center><div><a href="img/gallery_000117.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000117.png"/></a><div class="highslide-caption">gmic house.jpg 100%,100%,1,1,'X=(x-w/2)/30;Y=(y-h/2)/30;5*cos(X*Y)*sqrt(X^2+Y^2)' -elevation3d[0] [1] -keep[0] -rotate3d 1,1,0,60 -snapshot3d 500,2</div></div></center></td>
+ <td width=""><center><div><a href="img/gallery_000118.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000118.png"/></a><div class="highslide-caption">gmic statue.jpg -kuwahara 10 -noise 30 -smooth 100,0,1,3,3 -sharpen 400 -normalize 0,255 -equalize 256</div></div></center></td>
+ <td width=""><center><div><a href="img/gallery_000119.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gallery_thumb_000119.png"/></a><div class="highslide-caption">gmic beach.jpg -frame 4,4,0 -array_mirror 1,3</div></div></center></td>
+</tr>
+<tr bgcolor="">
+<td width="135"><center><font size="1">gmic chloe.jpg -focale3d 800 -remove 512,512,1,3 -chessboard 64,64,0,0,15,1,${-RGB},${-RGB} --imagecube3d -mul3d[-1] 230 -rotate3d[-1] 1,1,0.5,50 -mode3d 3 -object3d[-2] [-1],50%,50%,0 -remove[-1] -gimp_painting 1,1.5,2 -equalize. 256</font></center></td>
+<td width="144"><center><font size="1">gmic fawn.jpg --histogram 256 -display_graph. {0,w},{0,h},3 -to_rgba[-1] -mul[-1] 0.5 -blend alpha</font></center></td>
+<td width="171"><center><font size="1">gmic house.jpg 100%,100%,1,1,'X=(x-w/2)/30;Y=(y-h/2)/30;5*cos(X*Y)*sqrt(X^2+Y^2)' -elevation3d[0] [1] -keep[0] -rotate3d 1,1,0,60 -snapshot3d 500,2</font></center></td>
+<td width="96"><center><font size="1">gmic statue.jpg -kuwahara 10 -noise 30 -smooth 100,0,1,3,3 -sharpen 400 -normalize 0,255 -equalize 256</font></center></td>
+<td width="171"><center><font size="1">gmic beach.jpg -frame 4,4,0 -array_mirror 1,3</font></center></td>
+</tr>
+</table></center>
+ </div></div><div id="footer"><img alt="" src="images/footer.jpg" /></div></div>
+<!--#include file="copyright.html" -->
+<!--#include file="footer.html" -->

@@ -1,0 +1,199 @@
+gmic (_gmic_version) testing; urgency=low
+
+  * Current testing release.
+
+ -- David Tschumperlé <David.Tschumperle@ensicaen.fr>  Thu, 30 Dec 2012 11:39:41 +0200
+
+gmic (1.5.0.8+dfsg-1) unstable; urgency=low
+
+  * [b7ddf3a2] Merge commit 'upstream/1.5.0.8+dfsg'
+  * [a0dd17c6] Make GMIC build with recent OpenCV versions. (Closes: #652763)
+  * [7cb4a04f] Don't use configure, call src/Makefile directly.
+
+ -- Bernd Zeimetz <bzed@debian.org>  Sun, 08 Jan 2012 23:32:01 +0100
+
+gmic (1.5.0.7+dfsg-1) unstable; urgency=low
+
+  * [97e3ecbd] Merge commit 'upstream/1.5.0.7+dfsg'
+
+ -- Bernd Zeimetz <bzed@debian.org>  Sun, 04 Dec 2011 19:55:28 +0100
+
+gmic (1.5.0.5+dfsg-1) unstable; urgency=low
+
+  * [4978288c] Removing Jakub Wilk from Uploaders as requested.
+    Thanks for your work Jakub!
+  * [b7314e4e] Merge commit 'upstream/1.5.0.5+dfsg'
+  * [866550ef] Refactoring debian/rules
+  * [fce14609] Bumping Standards-Version, no changes needed.
+
+ -- Bernd Zeimetz <bzed@debian.org>  Sun, 30 Oct 2011 19:06:34 +0100
+
+gmic (1.5.0.0+dfsg-1) unstable; urgency=low
+
+  * [20fc4583] Merge commit 'upstream/1.5.0.0+dfsg'
+  * [ec62b62d] Dropping patch for configure fixes, not necessary anymore.
+  * [87daddc5] Refreshing patches.
+  * [833f51b5] Remove lib*magick++*-dev build-deps, not needed anymore.
+  * [7592f26e] Add libopenexr-dev as build-dependency.
+  * [5a8d6059] Don't try to install upstream's changelog, not shipped anymore.
+
+ -- Bernd Zeimetz <bzed@debian.org>  Tue, 26 Jul 2011 15:17:46 +0200
+
+gmic (1.4.8.1+dfsg-2) unstable; urgency=low
+
+  * [24dc0e58] Add patch to fix FTBFS on various architectures.
+    Thanks to Hector Oron (Closes: #614273)
+
+ -- Bernd Zeimetz <bzed@debian.org>  Sun, 20 Feb 2011 22:52:04 +0100
+
+gmic (1.4.8.1+dfsg-1) unstable; urgency=low
+
+  * [fab6cc4d] Merge commit 'upstream/1.4.8.1+dfsg'
+
+ -- Bernd Zeimetz <bzed@debian.org>  Wed, 16 Feb 2011 22:37:42 +0100
+
+gmic (1.4.8.0+dfsg-1) unstable; urgency=low
+
+  * [33847b44] Merge commit 'upstream/1.4.8.0+dfsg'
+  * [6e771817] Refreshing patches.
+
+ -- Bernd Zeimetz <bzed@debian.org>  Thu, 10 Feb 2011 13:13:22 +0100
+
+gmic (1.4.4.2+dfsg-1) experimental; urgency=low
+
+  * [3253ce08] Merge commit 'upstream/1.4.4.2+dfsg'
+
+ -- Bernd Zeimetz <bzed@debian.org>  Sun, 07 Nov 2010 18:47:00 +0100
+
+gmic (1.4.2.0+dfsg-1) experimental; urgency=low
+
+  * [f93deb46] Merge commit 'upstream/1.4.2.0+dfsg'
+  * [00290d4f] Refreshing patches.
+
+ -- Bernd Zeimetz <bzed@debian.org>  Wed, 20 Oct 2010 20:57:01 +0200
+
+gmic (1.4.0.0+dfsg-1) experimental; urgency=low
+
+  * [6fd356d5] Merge commit 'upstream/1.4.0.0+dfsg'
+  * [331aef59] Adding new build-dependencies.
+  * [86b49de0] Refreshing patches.
+
+ -- Bernd Zeimetz <bzed@debian.org>  Fri, 03 Sep 2010 14:49:11 +0200
+
+gmic (1.3.9.0+dfsg-1) unstable; urgency=low
+
+  * [23ccb979] Merge commit 'upstream/1.3.9.0+dfsg'
+  * [bef99d90] Install upstream changelog.
+
+ -- Bernd Zeimetz <bzed@debian.org>  Mon, 02 Aug 2010 10:26:51 +0200
+
+gmic (1.3.7.1+dfsg-1) unstable; urgency=low
+
+  * [b573582f] Merge commit 'upstream/1.3.7.1+dfsg'
+
+ -- Bernd Zeimetz <bzed@debian.org>  Mon, 19 Jul 2010 19:11:21 +0200
+
+gmic (1.3.6.0+dfsg-1) unstable; urgency=low
+
+  * [204cd64b] Merge commit 'upstream/1.3.6.0+dfsg'
+
+ -- Bernd Zeimetz <bzed@debian.org>  Wed, 30 Jun 2010 18:42:20 +0200
+
+gmic (1.3.5.7+dfsg-1) unstable; urgency=low
+
+  * [f733c366] Merge commit 'upstream/1.3.5.7+dfsg'
+  * [ee1cba19] Refreshing patches.
+
+ -- Bernd Zeimetz <bzed@debian.org>  Wed, 23 Jun 2010 02:23:16 +0200
+
+gmic (1.3.5.4+dfsg-2) unstable; urgency=low
+
+  * [e14a94e2] Rise required amount of RAM to avoid FTBFS on s390.
+    (*sigh* - these machines should have neough RAM and swap....)
+
+ -- Bernd Zeimetz <bzed@debian.org>  Mon, 07 Jun 2010 19:37:02 +0200
+
+gmic (1.3.5.4+dfsg-1) unstable; urgency=low
+
+  * [821186d5] Fix dversionmangle in watch file.
+  * [8fab3d8a] Merge commit 'upstream/1.3.5.4+dfsg'
+    - This icludes a fix for the FTBFS on various archicetures.
+      (Closes: #584304)
+  * [7550bc35] Refresh patches.
+  * [d682b862] Don't gunzip manpages and create directories before make
+    install.
+  * [6dccd71b] Tidy debian/rules' clean target.
+  * [dba56977] Install bash completion
+
+ -- Bernd Zeimetz <bzed@debian.org>  Mon, 07 Jun 2010 13:53:22 +0200
+
+gmic (1.3.5.1+dfsg2-1) unstable; urgency=low
+
+  * Upstream released a bugfix-release for 1.3.5.1 - unfortunately with the
+    same version number.
+  * [0e506788] Merge commit 'upstream/1.3.5.1+dfsg2'
+
+ -- Bernd Zeimetz <bzed@debian.org>  Wed, 26 May 2010 16:48:40 +0200
+
+gmic (1.3.5.1+dfsg-1) unstable; urgency=low
+
+  * [97366020] Use -O0 in case the system we build on has less than 1GB
+    RAM.
+  * [6aca1038] Merge commit 'upstream/1.3.5.1+dfsg'
+  * [fe6b2057] Fix awk call to evaluate the available memory.
+  * [6806172f] Updating patches.
+
+ -- Bernd Zeimetz <bzed@debian.org>  Wed, 26 May 2010 12:13:50 +0200
+
+gmic (1.3.5.0+dfsg-1) unstable; urgency=low
+
+  * [4efc6ba8] Add Enhances/Depends on gimp.
+  * [1cec005d] Merge commit 'upstream/1.3.5.0+dfsg'
+  * [4a1816e8] Don't use pristine-tar on git-import-orig. We need to
+    recreate the tarball after removing non-free material.
+
+ -- Bernd Zeimetz <bzed@debian.org>  Sun, 16 May 2010 22:48:10 +0200
+
+gmic (1.3.5.0~beta1+dfsg-1) experimental; urgency=low
+
+  * Beta version of the upcoming upstream version.
+  * [55bc031b] Merge commit 'upstream/1.3.5.0.beta1+dfsg'
+  * [35c39744] Bumping Standards-Version to 3.8.4, no changes needed.
+  * [1e7913f6] debian/control: Adding VCS Information.
+
+ -- Bernd Zeimetz <bzed@debian.org>  Wed, 28 Apr 2010 19:49:35 +0200
+
+gmic (1.3.4.1+dfsg-4) unstable; urgency=low
+
+  * [973d62d8] Small typo making the kfreebsd fix fail. Fixed now.
+  * [cd7344ee] Use -O0 on mips to avoid internal errors in g++.
+
+ -- Bernd Zeimetz <bzed@debian.org>  Tue, 20 Apr 2010 22:58:25 +0200
+
+gmic (1.3.4.1+dfsg-3) unstable; urgency=low
+
+  * [045a2f86] Remove strip commands from src/Makefile. dh_strip takes
+    care of stripping if necessary.
+  * [d3740bdf] Add patch to make gmic build on kfreebsd.
+  * [61119501] Use -O0 on arm to stop g++ from using even more memory.
+
+ -- Bernd Zeimetz <bzed@debian.org>  Tue, 20 Apr 2010 18:09:57 +0200
+
+gmic (1.3.4.1+dfsg-2) unstable; urgency=low
+
+  * [77f87ac2] Update jwilk's email address to jwilk@d.o
+  * [955493d8] Updating debian/copyright.
+
+ -- Bernd Zeimetz <bzed@debian.org>  Tue, 20 Apr 2010 11:15:26 +0200
+
+gmic (1.3.4.1+dfsg-1) unstable; urgency=low
+
+  [ Jakub Wilk ]
+  * Initial release (closes: #532629).
+
+  [ Bernd Zeimetz ]
+  * Removing non-free content (the html documentation comes without
+    sources and was generated using a non-free album generator).
+  * Also removing upstream's debian folder.
+
+ -- Bernd Zeimetz <bzed@debian.org>  Tue, 13 Apr 2010 22:56:12 +0200

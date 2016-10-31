@@ -1,0 +1,753 @@
+#
+#  File        : bbq_intro.gmic
+#                ( G'MIC commands file )
+#
+#  Description : Source code of the Arkham BBQ Party 2016 - Invitation intro.
+#                This source file has been written in less than 3 days, and
+#                is not intended to use optimized tricks of course :)
+#
+#  Copyright   : David Tschumperle
+#                ( http://tschumperle.users.greyc.fr/ )
+#
+#  License     : CeCILL v2.0
+#                ( http://www.cecill.info/licences/Licence_CeCILL_V2-en.html )
+#
+#  This software is governed by the CeCILL  license under French law and
+#  abiding by the rules of distribution of free software.  You can  use,
+#  modify and/ or redistribute the software under the terms of the CeCILL
+#  license as circulated by CEA, CNRS and INRIA at the following URL
+#  "http://www.cecill.info".
+#
+#  As a counterpart to the access to the source code and  rights to copy,
+#  modify and redistribute granted by the license, users are provided only
+#  with a limited warranty  and the software's author,  the holder of the
+#  economic rights,  and the successive licensors  have only  limited
+#  liability.
+#
+#  In this respect, the user's attention is drawn to the risks associated
+#  with loading,  using,  modifying and/or developing or reproducing the
+#  software by the user in light of its specific status of free software,
+#  that may mean  that it is complicated to manipulate,  and  that  also
+#  therefore means  that it is reserved for developers  and  experienced
+#  professionals having in-depth computer knowledge. Users are therefore
+#  encouraged to load and test the software's suitability as regards their
+#  requirements in conditions enabling the security of their systems and/or
+#  data to be ensured and,  more generally, to use and operate it in the
+#  same conditions as regards security.
+#
+#  The fact that you are presently reading this means that you have had
+#  knowledge of the CeCILL license and that you accept its terms.
+#
+
+# The main run() function.
+#--------------------------
+run : -skip ${1=0}
+  -v -
+  _output_video=$1
+  -if $1
+    -v + -e[] "\n  > Run 'BBQ Intro 2016' demo, by ARKHAM (video output mode)." -v -
+    -_run
+  -else
+    -if ${-path_tmp}/bbq_intro2016.mp3 -else -l[]
+      -v + -e[] "\n  > Retrieve music from the G'MIC server..." -v -
+      -i raw:http://gmic.eu/bbq_intro2016.mp3,uchar -o raw:${-path_tmp}/bbq_intro2016.mp3,uchar
+      -v + -e[] "  > ... done!" -v -
+    -onfail
+      -v + -e[] "  > ... failed!" -v -
+    -endl -endif
+    -v + -e[] "\n  > Run 'BBQ Intro 2016' demo, by ARKHAM (live mode)." -v -
+    -rm
+    -parallel "-x \"cvlc "${-path_tmp}"bbq_intro2016.mp3\"","-_run"
+  -endif
+
+_run :
+  -v -
+  -w 640,400,0,"BBQ Party 2016 - Intro (Arkham)"
+  -bbq_intro_notice
+  -bbq_intro_intro
+  -bbq_intro1
+  -bbq_intro2
+  -bbq_intro3
+  -bbq_intro4
+  -bbq_intro5
+  -bbq_intro6
+  -bbq_intro7
+  -bbq_intro8
+  -bbq_intro_final
+  -o[] "bbq_intro2016.avi",25,mp4v,0
+  -v +
+
+outvideo :
+  --l
+    -if $_output_video
+      0 -t. "Arkham",0,0,14,1,1 -expand_xy. 1,0 -f. 'if(x<0.45*w,i,1-i)' -frame. 1,1,1
+      -*. 255 -to_rgb.
+      -j.. [-1],{{-2,w}-w-2},2,0,0,0.25 -rm.
+      -r 400%,400%,1,3
+      -frame 2,2,128 -frame 20,20,64
+      -w.
+      -o "bbq_intro2016.avi",25,mp4v,1
+    -else
+    -w. -wait 40
+    -endif
+    -if {!{*}} -v + -quit -endif
+  -rm -endl
+
+# Notice.
+#---------
+bbq_intro_notice :
+  0 -t. \
+"The intro you are about to watch:"\n\n\
+"  - Fits in a 320x200 screen"\n\
+"    (eq. to. Atari ST lowres)."\n\
+"  - ...But uses more than 16 colors :)."\n\
+"  - Uses our own 3D routines (no OpenGL)."\n\
+"  - Has a source code of less than 750 loc."\n\
+"  - Is open-source."\n\
+"  - Has been written in the G'MIC"\n\
+"    script language."\n\n\
+"       [ More info at http://gmic.eu ]"\n\
+,0,0,15,1,255
+  320,200 -j. [-2],{(w-{-2,w})/2},{(h-{-2,h})/2} -rm..
+  -to_rgb.
+  -repeat 220
+    -if {$><150} --f. 'y<1.8*$>' -b. y,12% -*. [-2]
+    -elif {$>>170} --*. {max(0,1-($>-170)/20)}
+    -else [-1] -endif
+    -outvideo. -rm.
+  -done
+  -rm
+
+# Title page.
+#------------
+bbq_intro_intro :
+  -l[]
+    ({'ARKHAM'}) -s x
+    x=0 N=$! -repeat $N 0 -t. {$>,t},0,0,48,1,1 x$>=$x y$>=0 z$>={-3200-150*$>} x={$x+w+8} -done -k[50%--1]
+    -expand_xy 6,0 -dilate_circ 5 -b 0.5 -expand_z 1,0 -isosurface3d 10% -*3d 1,1,5 -rv3d
+    -repeat $N -col3d[$>] ${-RGB} -done
+  -endl
+  0 -t. "invites you to",0,0,48,1,1 -r2dy. 18 --f. 255 -to_rgb.
+  -random3d 2500 -col3d. 255 -*3d. 320,200,1000 --3d. 160,100
+  -l3d 0,0,-600
+  t=0
+  -do
+    320,200,1,3
+
+    # Starfield.
+    -l.. -s3d
+      -r[2] 3,{2,h/3},1,1,-1 -s[2] x -%[4] 1000
+      --/[4] 1000 -*. -1 -n. 0,2 -c. 0,1 -sqr. -j.. [-1] -rm.
+      -a[2-4] x
+      -y -a y
+    -endl
+    -j3d. [-2],50%,50%,-600,1,0,0,0,240 --3d.. 0,0,{min(12,$t/10-10)}
+
+    # Torus.
+    -torus3d 100,30 -col3d. 255,64,255
+    --col3d. 64,64,255 -r3d. 1,0,0,-90 -+3d. 65,0,0
+    -+3d[-2,-1] -c3d.
+    -r3d. 1,1,0,{-6*$t} -r3d. 0,0,1,{2*$t}
+    -j3d.. [-1],{($t-200)*2}%,50%,0,0.25,3,0,0 -rm.
+
+    # Letters.
+    -repeat $N
+      --r3d[$>] 1,{$>%4},1,{-${z$>}/2}
+      -j3d.. [-1],{50+${x$>}},{60+${y$>}},${z$>},1,4,0,0 -rm.
+      z$>={tl=280+6*$<;if($t<tl,min(0,${z$>}+20),-20*($t-tl))}
+    -done
+
+    # Presents.
+    -if {$t<280} op={max(0,min(1,($t-200)/20))}
+    -else op={max(0,1-($t-280)/20)}
+    -endif
+    -j. [-3],{(w-{-3,w})/2},120,0,0,$op,[-4]
+
+    -*. {if($t<330,min(1,$t/30),max(0,1-($t-330)/30))} # Fade from/to black.
+    -outvideo.
+    -rm.
+    t={$t+1}
+  -while {$t<370}
+  -rm
+
+# Fire effect
+#-------------
+bbq_intro1 :
+
+  # Init image data.
+  s=" The BBQ\nParty 2016"
+  -i[0] 100,32
+  -i[1] (0,255,255,255,255^0,0,255,255,255^0,0,0,128,255) -r[1] 256,1,1,3,3
+  -i[2] (0,0,0;0,0,0;1,1,1;0,1,0) -*[2] 0.21
+  -text3d $s,33,3,1
+  -mv. 3 -c3d[3] -n3d[3] -*3d[3] 320 -col3d[3] 255,205,130 -db3d 0 -f3d 300
+  100,100 -rand. 0,255 -ellipse. 50%,50%,5,5,0,1,300 -b. 10
+  -sharpen. 1000 -shrink_xy. 1 -n. 0,255 -to_rgb. -light3d [-1] -rm.
+
+  # Start animation loop.
+  angle=0 t=0
+  -do
+    -correlate[0] [2]                                                # Apply fire effect.
+    {0,w},1 -rand. 128,256 -j[0] [-1],0,{{0,h}-1} -rm.       # Add new random values at the bottom line.
+    --r[0] 400,200,1,1,3 -map. [1]                                # Map fire palette
+
+    y={max(55,200-$t)}
+
+    -e "\nY = "$y"\n"
+    --r3d[3] 0,1,0,{-$angle} -j3d.. [-1],50%,$y%,50,0.8,5,0,0            # Draw 3d object.
+
+    -*3d. 0.25,0.16,1 -j3d[0] [-1],50%,$y%,50,0.1,3,0,0
+    -rm.
+    angle={$angle+3}                                                 # Update 3d angle.
+
+    -r. 320,200,1,3,2
+    ratio={100-2*($t-300)}
+    ratio={max(2/w,min($ratio,100))}
+    -r. $ratio%,$ratio%,1,3,1
+
+    -*. {if($t<330,min(1,$t/30),max(0,1-($t-330)/30))} # Fade from/to black.
+
+    -r. 320,200,1,3
+
+    -outvideo.
+    -rm.
+    t={$t+1}
+  -while {$t<370}
+  -rm
+
+
+# Shade bobs.
+#-------------
+bbq_intro2 :
+  -reset -v -
+  t=100
+
+  # Start animation loop.
+  _t=0
+  -do
+    t={$t+0.025}
+    -if {$t>pi} # Reset motions variables if necessary.
+      rx={u(-1,1)} ry={u(-1,1)} rz={u(-1,1)} rt={u(-1,1)} rcx={u(-0.6*0.6)} t=0
+      N={120+round(u(80))} R={(2+round(u(10)))*min({*,w},{*,h})/300}
+      -if $obj3d -rm[colormap,img,obj3d] -endif
+      {10+round(u(12))},1,1,3 -noise[0] 255,2 -r[0] 256,1,1,3,3 -*[0] 255 -shift[0] 1 -nm. colormap
+      (67.5;73.5;109.5;103.5;51.5;100.5;{2*$N};$N) 3,{2*$N},1,1,0
+      1,$N,1,1,5 2,$N,1,1,'y+x*$N' -a[-2--1] x -z. 0,5
+      4,$N,1,1,1 -y[-3--1] -a[-4--1] y -nm. obj3d
+      {{*,w}/2},{{*,h}/2} -nm. img
+    -endif
+
+    # Compute bobs coordinates.
+    r={$ry+$rx*cos(6*$rz*$t)+(1-$rx)*sin(6*$rt*$t)}
+    (0;{30*$ry*($N-1)}) ($t;{2*pi*($N-1)/$N+$t}) -r[-2,-1] 1,$N,1,1,3
+    -+.. {360*sin($rz*$t)} -*.. {pi/180}
+    --sin[-2,-1] -cos[-4,-3] -*[-4,-2] $r -*[-3,-1] $rcx -+[-4,-3] -+[-2,-1]
+    -*.. {{*,w}/4} -*. {{*,h}/4} -a[-2,-1] x
+    --+. $R --.. $R -a[-2,-1] y -z. 0,2 -y. -j[obj3d] [-1],0,8 -rm.
+
+    # Draw bobs, map colors and display.
+    -j3d[img] [obj3d],50%,50%,0,-1,2,0,0
+    -&[img] 255 --map[img] [colormap]
+    -if {$_t<100} -*. {min(1,$_t/30)} -endif
+
+    -plane3d 320,26,1,1 --+3d. 0,25,0
+    d={max(0,1.6*(545-$_t))}
+    --3d.. $d,0,0 -+3d. $d,0,0
+    -+3d[-2,-1]
+    --+3d. 0,50,0 --+3d[-2,-1] 0,100,0
+    -+3d[-4--1] -col3d. 0 --3d. 160,100,0
+    -r3d. 0,0,1,{-$_t}
+    -j3d.. [-1],50%,50%,-320,1,2,0,0 -rm.
+
+    -if {!($_t%2)} -outvideo. -endif
+    -rm.
+    _t={$_t+1}
+  -while {$_t<550}
+  -rm
+
+# Landscape.
+#-----------
+bbq_intro3 :
+  W=150 H=350
+
+  # Generate global map + colors.
+  900,900 -plasma. 1,1,6 -b. 0.07% -n. 0,255 -nm. map
+  --g. -*. 0.5 -+[-2,-1] -n. 0,1 -^. 2 -n. -150,330
+  -equalize[map] 256 -n[map] -400,160 -c[map] 0,100% # Add water.
+  (0,102,51;149,175,124;102,42,0;255,255,255) -permute. yzcx -srgb2rgb. -r. 256,1,1,3,3 -rgb2srgb. --n[map] 0,255 -map. [-2] -rm..
+  -+. [-2] -rm.. -c. 0,255 -nm. colors # Colors.
+
+  # Pre-compute some images used on each frame.
+  $W,$H,1,1,'x' -y. x -nm. x # Increasing x.
+  $W,$H,1,1,'1+x+y*w' -y. x -nm. offsets # Offsets (+1).
+  $W,$H,1,1,'0.5*y' -nm. gmap Mgmap={iM} # Z-increment for altitude map.
+  $W,$H,1,3 -fc. 60,80,135 -nm. ccolors # Color for the horizon.
+  $W,$H,1,1,'(y/$H)^2' -nm. mcolors # Mask for the horizon.
+  $W,400,1,1,'b=h-1-$Mgmap;if(y>=b,256+(y-b)*255/(h-1-b),y*255/b)' -round. # Background.
+  (96^16^128) (0^200^255) -a[-2,-1] x -r. 256,1,1,3,3
+  (0^32^0) (0^64^128) -a[-2,-1] x -r. 256,1,1,3,3
+  -a[-2,-1] x -map.. [-1] -rm.
+  -nm. background
+  -quadrangle3d[] -0.45,0,0,0.45,0,0,0.55,1,0,-0.55,1,0 -*3d. {$W/2},{$H/2} -nm. viewrange3d # View range.
+  (64^16^0) -r. $W -nm. groundcolor # Ground color.
+
+  _t=0
+  -do
+    dt={$_t/20}
+
+    # Get part of the map to display.
+    t={$dt*0.03}
+    xm={map,w/2+(w-$H/2)/2*cos(3.1*$t)}
+    ym={map,h/2+(h-$H/2)/2*sin(2.8*$t)}
+    u={map,(w-$H/2)*cos(2.5*$t)}
+    v={map,(h-$H/2)*sin(9.7*$t)}
+    a={atan2($v,$u)*180/pi}
+    --r3d[viewrange3d] 0,0,1,{-$a} -y. x
+    ({$xm+i[8]},{$xm+i[11]};{$xm+i[17]},{$xm+i[14]}^{$ym+i[9]},{$ym+i[12]};{$ym+i[18]},{$ym+i[15]}) -rm..
+    -r. $W,$H,1,2,3 --warp[map,colors] [-1],0,1,0 -rm...
+    -nm.. lmap -nm. lcolors
+
+    # Add color shading and altitude to local maps.
+    --!=[lmap] 0 -nm. ground
+    -+[lmap] [gmap]
+    -j[lcolors] [ccolors],0,0,0,0,1,[mcolors]
+    -j[lcolors] [groundcolor]
+    --round[lmap] -f. '>m=abs(j(0,-1));if(i>m,i,-m)' -nm. y0  # Compute visible top points.
+    --shift. 0,1 -abs. -+. 1 -nm. y1 # Compute visible bottom points.
+    -*[y0,y1] [ground] -rm[ground]
+    -r[lcolors,y0,y1] {$W*$H},1,1,100%,-1
+
+    # Keep only visible primitives.
+    -->[y0] 0 -*. [offsets] -discard. 0
+    -if {h} # There is something to display (ground).
+      --. 1 --warp[x] [-1],0,0,0 -nm. lx
+      -warp[lcolors,y0,y1] [-2],0,0,0 -rm..
+
+      # Generate 3d object.
+      N={h} ({'CImg3d'},{2*$N},$N)
+      --a[lx] [y0],x -rm[y0] --a[lx] [y1],x -rm[lx,y1] -a[-2,-1] y -z. 0,2
+      1,$N,1,1,2 --f. y --+. $N -a[-3--1] x
+      -mv[lcolors] $! -permute. cyzx
+      1,$N,1,1,1
+      -y[-5--1] y -a[-5--1] y -*3d. -1,-1
+      --j3d[background] [-1],{background,w-1},{background,h},0,1,1,0,0,0 -rm[-3,-2]
+
+    -else # Case of nothing to display (only water).
+      -rm[-5--1] [background]
+    -endif
+
+    -r. {*,w},{*,h},1,3
+    -r. 320,200,1,3,2
+
+    op={if($_t<130,($_t-100)/20,1-($_t-130)/10)}
+    op={max(0,min(1,$op))}
+    -text_outline. "Code : Tchoom",10,10,24,1,$op,255
+
+    op={if($_t<230,($_t-200)/20,1-($_t-230)/10)}
+    op={max(0,min(1,$op))}
+    -text_outline. "Music : Kane Wood",120,20,24,1,$op,255
+
+    op={if($_t<330,($_t-300)/20,1-($_t-330)/10)}
+    op={max(0,min(1,$op))}
+    -text_outline. "Moral support : Faxe",10,20,24,1,$op,255
+
+    -b. {if($_t<440,max(0,(30-$_t*0.7)),$_t-440)}
+
+    -*. {if($_t<460,min(1,$_t/40),max(0,1-($_t-460)/30))} # Fade from/to black.
+    -outvideo.
+    -rm.
+    _t={$_t+1}
+  -while {$_t<500}
+  -rm
+
+
+# Bouncing balls.
+#-----------------
+bbq_intro4 :
+  -reset -v -
+  520,320,1,3 -plasma 1,1,9 -n 0,220
+  N=12
+  -repeat $N
+    -ball[] {round(u(32,80))},${-RGB}
+    t$>={u(200)} x$>={0,u(10,w-10)} h$>={u(150,300)} vx$>={if(u<0.5,1,-1)*u(1,8)}
+  -done
+  -mv[0] $!
+  (0;0.7;1) -r. {-2,w},70,1,1,3
+
+  _t=0
+  -do
+    [$N]
+    -repeat $N
+      bw={$>,w} bh={$>,h}
+      y={${h$>}*abs(cos(${t$>}*pi/60))-$bh/2}
+      dt=1
+      -if {$y<0} d={-$y} y=0 bh={$bh-$d} bw={$bw+$d} dt={max(0.2,1-($d/$bh)^2)} -else dt=1 -endif
+      -if {${x$>}+$bw/2>w}
+        d={${x$>}+$bw/2-w} bw={$bw-$d} bh={$bh+0.5*$d}
+        -if {${x$>}+$bw/4>w} vx$>={-${vx$>}} -endif
+      -endif
+      -if {${x$>}-$bw/2<0}
+        d={$bw/2-${x$>}} bw={$bw-$d} bh={$bh+0.5*$d}
+        -if {${x$>}-$bw/4<0} vx$>={-${vx$>}} -endif
+      -endif
+      --r[$>] $bw,$bh,1,4,3 -s. c,-3
+      -j... [-2],{max(0,min({$N,w-$bw},${x$>}-$bw/2))},{{$N,h}-{h}-$y-70},0,0,1,[-1],255 -rm[-2,-1]
+      t$>={${t$>}+$dt}
+      x$>={${x$>}+$dt*${vx$>}}
+    -done
+
+    --rows. {h-2*70},{h-1-70} -mirror. y -*. [{$N+1}]
+    -j.. [-1],0,{-2,h-71},0,0,0.5 -rm.
+    -r. 320,200,1,3,2
+
+    -if {$_t<90}
+      -box3d. 30 -c3d. -col3d. 255 -r3d. 1,0,1,{-5*$_t} -j3d.. [-1],{40+$_t}%,50%,{-650+4*$_t},1,3,0,0 -rm.
+      -*. {min(1,$_t/10)}
+    -endif
+    -if {$_t>430} -l.
+      -s y,8 s={$_t-430}
+      -repeat $! -shift[$>] {if($>%2,1,-1)*2*$s}%,0,0,0,0 -done
+      -a y
+      -water $s
+    -endl -endif
+
+    -if {!($_t%2)} -outvideo. -endif
+    -rm.
+    _t={$_t+1}
+  -while {$_t<500}
+  -rm
+
+# Plasma scroll
+#---------------
+bbq_intro5 :
+
+  # Init plasma backgrounds.
+  N=8
+  -repeat $N
+    320,200,1,3 -rand. 0,255 -plasma. 1,0,7 -n. 0,255
+    amp={u(-40,40)} freq={round(u(2,6))} dir$>={if(u<0.5,-1,1)*round(u(1,2))}
+    100%,100%,1,1,'$amp*cos(y*2*pi*$freq/h)'
+  -done
+
+  {w+2},100%,1,1,'x' 100%,100%,1,1,'Y=(y-80+15*cos(x/30)+10*sin(x/22));if(Y<0||Y>=50,-1,Y)' -a[-2,-1] c
+  0 -t. "** Greetings to all Amstrad CPC / Atari ST / Amiga fans worldwide ! **",0,0,50,1,255
+  -b. 0.5 -n. 0,255
+  M={w}
+
+  # Start animation loop.
+  t=0 tt={-1.5*{0,w}} _t=0
+  -do
+    dt={$t/20}
+    tic=$dt
+
+    # Render interpolated background between two successive plasmas.
+    a={int($t)} a2={2*$a} a21={$a2+1}
+    b={($a+1)%$N} b2={2*$b} b21={$b2+1}
+    --warp[$a2] [$a21],1,0,2
+    --warp[$b2] [$b21],1,0,2
+    -j.. [-1],0,0,0,0,{$t-$a} -rm.
+
+    -shift[$a21] 0,${dir$a},0,0,2  # Animate plasma background.
+    -shift[$b21] 0,${dir$b},0,0,2
+    -if {int($t+0.005)>int($t)} dir$a={if(u<0.5,-1,1)*round(u(1,3))} -endif
+    t={($t+max(0.005,($dt-$tic))%$N)}
+
+    # Render text scrolling.
+    --z.. $tt,{$tt+w-1+2}
+    -warp. [-4],0,0,0
+    -r. 100%,100%,1,3
+    --*. -1 -+. 255
+    -j... [-1],0,0,0,0,1,[-2],255 -rm.
+    -j.. [-1],-2,-2,0,0,1,[-1],255 -rm.
+    tt={$tt+5} # Animate scrolling.
+
+    # Display rendered frame.
+    -r. 320,200,1,3,2
+    -if {$_t<100} -*. {min(1,$_t/100)} -endif
+    -if {$_t>850} -*. {max(0,1-($_t-850)/40)} -endif
+
+    -outvideo.
+    -rm.
+    _t={$_t+2}
+  -while {$_t<900}
+  -rm
+
+# 3D Metaballs
+#---------------
+bbq_intro6 :
+  100,100 -noise. 100,1 -plasma. 1,0,10 -r. 512,320,1,3 -n. 0,1 -b. 4,0 -n. 0,255
+  -mix_channels. (0.7,0,0;0,0.9,0;0,0,1.2) -c. 0,255 -l3d
+  0
+  24,24,24,1,'X=x-w/2;Y=y-h/2;Z=z-d/2;exp(-(X*X+Y*Y+Z*Z)/100)'
+  72,72,72 M=8 mode=3
+  -repeat $M fx$>={g} fy$>={g} fz$>={g} -done
+  t=0
+  -do
+    dt={$t/20}
+    -repeat $M
+      x$>={w/2+0.5*(w-{2,w}-4)*cos(${fx$>}*2.2*$dt)}
+      y$>={h/2+0.5*(h-{2,h}-4)*sin(${fy$>}*2.2*$dt)}
+      z$>={d/2+0.5*(d-{2,d}-4)*sin(${fz$>}*2.2*$dt)}
+    -done
+    -f[3] 0 -repeat $M -j[3] [2],{${x$>}-{2,w/2}},{${y$>}-{2,h/2}},{${z$>}-{2,d/2}},0,-1 -done
+    --r[3] 24,24,24,1,2 -isosurface3d. 0.4 --3d. 12,12,12 -*3d. 13 -rv3d.
+    -r3d. 1,2,1,{-50*$dt}
+    N={i[7]} (255,255,150;200,96,164;50,150,230) -r. 3,$N,1,1,3 -y. -j.. [-1],0,{{-2,h}-4*$N} # Do some color tweaks.
+    -if {!$mode} -circles3d.. 4 -endif
+    -if {!{1,w}}
+      0 -t. "Flat-Shading\nRules The\nWorld!",5,185,43,0.5,255,255,255 -b. 0.7 -n. 0,255
+      --dilate. 3 --j[0] [-2],5,3,0,0,0.75,[-1],255 -mv. 1 -rm[2,-2,-1]
+    -endif
+    --j3d[1] [-2],50%,50%,0,1,{if(!$mode,3,$mode)},0,0,300,0,0,-500,0.1,1.5
+    -r. 320,200,1,3,2
+
+    -if {$t<100} -*. {min(1,$t/15)} -endif
+    -if {$t>400}
+      -rotate. {(($t-400)/3)^2},0,0,{50+($t-400)}%,{50-($t-400)/3}%
+      -*. {max(0,1-($t-400)/50)}
+    -endif
+
+    -outvideo.
+    -rm[-3--1]
+    t={$t+1}
+  -while {$t<470}
+  -rm
+
+
+# Rotozoom + Bump light.
+#-----------------------
+bbq_intro7 :
+
+  # Create warping and color images.
+  0 -t. "Demomakers\n  Forever !",0,0,80,1,255 -expand_xy. 15,0 -b. 3
+  [-1] -n.. 0,1 -r.. 100%,100%,1,3
+  -sh.. 0,0 -*. 120 -rm.
+  -sh.. 1,1 -*. 70 -rm.
+  -sh.. 0,50%,0,2 -*. 120 -rm.
+  25%,25%,1,1 -rand. -20,20 -smooth. 10,0,1,1,4 -r. [-2],3 -b. 3 -n. -100,100
+  -+[-2,-1] -g. xy -a[-2,-1] c -n. -150,150
+  -cursor[0] 0
+
+  # Create a large light image.
+  light=70
+  640,640 -gaussian. $light -n. 0,255
+  t=0
+
+  # Start animation.
+  _t=0
+  -do
+
+    # Manage light position and intensity.
+    X={round((w-{-2,w}*(1+cos(2*$t)))/2)}
+    Y={round((h-{-2,h}*(1+sin(2.5*$t)))/2)}
+    t={$t+0.02}
+
+    # Render lightened image.
+    --z. $X,$Y,{$X+{-2,w}-1},{$Y+{-2,h}-1}
+    -warp. [-3],1,0,1
+    -r. 100%,100%,1,3 -+. [-4] -c. 0,255
+    -r. 320,200,1,3,2
+
+    -if {$_t<100} -*. {min(1,$_t/100)} -endif
+    -if {$_t>450} -*. {max(0,1-($_t-450)/20)} -endif
+
+    zoom={1.6+1.2*sin($_t/20)}
+    -if {$_t>450} zoom={$zoom/(1+0.3*($_t-450))} -endif
+    -f. "
+      init( R=rot(-(180+1.7*"$_t"))/"$zoom"; C=[(50+"$_t"/5)*w/100,0.5*h]);
+      I((R**([x,y]-=C))+=C,0,2)"
+    -outvideo.
+    -rm.
+    _t={$_t+1}
+  -while {$_t<500}
+  -rm
+
+# Image waves.
+#--------------
+bbq_intro8 :
+  -if {!$!} -l[] # Generate fractal image
+    200,200 x={-1.06-u*0.1} y={-0.26-u*0.1}
+    -mandelbrot $x,$y,{$x+0.1},{$y+0.1},256
+    16,1,1,3,u -r. 256,1,1,3,3 -shift. 1
+    -map[0] [-1] -rm. -r2dx 100
+    --mirror y --mirror x -+ -n 0,255
+  -endl -else -k[0] -r[0] 100,100,1,3,2 -endif
+  -i[0] (20;80;0^20;80;0^20;80;0) -r[0] 400,300,1,3,3 -water[0] 100,2
+  w={w} -elevation3d. 0 -rv3d.
+  -sh. 8,{7+3*i[6]},0,0 -r. 3,{h/3},1,1,-1
+  (0,1,0;1,0,1;0,1,0) -/. 2
+  -ball[] 20,200,255,128,1,0.7,3.5
+  0 $w,$w [-1]
+  -l3d {$w/2},-200,-1000 -sl3d 0.4 -ss3d 0.8 -f3d 500 time0=3
+  t=0
+  -do
+    dt={$t/20}
+    --convolve. [3],1 --. [-3] -rm... -b. 0.8 --. {ia} # Update height map.
+    -r. 1,{$w*$w},1,1,-1 -j[2] [-1],2,0 -r. $w,$w,1,1,-1      # Set 3d object coordinates.
+    [1]
+    -if {5,h} --l[5] -rows 0,2
+      nb={w}
+      -i[0] ({'CImg3d'}) -i[1] ($nb,$nb) -transpose[2]
+      (1,0;1,{$nb-1}) -r. 2,$nb,1,1,3 -round.
+      1,{4*$nb},1,1,1 -y -a y
+    -endl [4] -sprites3d.. [-1],1 -rm. -+3d[-2,-1] -endif
+    --3d. {$w/2},{$w/2} -*3d. {0,0.9*max(w,h)/$w} # Center and scale 3d object.
+    -r3d. 0,0,1,{if({*,b}&2,{*,x}*360/{*,w},$dt*30)} -r3d. 1,0,0,120 # Get rotated 3d object.
+    --j3d[0] [-1],50%,65%,30,1,3,0,0
+    -r2dy. 190 -frame. 1,1,255 -drop_shadow. 3,3
+    -r. 320,200,1,4,0,0,0.5,0.5 -i.. 100%,100%,1,1,200 -blend[-2,-1] alpha
+
+    -if {$t>400}
+      --. 200 -rotate. {$t-400},1,0,{50-2*($t-400)}%,50% -+. 200
+    -endif
+
+    0 -t. "Arkham",0,0,24,1,1 -rotate. -90 100%,100%,1,3,0 -j... [-1],2,{-3,max(5,h-7*$t)},0,0,1,[-2] -rm[-2,-1]
+    0 -t. "BBQ Party - 2016",0,0,24,1,1 -rotate. 90 100%,100%,1,3,0 -fc. 128,32,16 -j... [-1],292,{-3,min(h-180,7*$t-200)},0,0,1,[-2] -rm[-2,-1]
+
+    -if {$t>400} -*. {max(0,1-($t-400)/40)} -endif
+    -if {$t<100} -*. {min(1,$t/40)} -endif
+    -to_rgb.
+
+    -outvideo.
+
+    -rm[-2,-1]
+    -if {($dt-$time0)>0.3} ({u*$w};{u*$w};70;0) -a[5,-1] x time0={$dt-u} -endif # Insert new ball.
+    -if {5,h} -l[5,-1] # Manage ball motion and collision.
+      -sh[0] 2,2,0,0 -sh[0] 3,3,0,0 --.. [-1] -+. 0.2 -rm[-2,-1]
+      -s[0] x -repeat {$!-1} coords={$<,@0-1} -if {{$<,@2}<i($coords)} -=. {80+{i($coords)}},$coords -rm[$<] -endif -done
+      -if {$!==1} -i[0] 0 -else -a[0--2] x -endif
+      -endl
+    -endif
+    t={$t+1}
+  -while {$t<450}
+
+# 3d reflection
+#---------------
+bbq_intro_final :
+
+  # Render background.
+  128,256,1,3 -rand. 0,255 -plasma. 1,100 -blur_xy. 30,2
+  -sh. 0,0 -n. 0,90 -rm. -sh. 1,1 -n. 0,60 -rm. -sh. 2,2 -n. 0,180 -rm.
+  --mirror. x [-2,-1] -a[-4--1] x
+  --luminance. -mirror. x -b. 2 -n. 0,255
+
+  # Create 3d objects.
+  -torus3d 30,10 -col3d. 255,200,0
+  -spherical3d 47,34,"80+20*abs(cos(2*theta))" -s3d. -rm.. -i.. 3,{h},1,1,150,220,255,200,255,255 -y.. -a[-6--1] y
+  -spherical3d 47,34,"100*abs(1+0.6*cos(3*phi)*sin(4*theta))"
+  -r3d[-2,-1] 0,1,0,-90 -db3d 0
+
+  # Generate scrolling data.
+  0 -t. "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"\
+"BBQ Party - 2016"\n\
+" Invitation intro"\n\n\
+"   by ARKHAM"\n\
+"   (ST section)"\n\n\
+"Code : Tchoom"\n\
+"Music : Kane Wood"\n\
+"Support : Faxe"\n\n\
+" This intro has"\n\
+" been coded to"\n\
+"announce the BBQ"\n\
+" that will take"\n\
+"place in Grisy"\n\
+"(at Kane Wood's"\n\
+"     house)"\n\
+"in summer 2016."\n\n\
+"Some members of"\n\
+"  the fantastic"\n\
+"   demo crew"\n\
+"  * ARKHAM *"\n\
+"  will be there!"\n\n\
+"We are a team of"\n\
+"friends who were"\n\
+"doing demos on"\n\n\
+" - Amstrad CPC"\n\
+" - Atari ST"\n\
+" - Amiga 1200"\n\n\
+"during our young"\n\
+"age (in the 90's)."\n\
+" We are still"\n\
+"loving those old"\n\
+"8/16-bits looking"\n\
+"demos. This was"\n\
+"the golden age"\n\
+"of demoscene and"\n\
+" we feel lucky to"\n\
+" have lived this"\n\
+"  piece of the"\n\
+"computer science"\n\
+"     history."\n\n\
+"This intro is a"\n\
+"small tribute to"\n\
+"this blessed era."\n\n\
+"Greetings to all"\n\
+"people who did"\n\
+"incredible things"\n\
+"  on these"\n\
+"  incredible"\n\
+"  machines!"\n\n\n\
+"  ----------------"\n\
+"  (c) Arkham"\n\
+"  August 2015"\n\
+"  ----------------"\n\
+,0,0,12,1,1
+  100%,100%,1,3,255
+  -mv[-2,-1] 0
+
+  # Start animation loop.
+  t=0 xb=0 xl=0 anim=0 y=0
+  -do
+
+    dt={$t/20}
+    tic=$dt
+    # Recreate 3d interpolated background object.
+    --rows. 8,{8+3*i[6]-1} --j... [-1],0,8,0,0,{if($anim<250,0,0.5-0.5*cos(($anim-250)/100))} -rm..
+
+    # Render 3d background object (with flat colors).
+    xo={max(75,150-$t/2)}
+    --z[-6] $xb,0,{$xb+255},255 -j3d. [-2],$xo%,50%,0,1,3,0,0
+
+    # Render light reflection map.
+    --z[-6] $xl,0,{$xl+255},255
+    xf={min(30,$anim-370)+20*cos(0.8*$dt)}
+    yf={50+20*sin(1.7*$dt)}
+    -j3d. [-6],{20+$xf}%,$yf%,0,1,4,0,0
+
+    # Add light reflection to 3d background object.
+    -l3d [-1] -rm. --j3d. [-2],$xo%,50%,0,1,5,0,0 -j.. [-1],0,0,0,0,0.6 -rm[-3,-1]
+
+    # Add 3d foreground object.
+    -j3d. [-4],$xf%,$yf%,0,1,4,0,0
+
+    # Display frame and update animation variables.
+    -r2dy. 200
+    --f. 'w-x' -c. 0,50 -/. 50 -*[-2,-1]
+
+    -r. 320,200,1,3,0,0
+
+    # Add text scrolling.
+    -j. [1],203,0,0,0,1,[0]
+    -if {!($t%3)} -shift[0] 0,-1,0,0,0 -endif
+
+    -*. {min(1,$t/40)} # Fade in
+    -if {$t>2620} -*. {max(0,1-($t-2620)/30)} -endif # Fade out.
+
+    -if {!($t%2)} -outvideo. -endif
+    -rm.
+
+    xb={($xb+3)&255}
+    xl={($xl-3)&255}
+    anim={$anim+2}
+    -r3d[-2,-1] {sin(0.5*$dt)},{cos($dt)},1,-1
+    -r3d... -1,0.3,0.8,-1
+    t={$t+1}
+  -while {$t<2700}
+  -rm
+
+
+# Local Variables:
+# mode: sh
+# End:
+#
+# (End of G'MIC custom commands)

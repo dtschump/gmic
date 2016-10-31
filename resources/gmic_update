@@ -1,0 +1,10 @@
+#!/bin/bash
+#
+# A simple script to fetch both CImg and G'MIC updates from the git repo.
+#
+cd $HOME/work/src/CImg
+git pull
+cd $HOME/work/src/gmic
+git pull
+cd $HOME/work/src/gmic-community
+git pull

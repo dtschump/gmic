@@ -1,0 +1,111 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+
+<!--#include file="../../header.html" -->
+<link href="../../style.css" rel="stylesheet" type="text/css">
+
+<div id="bloc_option">
+<div id="top_bleu">
+<div id="text_top">Tutorial
+</div>
+</div>
+<div id="center">
+<div id="text_centre_intro">
+
+<div id="gmic-tutorial">
+
+<h1>G'mic: anisotropic smoothing</h1>
+<h3>0-Introduction</h3>
+coucou ca marche?
+
+This page intends to help the use of the GIMP plugin filter <I>anisotropic smoothing</I> from the enhancement folder.<BR>
+<BR>
+The G'mic <I>anisotropic smoothing</I> is an implementation of the smoothing filter described in this <A href=http://tschumperle.users.greyc.fr/publications/tschumperle_ijcv06.pdf id=bm48 title="technical paper">technical paper</A>. Basically, the filter analyses the image to identify the structures and then smooth parallel to it , thus preserving the details.<BR>
+<BR>
+This doc explains step by step in the hope that you understand the influence of each option. It uses a simple example to illustrate: a noised grey disc (see below).<BR>
+<BR>
+  <IMG src="images/clean_disc.png" style="WIDTH:100px; HEIGHT:100px"><IMG src="images/disc.png" style="WIDTH:100px; HEIGHT:100px">
+<BR>
+The left hand-side image above is the original "clean disc". The right hand-side one is the noised one. The purpose is to get back (as much as possible) to the original one using the <I>anisotropic smoothing </I>filter<I>.</I><BR>
+<FONT size=1><I><BR>
+Those two images can be made using the following command lines:</I></FONT><BR>
+<FONT size=1><I>gmic 100,100,1,3 -fill 100 -ellipse 50,50,30,30,0,1,150,150,150 -o clean_disc.png<BR>
+gmic clean_disc.png -noise 30 -n 0,255 -o disc.png</I></FONT><BR>
+<BR>
+<h3>1-Image structure analysis</h3>
+</B>To localize the structure of the image you intend to filter, G'MIC uses gradient calculations since high gradient means high color variations and thus the border of a certain structure.<BR>
+<BR>
+But, the presence of noise in an image produces rather high color variation between concecutive pixel where there is actually no structure border. To handle this issue, the image is blurred <I>before</I> the gradient calculations so that the noise is smeared over a small distance. The parameter that controls that blur is the paramater called <B>gradient smoothness</B>. It therefore sets the limit between what should be considered as noise or as structure.<BR>
+<BR>
+Once the gradient computations are done, it is obtained what is called a <I>structure tensor</I>, that defines to the filter where it should act most (far from the structure borders). In practice, this <I>structure tensor </I>undergoes a second blurring in order to reduce the abruptness of the structure definition, thus increasing the size of the zones where the filter should have a intermediate behavior. The parameter regulating this second blurring is called the <B>tensor smoothness</B>. It can (for instance) diminish artefacts that may appear close to structure borders.<BR>
+<BR>
+The pictures below show the structure tensors as analyzed by G'mic.<BR>
+    <IMG src="images/raw_structure_tensor.png" style="WIDTH:100px; HEIGHT:100px"><IMG src="images/default_structure_tensor.png" style="WIDTH:100px; HEIGHT:100px"><IMG src="images/personalized_structure_tensor.png" style="WIDTH:100px; HEIGHT:100px"><BR>
+    <BR>
+    The left image is obtained using gradient_smoothness=0 and tensor_smoothness=0. It can be seen that the disc border is detected, but many pixels far from the border also have high values and will thus be interpreted as structure borders by the filter.<BR>
+    The middle image is obtained using the default setting (gradient_smoothness=0.6 and tensor_smoothness=1.1). Better, but stille noisy. Our simple image makes us expect better.<BR>
+    The right image is obtained using a stronger blurring (gradient_smoothness=3 and tensor_smoothness=1). The noise is almost completely removed, it will be our structure tensor in the rest of this doc.<BR>
+    <BR>
+    <FONT size=1><I>Those three images can be made using the following command lines:<BR>
+    gradient_tensor=0;tensor_smoothness=0;<BR>
+    gmic disc.png -blur $gradient_tensor -gradient xy --*[-2] [-1] -*[-1] 2 -sqr[-3,-2] -a x -s v -+ -s x,3 -mv[-1] -2 -a v -blur $tensor_smoothness -n 0,255 -o&nbsp; raw_structure_tensor.png<BR>
+    gradient_tensor=0.6;tensor_smoothness=1.1;<BR>
+    gmic disc.png -blur $gradient_tensor -gradient xy --*[-2] [-1] -*[-1] 2 -sqr[-3,-2] -a x -s v -+ -s x,3 -mv[-1] -2 -a v -blur $tensor_smoothness -n 0,255 -o&nbsp; default_structure_tensor.png<BR>
+    gradient_tensor=3;tensor_smoothness=1;<BR>
+    gmic disc.png -blur $gradient_tensor -gradient xy --*[-2] [-1] -*[-1] 2 -sqr[-3,-2] -a x -s v -+ -s x,3 -mv[-1] -2 -a v -blur $tensor_smoothness -n 0,255 -o&nbsp; personalized_structure_tensor.png</I></FONT><BR>
+<BR>
+<h3>2-Filter behavior</h3>
+Once the structure is detected, it is time to tell the filter how to behave with it.<BR>
+<BR>
+The parameter <B>sharpness</B> gives the threshold used to separate areas that deserves a strong or a weak smoothing. A too low value and the whole image becomes eligible for the maximum smoothing. At the opposite, a too high value means no smoothing at all.<BR>
+<BR>
+The parameter <B>anisotropy </B>gives the amount of anisotropy of the filter. Set as 0, your filter isn't anisotropic anymore, but if it is set too high, some serpentine artefact might appear on your image.<BR>
+<BR>
+  <IMG src="images/fixed_disc.png" style="WIDTH:100px; HEIGHT:100px"><IMG src="images/high_anisotropy_disc.png" style="WIDTH:100px; HEIGHT:100px"><BR>
+    The left image above comes from a smoothing using a reasonnable level of anisotropy (0.3), whereas the right one let appear some serpentine artefact because of too much anisotropy (1.0).<BR>
+    <BR>
+    <FONT size=1><I>Those two images can be made using the following command lines:<BR>
+    </I><I>gradient_tensor=3;tensor_smoothness=1;sharpness=0.4;anisotropy=0.3;<BR>
+    gmic disc.png -smooth 100,$sharpness,$anisotropy,$gradient_tensor,$tensor_smoothness -o fixed_disc.png<BR>
+    gradient_tensor=3;tensor_smoothness=1;sharpness=0.4;anisotropy=1;<BR>
+    gmic disc.png -smooth 100,$sharpness,$anisotropy,$gradient_tensor,$tensor_smoothness -o high_anisotropy_disc.png</I></FONT><BR>
+    <BR>
+    <h3>3-Strength</h3>
+    The strength of the filtering is set by the <B>amplitude </B>parameter.<BR>
+    <BR>
+    Another way to increase the amount of smoothing applied to your image is to increase the <B>number of iterations</B>. 2 iterations means that you apply again the same filter on your already once filtered image.<BR>
+    <BR>
+    <h3>4-Accuracy</h3>
+    You should probably not modify the parameters discussed here since their default values seems corrects for any image type.<BR>
+    <BR>
+    The three "precision" parameters: <B>spatial precision</B>, <B>value precision </B>and <B>angular precision</B> are mathematical parameters related to the level of discretization used to solve the differential equations of the filter. A lower value means a better accuracy at the expense of processing time. <FONT color=#00ffff>Difference between </FONT><FONT color=#00ffff>value et spatial precision?</FONT><BR>
+    <BR>
+    This algorithm used for this filter may go to some sub-pixel accuracy. The parameter <B>interpolation type</B> tells how the value between 2 pixels should be estimated. Runge-Kutta is luxury.<BR>
+    <BR>
+    Checking the <B>fast approximation </B>box allows the filter to use a slightly simpler but much faster algorithm. <SPAN style=COLOR:#00ffff>to be confirmed</SPAN><BR>
+    <BR>
+    <h3>5-Others</h3>
+    By default, the filter consider the image values from the RGB (or RGBA) channels, but it can be modified with the <B>channels processing </B>parameter. <SPAN style=COLOR:#00ffff>to be confirmed</SPAN><BR>
+    If you use this filter on a large image, your computer might run out of memory. In that case, you can increase the number of <B>tile subdivisions</B>. Your image will be cut in several pieces and the filter applied on each piece sequentially.<BR>
+    <BR>
+    <h3>6-And then?</h3>
+    Like all smoothing filter, this anisotropic one might let you feel that some details on your image have vanished. It is probably a good idea to add a slight edge enhancement filter like unsharp masking.
+    <br>
+    <br>
+    <br>
+    CC-BY-SA<br>
+  <div style=TEXT-ALIGN:right>
+      bad English?<br>
+      rough aesthetics?<br>
+      less clear than unclear?<br>
+      need to talk?<br>
+    zonder #@# tuxfamily.org<br>
+  </div>
+</div>
+</div>
+</div>
+<div id="footer"><img src="images/footer.jpg" />
+</div>
+</div>
+<!--#include file="../../copyright.html" -->
+<!--#include file="../../footer.html" -->
+

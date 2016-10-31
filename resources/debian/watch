@@ -1,0 +1,3 @@
+version=3
+opts=dversionmangle=s/\+dfsg.*// \
+http://sf.net/gmic/gmic_([0-9.]+).tar.gz

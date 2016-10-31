@@ -1,0 +1,199 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<!--#include file="header.html" -->
+
+<div id="bloc_option"><div id="top_bleu"><div id="text_top">Download</div></div>
+  <div id="center"><div id="text_centre_intro">
+
+      <p>The packages below provide both the command-line tool <a href="tutorial/basics.shtml">gmic</a> and the plug-in for <a href="http://www.gimp.org">GIMP</a>
+        for some common architectures (also <i>ZArt</i> and the <i>libgmic</i> interfaces in the .deb packages).
+        If you are looking for the <a href="http://www.gimp.org">GIMP</a> plug-in <b>only</b>, please visit <a href="gimp.shtml">its dedicated page</a> instead.
+        It is recommended you uninstall any previous installations of <b><font color="#000066">G'MIC</font></b>, before installing a new version.
+      </p>
+
+      <table><tr>
+          <td width="200" valign="top">
+            <div><a href="img/roddy_large.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/roddy_small.jpg"/></a>
+              <div class="highslide-caption"><i><b>Roddy</b>, the mascot of the 'Rodilius' filter in G'MIC, artwork by <a href="http://www.mahvin.com/">Mahvin</a>.</i></div></div><br/>
+            <center><font size="-2"><i><b>Roddy</b>, the mascot of the 'Rodilius' filter in G'MIC<br/>
+                  (artwork by <a href="http://www.mahvin.com/">Mahvin</a>)</i></font><br/>
+
+              <hr noshade="noshade" size="1" width="90%"></hr>
+            </center>
+          </td>
+          <td width="700" valign="top">
+
+            <hr noshade="noshade" size="1" width="90%"></hr>
+
+            <font size="-1">
+              <table align="center" border="0" cellpadding="2" cellspacing="0" width="90%">
+                <tr>
+                  <td><a href="http://gmic.eu/gimp.shtml"><img alt="" src="img/download_gimp.png" border="0"></img></a></td><td>&nbsp;&nbsp;</td>
+                  <td><a href="http://gmic.eu/gimp.shtml"><font size="3">G'MIC plug-in for GIMP only</font></a><br/>
+                    installers/binaries for Windows/Linux<br/><br/></td>
+                </tr>
+                <tr>
+                  <td><a href="http://gmic.eu/files/prerelease/gmic_win64.zip"><img alt="" src="img/download_win64.png" border="0"></img></a></td><td>&nbsp;&nbsp;</td>
+                  <td><a href="http://gmic.eu/files/prerelease/gmic_win64.zip"><font size="3">G'MIC for Windows (64 bits)</font></a><br/>
+                    zip file<br/><br/></td>
+                </tr>
+                <tr>
+                  <td><a href="http://gmic.eu/files/prerelease/gmic_win32.zip"><img alt="" src="img/download_win32.png" border="0"></img></a></td><td>&nbsp;&nbsp;</td>
+                  <td><a href="http://gmic.eu/files/prerelease/gmic_win32.zip"><font size="3">G'MIC for Windows (32 bits)</font></a><br/>
+                    zip file<br/><br/></td>
+                </tr>
+                <tr>
+                  <td><a href="http://gmic.eu/files/prerelease/gmic_debian_jessie_amd64.deb"><img alt="" src="img/download_debian64.png" border="0"></img></a></td><td>&nbsp;&nbsp;</td>
+                  <td><a href="http://gmic.eu/files/prerelease/gmic_debian_jessie_amd64.deb"><font size="3">G'MIC for Debian 8 <i>Jessie</i> (64 bits)</font></a><br/>
+                    deb file<br/>
+                    alternative: <a href="http://gmic.eu/files/prerelease/gmic_debian_wheezy_amd64.deb">for Debian 7 <i>Wheezy</i> (64 bits)</a><br/><br/></td>
+                </tr>
+                <tr>
+                  <td><a href="http://gmic.eu/files/prerelease/gmic_debian_jessie_i386.deb"><img alt="" src="img/download_debian32.png" border="0"></img></a></td><td>&nbsp;&nbsp;</td>
+                  <td><a href="http://gmic.eu/files/prerelease/gmic_debian_jessie_i386.deb"><font size="3">G'MIC for Debian 8 <i>Jessie</i> (32 bits)</font></a><br/>
+                    deb file<br/>
+                    alternative: <a href="http://gmic.eu/files/prerelease/gmic_debian_wheezy_i386.deb">for Debian 7 <i>Wheezy</i> (32 bits)</a><br/><br/></td>
+                </tr>
+                <tr>
+                  <td><a href="http://gmic.eu/files/prerelease/gmic_ubuntu_vivid_amd64.deb"><img alt="" src="img/download_ubuntu64.png" border="0"></img></a></td><td>&nbsp;&nbsp;</td>
+                  <td>
+                    <a href="http://gmic.eu/files/prerelease/gmic_ubuntu_trusty_amd64.deb"><font size="3">G'MIC for Ubuntu 14.04 LTS <i>Trusty</i> (64 bits)</font></a><br/>
+                    deb file<br/>
+                    alternative1: <a href="http://gmic.eu/files/prerelease/gmic_ubuntu_vivid_amd64.deb">for Ubuntu 15.04 <i>Vivid</i> (64 bits)</a><br/>
+                    alternative2: <a href="http://gmic.eu/files/prerelease/gmic_ubuntu_xenial_amd64.deb">for Ubuntu 16.04 <i>Xenial</i> (64 bits)</a><br/><br/></td>
+                </tr>
+                <tr>
+                  <td><a href="http://gmic.eu/files/prerelease/gmic_ubuntu_trusty_i386.deb"><img alt="" src="img/download_ubuntu32.png" border="0"></img></a></td><td>&nbsp;&nbsp;</td>
+                  <td><a href="http://gmic.eu/files/prerelease/gmic_ubuntu_trusty_i386.deb"><font size="3">G'MIC for Ubuntu 14.04 LTS <i>Trusty</i> (32 bits)</font></a><br/>
+                    deb file<br/><br/></td>
+                </tr>
+                <tr>
+                  <td><a href="http://gmic.eu/files/prerelease/gmic_static_linux64.zip"><img alt="" src="img/download_linux64.png" border="0"></img></a></td><td>&nbsp;&nbsp;</td>
+                  <td><a href="http://gmic.eu/files/prerelease/gmic_static_linux64.zip"><font size="3">G'MIC for Linux, static version (64 bits)</font></a><br/>
+                    zip file, <i>beware: without display capabilities!</i><br/><br/></td>
+                </tr>
+                <tr>
+                  <td><a href="http://gmic.eu/files/prerelease/gmic_static_linux32.zip"><img alt="" src="img/download_linux32.png" border="0"></img></a></td><td>&nbsp;&nbsp;</td>
+                  <td><a href="http://gmic.eu/files/prerelease/gmic_static_linux32.zip"><font size="3">G'MIC for Linux, static version (32 bits)</font></a><br/>
+                    zip file, <i>beware: without display capabilities!</i><br/><br/></td>
+                </tr>
+                <tr>
+                  <td><a href="http://karo03.bplaced.de/gmic/release/"><img alt="" src="img/download_macosx.png" border="0"></img></a></td><td>&nbsp;&nbsp;</td>
+                  <td><a href="http://karo03.bplaced.de/gmic/release/"><font size="3">G'MIC for MacOSX (64bits, LISANET version)</font></a><br/>
+                    dmg file<br/>
+                    alternative: <a href="http://www.partha.com/">Partha version (64 bits)</a><br/><br/></td>
+                </tr>
+                <tr>
+                  <td><a href="http://gmic.eu/files/prerelease/gmic_source.tar.gz"><img alt="" src="img/download_source.png" border="0"></img></a></td><td>&nbsp;&nbsp;</td>
+                  <td><a href="http://gmic.eu/files/prerelease/gmic_source.tar.gz"><font size="3">G'MIC source</font></a><br/>
+                    tar.gz file (current <i>development version</i>)<br/>
+                    alternative1: <a href="https://github.com/dtschump/gmic">git repository</a><br/>
+                    alternative2: <a href="http://gmic.eu/files/source/gmic_source.tar.gz">Latest stable (.tar.gz)</a><br/><br/></td>
+                </tr>
+                <!-- <tr> -->
+                <!--   <td><a href="http://gmic.eu/files/prerelease"><img alt="" src="img/download_prerelease.png" border="0"></img></a></td><td>&nbsp;&nbsp;</td> -->
+                <!--   <td><a href="http://gmic.eu/files/prerelease"><font size="3">G'MIC pre-release for testing</font></a><br/> -->
+                <!--     source and Windows/Linux installers/binaries<br/><br/></td> -->
+                <!-- </tr> -->
+                <tr>
+                  <td><a href="http://gmic.eu/files/"><img alt="" src="img/download_browse.png" border="0"></img></a></td><td>&nbsp;&nbsp;</td>
+                  <td><a href="http://gmic.eu/files"><font size="3">Browse all files</font></a><br/></td>
+                </tr>
+              </table>
+              <hr noshade="noshade" size="1" width="90%"></hr>
+
+            </td>
+        </tr></table>
+      </font>
+
+
+  </div></div><div id="footer"><img alt="" src="images/footer.jpg" /></div></div>
+
+<div id="bloc_option"><div id="top_bleu"><div id="text_top">Other means</div></div>
+  <div id="center"><div id="text_centre_intro">
+
+      <ul>
+        <!-- <li><b><font color="black">PPA for Ubuntu:</font></b> -->
+        <!--   On Ubuntu (Linux), there is a frequently updated PPA (Personal Package Archives), -->
+        <!--   maintained by <a href="https://plus.google.com/u/0/117581776478455814502/posts">Thorsten "otto" Stettin</a> -->
+        <!--   which may be used to ease the installation of <b><font color="#000066">G'MIC</font></b>, and to get quick updates as well. -->
+        <!--   <\!-- <b>Beware</b>, <i>Thorsten</i> applies unofficial patches on the <b><font color="#000066">G'MIC</font></b> source code in the builds available on his PPA. -\-> -->
+        <!--   <\!-- This may lead to malfunction or strange behaviors (GIMP plug-in entry moved away from the <b>Filters/</b> menu, for instance). -\-> -->
+        <!--   <\!-- So, use this PPA at your own risk, and report bugs only to <i>Thorsten</i> if you use it. -\-> -->
+        <!--   <br/>To enable Thorsten's PPA, type the following commands in a terminal:<br/><br/> -->
+        <!--   <font style="font-family:monospace;"> -->
+        <!--     sudo add-apt-repository ppa:otto-kesselgulasch/gimp<br/> -->
+        <!--     sudo apt-get update<br/> -->
+        <!--     sudo apt-get install gmic gimp-gmic<br/> -->
+        <!--   </font><br/> -->
+        <!-- </li> -->
+        <li><b><font color="black">Packages for Fedora:</font></b>
+          should be available <a href="http://www.nosuchhost.net/~cheese/fedora/packages/ALL/x86_64/gmic.html">here</a>.
+        </li>
+      </ul>
+
+  </div></div><div id="footer"><img alt="" src="images/footer.jpg" /></div></div>
+
+<div id="bloc_option"><div id="top_bleu"><div id="text_top"><a id="source"></a>From source</div></div>
+  <div id="center"><div id="text_centre_intro">
+      The source code of <b><font color="#000066">G'MIC</font></b> is hosted on a <a href="http://git-scm.com/"><i>git</i></a> repository with public access.
+      Accessing it via <a href="http://git-scm.com/"><i>git</i></a> ensures you get the latest code available, and will ease the
+      source updates as well. Here are the instructions to compile <b><font color="#000066">G'MIC</font></b> and
+      <a href="img/zart.jpg" class="highslide" onclick="return hs.expand(this)"><b>ZArt</b></a><div class="highslide-caption">Screenshot of <b>ZArt</b> in action.</div> on a fresh installation of <i>Debian (or Ubuntu)</i>.
+      It should not be much harder for other distros. First you need to install all the required tools and libraries:
+      <pre style="font-family:monospace;">
+        $ sudo apt-get install git build-essential libgimp2.0-dev libcv-dev libopencv-dev \
+        libhighgui-dev libcurl4-openssl-dev libfftw3-dev
+      </pre>
+      Then, get the <b><font color="#000066">G'MIC</font></b> source from the <i>git</i> repository:
+      <pre style="font-family:monospace;">
+        $ git clone <a href="https://github.com/dtschump/gmic">https://github.com/dtschump/gmic.git</a> gmic
+      </pre>
+      Alternatively, you may also prefer to get the source from <a href="http://gmic.eu/files/source/gmic_source.tar.gz">the last released stable <i>.tar.gz</i> file</a>
+      instead of the current development version.<br/><br/>
+      You are now ready to compile the following <b><font color="#000066">G'MIC</font></b> interfaces:
+      <a href="http://gmic.eu/reference.shtml"><i>gmic</i></a> (command-line tool),
+      <a href="http://gmic.eu/gimp.shtml"><i>gmic_gimp</i></a> (plug-in for <a href="http://www.gimp.org">GIMP</a>)
+      and <i>libgmic</i> (the <b><font color="#000066">G'MIC</font></b> C++ library). Just type:
+      <pre style="font-family:monospace;">
+        $ cd gmic/src
+        $ make
+      </pre>
+      and go out for a long drink (there are only few source files, but the compilation takes time). Alternatively, you may want to:<br/>
+      <ul>
+        <li>
+          Compile the <b><a href="gimp.shtml">GIMP plug-in</a></b> only. If so, type &nbsp;&nbsp;<tt style="font-family:monospace;">$ make gimp</tt>&nbsp;&nbsp;
+        </li>
+        <li>
+          Compile the <b><a href="libgmic.shtml">libgmic</a></b> library only. If so, type &nbsp;&nbsp;<tt style="font-family:monospace;">$ make lib</tt>&nbsp;&nbsp; instead.
+        </li>
+      </ul>
+      Note that compiling issues (compiler segfault) may happen with versions of <i>g++ 4.8.1</i> and <i>4.8.2</i>.
+      If you encounter this kind of errors, you probably have to disable the support of OpenMP
+      in <b><font color="#000066">G'MIC</font></b> to make it work, by compiling it with:
+      <pre style="font-family:monospace;">
+        $ make OPENMP_CFLAGS="" OPENMP_LIBS=""
+      </pre>
+      Now, you should have the compiled files <tt style="font-family:monospace;">gmic</tt>, <tt style="font-family:monospace;">gmic_gimp</tt>, <tt style="font-family:monospace;">libgmic.a</tt>
+      and <tt style="font-family:monospace;">libgmic.so</tt> in your <tt style="font-family:monospace;">gmic/src/</tt> folder.<br/><br/>
+
+      Additionally, you may want to compile <a href="img/zart.jpg" class="highslide" onclick="return hs.expand(this)"><b>ZArt</b></a><div class="highslide-caption">Screenshot of <b>ZArt</b> in action.</div>.
+      For this, you need to install these additional dependencies:
+      <pre style="font-family:monospace;">
+        $ sudo apt-get install qt5-default qtbase5-dev
+      </pre>
+      And then,
+      <pre style="font-family:monospace;">
+        $ git clone <a href="https://github.com/dtschump/gmic-community">https://github.com/dtschump/gmic-community.git</a> ../../gmic-community
+        $ make zart
+      </pre>
+
+      Also, please remember that the source code in the <i>git</i> repository
+      is constantly under development and may be a bit unstable, so always test the latest stable archive before complaining
+      (and of course, please <a href="https://github.com/dtschump/gmic-community/issues">report bugs</a> if you encounter any).
+
+  </div></div><div id="footer"><img alt="" src="images/footer.jpg" /></div></div>
+
+<!--#include file="copyright.html" -->
+<!--#include file="footer.html" -->

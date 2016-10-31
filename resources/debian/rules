@@ -1,0 +1,33 @@
+#!/usr/bin/make -f
+
+BUILDD_MEM := $(shell awk '/^MemTotal:/ {print $$2}' /proc/meminfo)
+BUILDD_MEM_OK := $(strip $(shell test $(BUILDD_MEM) -gt 1800000 && echo yes))
+
+%:
+	dh $@ --sourcedirectory=src
+
+clean:
+	dh $@ --sourcedirectory=src
+
+override_dh_auto_test:
+	# no tests please.
+
+override_dh_compress:
+	dh_compress -X.shtml -X.rss -X.js -X.ppm
+
+override_dh_auto_build:
+	dh_auto_build -- \
+		LDFLAGS="-Wl,--as-needed" \
+		CFLAGS="$(GMIC_CFLAGS) -I. -I/usr/include/libavcodec/ -I/usr/include/libavformat/ -I/usr/include/libswscale/"
+
+
+override_dh_install:
+	dh_install
+	install -d $(CURDIR)/debian/gmic/etc/bash_completion.d
+	install -D -m644 resources/gmic_bashcompletion.sh \
+	                 $(CURDIR)/debian/gmic/etc/bash_completion.d/gmic
+
+
+.PHONY: override_dh_auto_test override_dh_compress override_dh_auto_build override_dh_clean override_dh_install
+
+# vim:ts=4 sw=2 noet

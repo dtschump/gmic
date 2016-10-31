@@ -1,0 +1,8 @@
+*.a
+*.o
+*.so
+src/CImg.h
+src/gmic_stdlib.h
+src/gmic
+src/gmic_gimp
+src/use_libgmic

@@ -1,0 +1,324 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<body onload="javascript:hop();"></body>
+<!--#include file="header.html" -->
+
+<div id="bloc_option"><div id="top_bleu"><div id="text_top">Using <i>libgmic</i></div></div>
+  <div id="center"><div id="text_centre_intro">
+
+      <p><b>libgmic</b> is a small, portable, thread-safe, multi-threaded, C++, image processing library that forms the foundation of the <b><font color="#000066">G'MIC</font></b> framework.
+        It is used by all available <b><font color="#000066">G'MIC</font></b> interfaces.
+        It is built upon the <a href="http://cimg.eu">CImg Library</a>, a lower-level C++ template image processing library which actually implements
+        the core algorithms that <b><font color="#000066">G'MIC</font></b> uses (a.k.a the <i>native commands</i>).
+        Despite its small size (approx. <i>5 MB</i> ), <b>libgmic</b> provides even more image processing operators
+        than <i>CImg</i>, as well as a simpler <i>API</i>,
+        so that anyone can readily integrate all the <b><font color="#000066">G'MIC</font></b> features
+        directly into their own code.
+      </p>
+      <p>Here is a quick step-by-step guide to show how such an integration could be achieved. It assumes you are using <i>Linux</i>, but of course, the steps are very similar for other operating systems.</p>
+
+      <h2>Step 1: Get the required library files</h2>
+
+      To be able to use <b>libgmic</b> in your own code, you need:
+      <ul>
+        <li>
+          The header file <tt style="font-family:monospace;"><a href="https://github.com/dtschump/gmic/blob/master/src/gmic.h">gmic.h</a></tt>
+          which contains the declarations of the classes and methods allowing to use the <b>libgmic</b> library.
+          This file needs to be included by your source code.
+        </li>
+        <li>
+          The dynamic library file <tt style="font-family:monospace;">libgmic.so</tt> (or its static version <tt style="font-family:monospace;">libgmic.a</tt>) that needs to be linked
+          against your code. These binary files are of course platform-dependent.
+          It is recommended you compile them directly from the latest source (following <a href="http://gmic.eu/download.shtml#source">these instructions</a>).
+          Alternatively, you may have the <b>libgmic</b> files already present on your system (in <tt style="font-family:monospace;">/usr/lib/</tt>), if you have installed <b><font color="#000066">G'MIC</font></b>
+          from the <a href="download.shtml"><b>.deb</b> packages</a> we provide.
+        </li>
+      </ul>
+
+      <h2>Step 2: Write and compile your first code using <i>libgmic</i></h2>
+
+      Now, you should be able to write your first <b>libgmic</b>-based program <tt style="font-family:monospace;">foo.cpp</tt>:
+
+      <hr noshade="noshade" size="1" width="100%"/>
+<pre style='color:#000020;background:#f6f8ff;font-family:monospace;'>
+<span style='color:#595979; '>//----- File 'foo.cpp' -----</span>
+<span style='color:#004a43; '>#</span><span style='color:#004a43; '>include </span><span style='color:#800000; '>"</span><span style='color:#40015a; '>gmic.h</span><span style='color:#800000; '>"</span>
+<span style='color:#004a43; '>#</span><span style='color:#004a43; '>include </span><span style='color:#800000; '>&lt;</span><span style='color:#40015a; '>cstdio</span><span style='color:#800000; '>></span>
+
+<span style='color:#200080; font-weight:bold; '>int</span> <span style='color:#400000; '>main</span><span style='color:#308080; '>(</span><span style='color:#308080; '>)</span> <span style='color:#406080; '>{</span>
+    <span style='color:#200080; font-weight:bold; '>try</span> <span style='color:#406080; '>{</span>
+        gmic<span style='color:#308080; '>(</span><span style='color:#800000; '>"</span><span style='color:#1060b6; '>-testimage2d 512 -output gmic_test.png</span><span style='color:#800000; '>"</span><span style='color:#308080; '>)</span><span style='color:#406080; '>;</span>
+    <span style='color:#406080; '>}</span> <span style='color:#200080; font-weight:bold; '>catch</span> <span style='color:#308080; '>(</span>gmic_exception<span style='color:#308080; '>&amp;</span> e<span style='color:#308080; '>)</span> <span style='color:#406080; '>{</span> <span style='color:#595979; '>// In case something went wrong:</span>
+        <span style='color:#0066ee; '>std</span><span style='color:#406080; '>::</span><span style='color:#003060; '>fprintf</span><span style='color:#308080; '>(</span><span style='color:#003060; '>stderr</span><span style='color:#308080; '>,</span><span style='color:#800000; '>"</span><span style='color:#1060b6; '>ERROR : </span><span style='color:#007997; '>%s</span><span style='color:#0f69ff; '>\n</span><span style='color:#800000; '>"</span><span style='color:#308080; '>,</span>e<span style='color:#308080; '>.</span>what<span style='color:#308080; '>(</span><span style='color:#308080; '>)</span><span style='color:#308080; '>)</span><span style='color:#406080; '>;</span>
+        <span style='color:#200080; font-weight:bold; '>return</span> <span style='color:#308080; '>-</span><span style='color:#008c00; '>1</span><span style='color:#406080; '>;</span>
+    <span style='color:#406080; '>}</span>
+    <span style='color:#200080; font-weight:bold; '>return</span> <span style='color:#008c00; '>0</span><span style='color:#406080; '>;</span>
+<span style='color:#406080; '>}</span>
+</pre>
+      <hr noshade="noshade" size="1" width="100%"/>
+
+      You can compile it simply like this (here, with  <tt style="font-family:monospace;">g++</tt>):
+
+      <hr noshade="noshade" size="1" width="100%"/>
+      <pre style='color:#000020;background:#f6f8ff;font-family:monospace;'>
+<span style='color:#007d45; '>$</span> g++ <span style='color:#44aadd; '>-o</span> foo foo<span style='color:#200080; font-weight:bold; '>.</span>cpp -lgmic
+      </pre>
+      <hr noshade="noshade" size="1" width="100%"/>
+
+      Execute it:
+
+      <hr noshade="noshade" size="1" width="100%"/>
+      <pre style='color:#000020;background:#f6f8ff;font-family:monospace;'>
+<span style='color:#007d45; '>$</span> <span style='color:#200080; font-weight:bold; '>.</span><span style='color:#40015a; '>/foo</span>
+      </pre>
+      <hr noshade="noshade" size="1" width="100%"/>
+
+      and if all goes well, you should have a new image file <tt style="font-family:monospace;">gmic_test.png</tt> in your current folder, which looks like this:<br/><br/>
+      <center><div><a href="img/gmic_libgmic_sample.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gmic_libgmic_sample_thumb.jpg"/></a></div></center>
+      <p><b>Additional information:</b></p>
+      <ul>
+        <li><b><font color="#000066">G'MIC</font></b> is actually more than an image processing library. It defines an entire framework with
+          <a href="reference.shtml">its own scripting language</a>.
+          So, of course, <b>libgmic</b> embeds the corresponding script interpreter in addition to the image processing algorithms themselves.</li>
+        <li>Actually, all <b>libgmic</b> entry points invoke the <b><font color="#000066">G'MIC</font></b> interpreter, and
+          all actions you want <b>libgmic</b> to perform will be described as pieces of small <b><font color="#000066">G'MIC</font></b> scripts.
+          That is exactly what we've done in the file <tt style="font-family:monospace;">foo.cpp</tt>.
+        </li>
+
+        <li>By the way, it is then recommended to have some knowledge about how the <b><font color="#000066">G'MIC</font></b> script language works,
+          to be able to use <b>libgmic</b> as its full potential. Fortunately, this is a pretty straightforward language,
+          and you can read <a href="tutorial/">very detailed tutorial pages</a> which explain it, so this should not be a big deal.</li>
+        <li>In the sample file <tt style="font-family:monospace;">foo.cpp</tt> above, we have just asked <b><font color="#000066">G'MIC</font></b> to generate a new <i>512x512</i> color image
+          from scratch (with command <tt style="font-family:monospace;">-testimage2d 512</tt>)
+          and save it as the image file <tt style="font-family:monospace;">gmic_test.png</tt> in the current folder<br/>
+          (with <tt style="font-family:monospace;">-output gmic_test.png</tt>).</li>
+      </ul>
+
+      <h2>Step 3: Dealing with image buffers</h2>
+
+      It is quite unlikely you want to manage the input/output of your image data to/from <b>libgmic</b> using files only.
+      So here are details on how to pass image data using memory buffers instead. The important things to know are:
+      <ul>
+        <li><b><font color="#000066">G'MIC</font></b> does all its processing using <b>float-valued</b> image buffers. So you need to feed <b>libgmic</b> with such buffers when you invoke it.
+        This may imply converting your current image data into buffers of 32bits <tt style="font-family:monospace;">float</tt>'s before any <b>libgmic</b> call.</li>
+        <li><b><font color="#000066">G'MIC</font></b> may take several images as input, and may output several images as well.
+          So, it primarily works with <b>list of images</b>. All <b>libgmic</b> entry points which take image buffers will actually take a list of images as an argument.
+          The execution of a <b><font color="#000066">G'MIC</font></b> pipeline through the <b>libgmic</b> <i>API</i> modifies this list of images so that it contains the desired pipeline output.
+        </li>
+        <li><b>libgmic</b> defines two simple classes <tt style="font-family:monospace;">gmic_image&lt;float&gt;</tt> and <tt style="font-family:monospace;">gmic_list&lt;float&gt;</tt>
+          to create and manage float-valued images and lists of images.
+          They have basic constructors/destructors for the allocation and deallocation of the corresponding float-valued memory buffers.
+          So, you'll probably never have to do the memory allocation/deallocation by yourself.</li>
+        <li>To summarize, the only thing you need to do is: <b>1.</b> construct an instance of a <tt style="font-family:monospace;">gmic_list&lt;float&gt;</tt> containing <i>N</i> (initially empty) images,
+          then <b>2.</b> assign a size for each input image of the list,
+          <b>3.</b> fill the input image buffers (i.e. set the float values defining each image pixel),
+          and finally <b>4.</b> invoke one of the <tt style="font-family:monospace;">gmic()</tt> constructor (i.e. one of the <b>libgmic</b> entry points) to apply a <b><font color="#000066">G'MIC</font></b>
+          pipeline on the input images.</li>
+        <li>When <b>libgmic</b> has returned, your input image list <tt style="font-family:monospace;">gmic_list&lt;float&gt;</tt> has been modified regarding the invoked processing pipeline.
+        It may now contain more or fewer images, with different sizes, etc.
+          <b><font color="#000066">G'MIC</font></b> manages the necessary memory allocation/deallocation automatically to avoid memory leaks.</li>
+      </ul>
+      This second example <tt style="font-family:monospace;">foo2.cpp</tt> illustrates these points:
+
+      <hr noshade="noshade" size="1" width="100%"/>
+<pre style='color:#000020;background:#f6f8ff;font-family:monospace;'>
+<span style='color:#595979; '>//----- File 'foo2.cpp' -----</span>
+<span style='color:#004a43; '>#</span><span style='color:#004a43; '>include </span><span style='color:#800000; '>"</span><span style='color:#40015a; '>gmic.h</span><span style='color:#800000; '>"</span>
+<span style='color:#004a43; '>#</span><span style='color:#004a43; '>include </span><span style='color:#800000; '>&lt;</span><span style='color:#40015a; '>cstdio</span><span style='color:#800000; '>></span>
+<span style='color:#004a43; '>#</span><span style='color:#004a43; '>include </span><span style='color:#800000; '>&lt;</span><span style='color:#40015a; '>cmath</span><span style='color:#800000; '>></span>
+
+<span style='color:#200080; font-weight:bold; '>int</span> <span style='color:#400000; '>main</span><span style='color:#308080; '>(</span><span style='color:#308080; '>)</span> <span style='color:#406080; '>{</span>
+  gmic_list<span style='color:#406080; '>&lt;</span><span style='color:#200080; font-weight:bold; '>float</span><span style='color:#406080; '>></span> image_list<span style='color:#406080; '>;</span>
+  image_list<span style='color:#308080; '>.</span>assign<span style='color:#308080; '>(</span><span style='color:#008c00; '>2</span><span style='color:#308080; '>)</span><span style='color:#406080; '>;</span> <span style='color:#595979; '>// Tell 'image_list' it has 2 images.</span>
+
+  <span style='color:#200080; font-weight:bold; '>for</span> <span style='color:#308080; '>(</span><span style='color:#200080; font-weight:bold; '>unsigned</span> <span style='color:#200080; font-weight:bold; '>int</span> i <span style='color:#308080; '>=</span> <span style='color:#008c00; '>0</span><span style='color:#406080; '>;</span> i<span style='color:#308080; '>&lt;</span>image_list<span style='color:#308080; '>.</span>_width<span style='color:#406080; '>;</span> <span style='color:#308080; '>+</span><span style='color:#308080; '>+</span>i<span style='color:#308080; '>)</span> <span style='color:#406080; '>{</span> <span style='color:#595979; '>// 2 input images.</span>
+
+    <span style='color:#595979; '>// Initialize each image of 'image_list' to a 320x200x1x3 (color) image.</span>
+    gmic_image<span style='color:#406080; '>&lt;</span><span style='color:#200080; font-weight:bold; '>float</span><span style='color:#406080; '>></span><span style='color:#308080; '>&amp;</span> img <span style='color:#308080; '>=</span> image_list<span style='color:#308080; '></span><span style='color:#308080; '>[</span>i<span style='color:#308080; '>]</span><span style='color:#406080; '>;</span>
+    img<span style='color:#308080; '>.</span>assign<span style='color:#308080; '>(</span><span style='color:#008c00; '>320</span><span style='color:#308080; '>,</span><span style='color:#008c00; '>200</span><span style='color:#308080; '>,</span><span style='color:#008c00; '>1</span><span style='color:#308080; '>,</span><span style='color:#008c00; '>3</span><span style='color:#308080; '>)</span><span style='color:#406080; '>;</span>
+
+    <span style='color:#595979; '>// Fill image buffer with random sinus waves.</span>
+    <span style='color:#200080; font-weight:bold; '>float</span> <span style='color:#308080; '>*</span>ptr <span style='color:#308080; '>=</span> img<span style='color:#308080; '></span><span style='color:#406080; '>;</span>
+    <span style='color:#200080; font-weight:bold; '>for</span> <span style='color:#308080; '>(</span><span style='color:#200080; font-weight:bold; '>unsigned</span> <span style='color:#200080; font-weight:bold; '>int</span> c <span style='color:#308080; '>=</span> <span style='color:#008c00; '>0</span><span style='color:#406080; '>;</span> c<span style='color:#308080; '>&lt;</span>img<span style='color:#308080; '>.</span>_spectrum<span style='color:#406080; '>;</span> <span style='color:#308080; '>+</span><span style='color:#308080; '>+</span>c<span style='color:#308080; '>)</span> <span style='color:#595979; '>// 3 channels.</span>
+      <span style='color:#200080; font-weight:bold; '>for</span> <span style='color:#308080; '>(</span><span style='color:#200080; font-weight:bold; '>unsigned</span> <span style='color:#200080; font-weight:bold; '>int</span> y <span style='color:#308080; '>=</span> <span style='color:#008c00; '>0</span><span style='color:#406080; '>;</span> y<span style='color:#308080; '>&lt;</span>img<span style='color:#308080; '>.</span>_height<span style='color:#406080; '>;</span> <span style='color:#308080; '>+</span><span style='color:#308080; '>+</span>y<span style='color:#308080; '>)</span> <span style='color:#595979; '>// 200 rows.</span>
+        <span style='color:#200080; font-weight:bold; '>for</span> <span style='color:#308080; '>(</span><span style='color:#200080; font-weight:bold; '>unsigned</span> <span style='color:#200080; font-weight:bold; '>int</span> x <span style='color:#308080; '>=</span> <span style='color:#008c00; '>0</span><span style='color:#406080; '>;</span> x<span style='color:#308080; '>&lt;</span>img<span style='color:#308080; '>.</span>_width<span style='color:#406080; '>;</span> <span style='color:#308080; '>+</span><span style='color:#308080; '>+</span>x<span style='color:#308080; '>)</span> <span style='color:#595979; '>// 320 columns.</span>
+          <span style='color:#308080; '>*</span><span style='color:#308080; '>(</span>ptr<span style='color:#308080; '>+</span><span style='color:#308080; '>+</span><span style='color:#308080; '>)</span> <span style='color:#308080; '>=</span> <span style='color:#308080; '>(</span><span style='color:#200080; font-weight:bold; '>float</span><span style='color:#308080; '>)</span><span style='color:#308080; '>(</span><span style='color:#008c00; '>128</span> <span style='color:#308080; '>+</span> <span style='color:#008c00; '>127</span><span style='color:#308080; '>*</span><span style='color:#0066ee; '>std</span><span style='color:#406080; '>::</span><span style='color:#003060; '>cos</span><span style='color:#308080; '>(</span>x<span style='color:#308080; '>/</span><span style='color:#308080; '>(</span><span style='color:#008c00; '>5</span><span style='color:#308080; '>.</span> <span style='color:#308080; '>+</span> <span style='color:#008c00; '>10</span><span style='color:#308080; '>*</span>i<span style='color:#308080; '>)</span><span style='color:#308080; '>)</span><span style='color:#308080; '>*</span><span style='color:#0066ee; '>std</span><span style='color:#406080; '>::</span><span style='color:#003060; '>sin</span><span style='color:#308080; '>(</span>y<span style='color:#308080; '>/</span><span style='color:#308080; '>(</span><span style='color:#008c00; '>5</span><span style='color:#308080; '>.</span> <span style='color:#308080; '>+</span> <span style='color:#008c00; '>10</span><span style='color:#308080; '>*</span>i <span style='color:#308080; '>+</span> c<span style='color:#308080; '>)</span><span style='color:#308080; '>)</span><span style='color:#308080; '>)</span><span style='color:#406080; '>;</span>
+  <span style='color:#406080; '>}</span>
+
+  gmic_list<span style='color:#406080; '>&lt;</span><span style='color:#200080; font-weight:bold; '>char</span><span style='color:#406080; '>></span> image_names<span style='color:#406080; '>;</span> <span style='color:#595979; '>// We don't care about image names here, let this empty.</span>
+  <span style='color:#200080; font-weight:bold; '>try</span> <span style='color:#406080; '>{</span>
+    gmic<span style='color:#308080; '>(</span><span style='color:#800000; '>"</span><span style='color:#1060b6; '>-water[0] 20 -flower[1] 20 -blend vividlight</span><span style='color:#800000; '>"</span><span style='color:#308080; '>,
+         </span>image_list<span style='color:#308080; '>,</span>image_names<span style='color:#308080; '>)</span><span style='color:#406080; '>;</span>
+  <span style='color:#406080; '>}</span> <span style='color:#200080; font-weight:bold; '>catch</span> <span style='color:#308080; '>(</span>gmic_exception <span style='color:#308080; '>&amp;</span>e<span style='color:#308080; '>)</span> <span style='color:#406080; '>{</span> <span style='color:#595979; '>// In case something went wrong.</span>
+    <span style='color:#0066ee; '>std</span><span style='color:#406080; '>::</span><span style='color:#003060; '>fprintf</span><span style='color:#308080; '>(</span><span style='color:#003060; '>stderr</span><span style='color:#308080; '>,</span><span style='color:#800000; '>"</span><span style='color:#1060b6; '>ERROR : </span><span style='color:#007997; '>%s</span><span style='color:#0f69ff; '>\n</span><span style='color:#800000; '>"</span><span style='color:#308080; '>,</span>e<span style='color:#308080; '>.</span>what<span style='color:#308080; '>(</span><span style='color:#308080; '>)</span><span style='color:#308080; '>)</span><span style='color:#406080; '>;</span>
+    <span style='color:#200080; font-weight:bold; '>return</span> <span style='color:#308080; '>-</span><span style='color:#008c00; '>1</span><span style='color:#406080; '>;</span>
+  <span style='color:#406080; '>}</span>
+
+  <span style='color:#595979; '>// Here, 'image_list' now contains only 1 (color) image of size 320x200x1x3.</span>
+  <span style='color:#595979; '>// You can retrieve the image data from the buffer at 'image_list[0]._data',</span>
+  <span style='color:#595979; '>// as well as the image dimensions 'image_list[0]._xxxx', where</span>
+  <span style='color:#595979; '>// 'xxxx' can be 'width', 'height', 'depth' or 'spectrum'.</span>
+
+  (...)  <span style='color:#595979; '>// Do whatever you want with the image data here.</span>
+
+  image_list<span style='color:#308080; '>.</span>assign<span style='color:#308080; '>(</span><span style='color:#008c00; '>0</span><span style='color:#308080; '>)</span><span style='color:#406080; '>;</span> <span style='color:#595979; '>// Deallocate images, if you want to do it before the destructor.</span>
+  <span style='color:#200080; font-weight:bold; '>return</span> <span style='color:#008c00; '>0</span><span style='color:#406080; '>;</span>
+<span style='color:#406080; '>}</span>
+</pre>
+      <hr noshade="noshade" size="1" width="100%"/>
+
+      <p>In <tt style="font-family:monospace;">foo2.cpp</tt>, we first define and initialize a list of two input images (with random sinus waves for the colors). They actually look like this:</p>
+      <center><table><tr>
+            <td><div><a href="img/gmic_libgmic_sample1.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gmic_libgmic_sample1_thumb.jpg"/></a></div></td>
+            <td><div><a href="img/gmic_libgmic_sample2.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gmic_libgmic_sample2_thumb.jpg"/></a></div></td>
+      </tr></table></center>
+      Then, the <b><font color="#000066">G'MIC</font></b> invokation creates this single output image buffer (but without saving the image into a file in this case):
+      <center><td><div><a href="img/gmic_libgmic_sample3.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gmic_libgmic_sample3_thumb.jpg"/></a></div></td></center>
+      This is the result of the following <b><font color="#000066">G'MIC</font></b> pipeline:
+      <b>1.</b> Apply a water effect on the first image (command <tt style="font-family:monospace;">-water[0] 20</tt>),
+      <b>2.</b> Apply a flower effect on the second image (command <tt style="font-family:monospace;">-flower[1] 20</tt>),
+      and <b>3.</b> Blend the resulting images together, using the <i>Vivid light</i> mode (command <tt style="font-family:monospace;">-blend vividlight</tt>).
+      Easy, isn't it ?
+
+      <p>At this stage, you already know the most complex things about the use of the <b>libgmic</b> <i>API</i> :).</p>
+
+      <h2>Step 4: Additional information about the <i>libgmic</i> <i>API</i></h2>
+
+      In bulk order, some other interesting things to know about the <b>libgmic</b> <i>API</i>:
+      <ul>
+
+        <li>A <tt style="font-family:monospace;">gmic_image&lt;float&gt;</tt> instance as defined in <b><font color="#000066">G'MIC</font></b> has <b>4 dimensions</b>:
+          <i>width</i> (number of <i>columns</i>), <i>height</i> (number of <i>rows</i>),
+          <i>depth</i> (number of <i>slices</i>) and <i>spectrum</i> (number of <i>channels</i>).
+          There are no hard limits for each image dimension, except the available memory required to store the image buffer.
+          You can set an arbitrary number of channels for an image (more than <i>4</i> for instance), or an arbitrary number of slices (to deal with <i>3D volumetric</i> images).
+          A usual <i>RGB</i> color image has three channels (<i>spectrum==3</i>) and a single slice (<i>depth==1</i>).
+          That's why we define our color images with dimensions '<tt style="font-family:monospace;">320,200,<b>1</b>,3</tt>' in
+          the file <tt style="font-family:monospace;">foo2.cpp</tt>.
+          The encoding order of the pixel values in an image buffer is straightforward and follows the natural order of the image dimensions: It first stores the image variations along the
+          <i>X</i>-axis (columns), then <i>Y</i> (rows), then <i>Z</i> (slices), then finally <i>C</i> (channels). For instance, the memory buffer for a <i>2x2x1x3</i> RGB color image
+          is organized as follows (beware, the channels are not stored in an interleaved way!):
+
+          <hr noshade="noshade" size="1" width="100%"/>
+<pre style='color:#000020;background:#f6f8ff;font-family:monospace;'>
+R<span style='color:#308080; '>(</span><span style='color:#008c00; '>0</span><span style='color:#308080; '>,</span><span style='color:#008c00; '>0</span><span style='color:#308080; '>)</span><span style='color:#308080; '>,</span>R<span style='color:#308080; '>(</span><span style='color:#008c00; '>1</span><span style='color:#308080; '>,</span><span style='color:#008c00; '>0</span><span style='color:#308080; '>)</span><span style='color:#308080; '>,</span>R<span style='color:#308080; '>(</span><span style='color:#008c00; '>0</span><span style='color:#308080; '>,</span><span style='color:#008c00; '>1</span><span style='color:#308080; '>)</span><span style='color:#308080; '>,</span>R<span style='color:#308080; '>(</span><span style='color:#008c00; '>1</span><span style='color:#308080; '>,</span><span style='color:#008c00; '>1</span><span style='color:#308080; '>)</span><span style='color:#308080; '>,</span>G<span style='color:#308080; '>(</span><span style='color:#008c00; '>0</span><span style='color:#308080; '>,</span><span style='color:#008c00; '>0</span><span style='color:#308080; '>)</span><span style='color:#308080; '>,</span>G<span style='color:#308080; '>(</span><span style='color:#008c00; '>1</span><span style='color:#308080; '>,</span><span style='color:#008c00; '>0</span><span style='color:#308080; '>)</span><span style='color:#308080; '>,</span>G<span style='color:#308080; '>(</span><span style='color:#008c00; '>0</span><span style='color:#308080; '>,</span><span style='color:#008c00; '>1</span><span style='color:#308080; '>)</span><span style='color:#308080; '>,</span>G<span style='color:#308080; '>(</span><span style='color:#008c00; '>1</span><span style='color:#308080; '>,</span><span style='color:#008c00; '>1</span><span style='color:#308080; '>)</span><span style='color:#308080; '>,</span>B<span style='color:#308080; '>(</span><span style='color:#008c00; '>0</span><span style='color:#308080; '>,</span><span style='color:#008c00; '>0</span><span style='color:#308080; '>)</span><span style='color:#308080; '>,</span>B<span style='color:#308080; '>(</span><span style='color:#008c00; '>1</span><span style='color:#308080; '>,</span><span style='color:#008c00; '>0</span><span style='color:#308080; '>)</span><span style='color:#308080; '>,</span>B<span style='color:#308080; '>(</span><span style='color:#008c00; '>0</span><span style='color:#308080; '>,</span><span style='color:#008c00; '>1</span><span style='color:#308080; '>)</span><span style='color:#308080; '>,</span>B<span style='color:#308080; '>(</span><span style='color:#008c00; '>1</span><span style='color:#308080; '>,</span><span style='color:#008c00; '>1</span><span style='color:#308080; '>)</span>
+</pre>
+          <hr noshade="noshade" size="1" width="100%"/>
+
+        <br/><br/></li>
+
+        <li>The call to <tt style="font-family:monospace;">gmic(...)</tt> is actually a call to a <i>constructor</i>. It constructs one temporary <tt style="font-family:monospace;">gmic</tt> instance
+          and destroys it just after it has completed its pipeline execution. It is possible to construct a more permanent <tt style="font-family:monospace;">gmic</tt> instance, and use it multiple times if necessary.
+          For instance, the call to <b>libgmic</b> in file <tt style="font-family:monospace;">foo2.cpp</tt> could have been decomposed like this:
+
+          <hr noshade="noshade" size="1" width="100%"/>
+<pre style='color:#000020;background:#f6f8ff;font-family:monospace;'>
+gmic g_instance<span style='color:#406080; '>;</span>
+g_instance<span style='color:#308080; '>.</span>run<span style='color:#308080; '>(</span><span style='color:#800000; '>"</span><span style='color:#1060b6; '>-water[0] 20</span><span style='color:#800000; '>"</span><span style='color:#308080; '>,</span>image_list<span style='color:#308080; '>,</span>image_names<span style='color:#308080; '>)</span><span style='color:#406080; '>;</span>
+g_instance<span style='color:#308080; '>.</span>run<span style='color:#308080; '>(</span><span style='color:#800000; '>"</span><span style='color:#1060b6; '>-flower[1] 20</span><span style='color:#800000; '>"</span><span style='color:#308080; '>,</span>image_list<span style='color:#308080; '>,</span>image_names<span style='color:#308080; '>)</span><span style='color:#406080; '>;</span>
+g_instance<span style='color:#308080; '>.</span>run<span style='color:#308080; '>(</span><span style='color:#800000; '>"</span><span style='color:#1060b6; '>-blend vividlight</span><span style='color:#800000; '>"</span><span style='color:#308080; '>,</span>image_list<span style='color:#308080; '>,</span>image_names<span style='color:#308080; '>)</span><span style='color:#406080; '>;</span>
+g_instance<span style='color:#308080; '>.</span>run<span style='color:#308080; '>(</span><span style='color:#800000; '>"</span><span style='color:#1060b6; '>-output gmic_test.png</span><span style='color:#800000; '>"</span><span style='color:#308080; '>,</span>image_list<span style='color:#308080; '>,</span>image_names<span style='color:#308080; '>)</span><span style='color:#406080; '>;</span>
+</pre>
+<hr noshade="noshade" size="1" width="100%"/>
+
+        <br/><br/></li>
+
+        <li>You may want to set names for your input images. For instance, in file <tt style="font-family:monospace;">foo2.cpp</tt>, we could have set the input image names like this:
+
+      <hr noshade="noshade" size="1" width="100%"/>
+<pre style='color:#000020;background:#f6f8ff;font-family:monospace;'>
+<span style='color:#200080; font-weight:bold; '>const</span> <span style='color:#200080; font-weight:bold; '>char</span> <span style='color:#308080; '>*</span><span style='color:#200080; font-weight:bold; '>const</span> name1 <span style='color:#308080; '>=</span> <span style='color:#800000; '>"</span><span style='color:#1060b6; '>First image</span><span style='color:#800000; '>"</span><span style='color:#308080; '>,</span> <span style='color:#308080; '>*</span><span style='color:#200080; font-weight:bold; '>const</span> name2 <span style='color:#308080; '>=</span> <span style='color:#800000; '>"</span><span style='color:#1060b6; '>Second image</span><span style='color:#800000; '>"</span><span style='color:#406080; '>;</span>
+gmic_list<span style='color:#406080; '>&lt;</span><span style='color:#200080; font-weight:bold; '>char</span><span style='color:#406080; '>></span> image_names<span style='color:#406080; '>;</span>
+image_names<span style='color:#308080; '>.</span>assign<span style='color:#308080; '>(</span><span style='color:#008c00; '>2</span><span style='color:#308080; '>)</span><span style='color:#406080; '>;</span>
+image_names<span style='color:#308080; '></span><span style='color:#308080; '>[</span><span style='color:#008c00; '>0</span><span style='color:#308080; '>]</span><span style='color:#308080; '>.</span>assign<span style='color:#308080; '>(</span><span style='color:#0066ee; '>std</span><span style='color:#406080; '>::</span><span style='color:#003060; '>strlen</span><span style='color:#308080; '>(</span>name1<span style='color:#308080; '>)</span><span style='color:#308080; '>+</span><span style='color:#008c00; '>1</span><span style='color:#308080; '>)</span><span style='color:#406080; '>;</span> <span style='color:#595979; '>// We don't forget the '\0'.</span>
+<span style='color:#0066ee; '>std</span><span style='color:#406080; '>::</span><span style='color:#003060; '>strcpy</span><span style='color:#308080; '>(</span>image_names<span style='color:#308080; '></span><span style='color:#308080; '>[</span><span style='color:#008c00; '>0</span><span style='color:#308080; '>]</span><span style='color:#308080; '></span><span style='color:#308080; '>,</span>name1<span style='color:#308080; '>)</span><span style='color:#406080; '>;</span>
+image_names<span style='color:#308080; '></span><span style='color:#308080; '>[</span><span style='color:#008c00; '>1</span><span style='color:#308080; '>]</span><span style='color:#308080; '>.</span>assign<span style='color:#308080; '>(</span><span style='color:#0066ee; '>std</span><span style='color:#406080; '>::</span><span style='color:#003060; '>strlen</span><span style='color:#308080; '>(</span>name2<span style='color:#308080; '>)</span><span style='color:#308080; '>+</span><span style='color:#008c00; '>1</span><span style='color:#308080; '>)</span><span style='color:#406080; '>;</span> <span style='color:#595979; '>// We don't forget the '\0'.</span>
+<span style='color:#0066ee; '>std</span><span style='color:#406080; '>::</span><span style='color:#003060; '>strcpy</span><span style='color:#308080; '>(</span>image_names<span style='color:#308080; '></span><span style='color:#308080; '>[</span><span style='color:#008c00; '>1</span><span style='color:#308080; '>]</span><span style='color:#308080; '></span><span style='color:#308080; '>,</span>name2<span style='color:#308080; '>)</span><span style='color:#406080; '>;</span>
+</pre>
+      <hr noshade="noshade" size="1" width="100%"/>
+
+And similarly, you can get the name of the resulting image by:
+
+      <hr noshade="noshade" size="1" width="100%"/>
+<pre style='color:#000020;background:#f6f8ff;font-family:monospace;'>
+<span style='color:#200080; font-weight:bold; '>const</span> <span style='color:#200080; font-weight:bold; '>char</span> <span style='color:#308080; '>*</span><span style='color:#200080; font-weight:bold; '>const</span> output_name <span style='color:#308080; '>=</span> image_names<span style='color:#308080; '></span><span style='color:#308080; '>[</span><span style='color:#008c00; '>0</span><span style='color:#308080; '>]</span><span style='color:#308080; '></span><span style='color:#406080; '>;</span>
+</pre>
+      <hr noshade="noshade" size="1" width="100%"/>
+
+Setting image names is generally useless, except if one of the commands you invoke in your <b><font color="#000066">G'MIC</font></b> pipeline takes care about it (there are some).
+
+        <br/><br/></li>
+
+        <li>If by chance, you are already a user of the <a href="http://cimg.eu">CImg Library</a>,
+          you might be happy to learn that the two main <b>libgmic</b> classes
+          <tt style="font-family:monospace;">gmic_image&lt;float&gt;</tt> and
+          <tt style="font-family:monospace;">gmic_list&lt;float&gt;</tt> are actually the same as the <i>CImg</i> classes
+          <tt style="font-family:monospace;">CImg&lt;float&gt;</tt> and
+          <tt style="font-family:monospace;">CImgList&lt;float&gt;</tt> respectively.
+          Indeed, the <b><font color="#000066">G'MIC</font></b> project is based on <i>CImg</i>, and it is then straightforward
+          to use <i>CImg</i> in conjunction with <b>libgmic</b>, and get the power of both libraries at the same time.
+          The file <tt style="font-family:monospace;">foo3.cpp</tt> below illustrates the mixed use of <i>CImg</i> and <b>libgmic</b>:
+
+      <hr noshade="noshade" size="1" width="100%"/>
+<pre style='color:#000020;background:#f6f8ff;font-family:monospace;'>
+<span style='color:#595979; '>//----- File 'foo3.cpp' -----</span>
+<span style='color:#004a43; '>#</span><span style='color:#004a43; '>include </span><span style='color:#800000; '>"</span><span style='color:#40015a; '>CImg.h</span><span style='color:#800000; '>"</span>
+<span style='color:#004a43; '>#</span><span style='color:#004a43; '>include </span><span style='color:#800000; '>"</span><span style='color:#40015a; '>gmic.h</span><span style='color:#800000; '>"</span>
+<span style='color:#200080; font-weight:bold; '>using</span> <span style='color:#200080; font-weight:bold; '>namespace</span> cimg_library<span style='color:#406080; '>;</span>
+
+<span style='color:#200080; font-weight:bold; '>int</span> <span style='color:#400000; '>main</span><span style='color:#308080; '>(</span><span style='color:#308080; '>)</span> <span style='color:#406080; '>{</span>
+
+  <span style='color:#595979; '>// Load input image files, using the CImg Library.</span>
+  CImg<span style='color:#406080; '>&lt;</span><span style='color:#200080; font-weight:bold; '>float</span><span style='color:#406080; '>></span>
+    img1<span style='color:#308080; '>(</span><span style='color:#800000; '>"</span><span style='color:#1060b6; '>img/lena.jpg</span><span style='color:#800000; '>"</span><span style='color:#308080; '>)</span><span style='color:#308080; '>,</span>
+    img2<span style='color:#308080; '>(</span><span style='color:#800000; '>"</span><span style='color:#1060b6; '>img/joconde.jpg</span><span style='color:#800000; '>"</span><span style='color:#308080; '>)</span><span style='color:#406080; '>;</span>
+
+  <span style='color:#595979; '>// Move input images into a list.</span>
+  CImgList<span style='color:#406080; '>&lt;</span><span style='color:#200080; font-weight:bold; '>float</span><span style='color:#406080; '>></span> image_list<span style='color:#406080; '>;</span>
+  img1<span style='color:#308080; '>.</span>move_to<span style='color:#308080; '>(</span>image_list<span style='color:#308080; '>)</span><span style='color:#406080; '>;</span>
+  img2<span style='color:#308080; '>.</span>move_to<span style='color:#308080; '>(</span>image_list<span style='color:#308080; '>)</span><span style='color:#406080; '>;</span>
+
+  <span style='color:#595979; '>// Define the corresponding image names.</span>
+  CImgList<span style='color:#406080; '>&lt;</span><span style='color:#200080; font-weight:bold; '>char</span><span style='color:#406080; '>></span> image_names<span style='color:#406080; '>;</span>
+  CImg<span style='color:#406080; '>&lt;</span><span style='color:#200080; font-weight:bold; '>char</span><span style='color:#406080; '>></span><span style='color:#406080; '>::</span><span style='color:#003060; '>string</span><span style='color:#308080; '>(</span><span style='color:#800000; '>"</span><span style='color:#1060b6; '>First image</span><span style='color:#800000; '>"</span><span style='color:#308080; '>)</span><span style='color:#308080; '>.</span>move_to<span style='color:#308080; '>(</span>image_names<span style='color:#308080; '>)</span><span style='color:#406080; '>;</span>
+  CImg<span style='color:#406080; '>&lt;</span><span style='color:#200080; font-weight:bold; '>char</span><span style='color:#406080; '>></span><span style='color:#406080; '>::</span><span style='color:#003060; '>string</span><span style='color:#308080; '>(</span><span style='color:#800000; '>"</span><span style='color:#1060b6; '>Second image</span><span style='color:#800000; '>"</span><span style='color:#308080; '>)</span><span style='color:#308080; '>.</span>move_to<span style='color:#308080; '>(</span>image_names<span style='color:#308080; '>)</span><span style='color:#406080; '>;</span>
+
+  <span style='color:#595979; '>// Invoke libgmic to execute a G'MIC pipeline.</span>
+  gmic<span style='color:#308080; '>(</span><span style='color:#800000; '>"</span><span style='color:#1060b6; '>-water[0] 15 -wave[1] 15 </span><span style='color:#800000; '>"</span>
+       <span style='color:#800000; '>"</span><span style='color:#1060b6; '>320,256 -mandelbrot[-1] -0.6918,-0.4831,-0.6375,-0.4338,256 </span><span style='color:#800000; '>"</span>
+       <span style='color:#800000; '>"</span><span style='color:#1060b6; '>64,1,1,3,?(255) -r[-1] 256,1,1,3,3 -point[-1] 0 -map[-2] [-1] -rm[-1] </span><span style='color:#800000; '>"</span>
+       <span style='color:#800000; '>"</span><span style='color:#1060b6; '>-frame 2,2,0 -to_rgba -drop_shadow 3,3 -montage X </span><span style='color:#800000; '>"</span>
+       <span style='color:#800000; '>"</span><span style='color:#1060b6; '>-i[0] 100%,100%,1,3,255 -blend alpha </span><span style='color:#800000; '>"</span>
+       <span style='color:#800000; '>"</span><span style='color:#1060b6; '>-name </span><span style='color:#0f69ff; '>\"</span><span style='color:#1060b6; '>Result image</span><span style='color:#0f69ff; '>\"</span><span style='color:#800000; '>"</span><span style='color:#308080; '>,</span>
+       image_list<span style='color:#308080; '>,</span>image_names<span style='color:#308080; '>)</span><span style='color:#406080; '>;</span>
+
+  <span style='color:#595979; '>// Display resulting image.</span>
+  <span style='color:#200080; font-weight:bold; '>const</span> <span style='color:#200080; font-weight:bold; '>char</span> <span style='color:#308080; '>*</span><span style='color:#200080; font-weight:bold; '>const</span> title_bar <span style='color:#308080; '>=</span> image_names<span style='color:#308080; '>[</span><span style='color:#008c00; '>0</span><span style='color:#308080; '>]</span><span style='color:#406080; '>;</span>
+  image_list<span style='color:#308080; '>.</span>display<span style='color:#308080; '>(</span>title_bar<span style='color:#308080; '>)</span><span style='color:#406080; '>;</span>
+
+  <span style='color:#200080; font-weight:bold; '>return</span> <span style='color:#008c00; '>0</span><span style='color:#406080; '>;</span>
+<span style='color:#406080; '>}</span>
+</pre>
+      <hr noshade="noshade" size="1" width="100%"/>
+
+      Here, we start to load two input images <tt style="font-family:monospace;">lena.jpg</tt> and <tt style="font-family:monospace;">joconde.jpg</tt> in memory,
+      and after the <b>libgmic</b> invokation, we get this single resulting image:
+      <center><div><a href="img/gmic_libgmic_sample4.jpg" class="highslide" onclick="return hs.expand(this)"><img alt="" border="0" src="img/gmic_libgmic_sample4_thumb.jpg"/></a></div></center><br/>
+      Implementing the same pipeline entirely with <i>CImg</i> calls only would have involved much efforts for sure!
+        </li>
+
+      </ul>
+
+      <p>
+        In the <b><font color="#000066">G'MIC</font></b> source, you will a sample file
+        <tt style="font-family:monospace;"><a href="https://github.com/dtschump/gmic/blob/master/src/use_libgmic.cpp">use_libgmic.cpp</a></tt> which contains all
+        the stuffs we've summarized in this page. Check it out and compile it to have another example on how the <b>libgmic</b> can do for you.
+      </p>
+
+    </div>
+  </div>
+  <div id="footer"><img alt="" src="images/footer.jpg" /></div></div>
+
+  <!--#include file="copyright.html" -->
+  <!--#include file="footer.html" -->

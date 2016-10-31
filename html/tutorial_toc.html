@@ -1,0 +1,175 @@
+<script language="javascript">
+  function foldOrUnfold(section) {
+  var e = document.getElementById('Subsection_'+section);
+  var button = document.getElementById('SectionButton_'+section);
+  if ( e.style.display == '' ) {
+  e.style.display = 'none';
+  button.style.backgroundPosition = '-13px 0px';
+  } else {
+  e.style.display = '';
+  button.style.backgroundPosition = '0px 0px';
+  }
+  }
+  function unfoldSingleSection( ) {
+  if ( gFilename == '' ) return;
+  }
+</script>
+<style>
+  img.foldingButton { cursor: pointer; width: 13px; height: 13px; background: url(img/toc_buttons.png) -13px 0; }
+  img.voidButton { cursor: auto; height: 13px; width: 13px; }
+  ul.noMarker { list-style-type: none; }
+</style>
+<h1>Table of Contents</h1>
+<ul class="noMarker"  style="font-size:14px">
+
+  <!-- Introduction -->
+  <li><img class="voidButton" src="img/toc_void.png"/> <a target="_parent" href="http://gmic.eu/tutorial/index.shtml">Introduction</a></li>
+
+  <!-- Basics -->
+  <li><img class="voidButton" src="img/toc_void.png"/> <a target="_parent" href="http://gmic.eu/tutorial/basics.shtml">Basics</a></li>
+
+  <!-- Images -->
+  <li><img id="SectionButton_images" class="foldingButton" onclick="foldOrUnfold('images');" src="img/toc_void.png" /> <a target="_parent" href="http://gmic.eu/tutorial/images.shtml">Images</a></li>
+  <ul id="Subsection_images" style="display: none; font-size:13px">
+    <li><a target="_parent" href="http://gmic.eu/tutorial/images.shtml">Images</a></li>
+    <li><a target="_parent" href="http://gmic.eu/tutorial/images-as-datasets.shtml">Images as Data Sets</a></li>
+    <li><a target="_parent" href="http://gmic.eu/tutorial/conjuring-images.shtml">Conjuring Images out of the Aether and Other Generators</a></li>
+    <li><a target="_parent" href="http://gmic.eu/tutorial/images-have-edges.shtml">Images Have Edges. Now What?</a></li>
+  </ul>
+
+  <!-- Command Decorations -->
+  <li><img class="voidButton" src="img/toc_void.png"/> <a target="_parent" href="http://gmic.eu/tutorial/command-decorations.shtml">Command Decorations</a></li>
+
+  <!-- Beginners Cookbook -->
+  <li><img id="SectionButton_beginners-cookbook" class="foldingButton" onclick="foldOrUnfold('beginners-cookbook');" src="img/toc_void.png" /> <a target="_parent" href="http://gmic.eu/tutorial/beginners-cookbook.shtml">Beginners Cookbook</a></li>
+  <ul id="Subsection_beginners-cookbook" style="display: none; font-size:13px">
+    <li><a target="_parent" href="http://gmic.eu/tutorial/beginners-cookbook.shtml">About</a></li>
+    <li><a target="_parent" href="http://gmic.eu/tutorial/cauldron.shtml">Cauldron, Anyone ?</a></li>
+    <li><a target="_parent" href="http://gmic.eu/tutorial/convert_raw.shtml">Convert Raw Image</a></li>
+    <li><a target="_parent" href="http://gmic.eu/tutorial/dyidiffusion.shtml">Do Your Own Diffusion Tensor Fields</a></li>
+    <li><a target="_parent" href="http://gmic.eu/tutorial/fingerpainting.shtml">Fingerpainting</a></li>
+    <li><a target="_parent" href="http://gmic.eu/tutorial/ramps.shtml">Ramps - a.k.a "Gradients"</a></li>
+    <li><a target="_parent" href="http://gmic.eu/tutorial/road-systems.shtml">Road Systems, Maybe, or Cells</a></li>
+    <li><a target="_parent" href="http://gmic.eu/tutorial/spectral-art.shtml">Spectral Art</a></li>
+    <li><a target="_parent" href="http://gmic.eu/tutorial/stained-glass.shtml">Stained Glass</a></li>
+  </ul>
+
+  <!-- Gimp Filters -->
+  <li><img id="SectionButton_gimp-filters" class="foldingButton" onclick="foldOrUnfold('gimp-filters');" src="img/toc_void.png" /> <a target="_parent" href="http://gmic.eu/tutorial/gimp-filters.shtml">Tutorial Filters for GIMP</a></li>
+  <ul id="Subsection_gimp-filters" style="display: none; font-size:13px">
+    <li><a target="_parent" href="http://gmic.eu/tutorial/gimp-filters.shtml">About</a></li>
+    <li><a target="_parent" href="http://gmic.eu/tutorial/blur-by-color-filter.shtml">Blur by Color</a></li>
+    <li><a target="_parent" href="http://gmic.eu/tutorial/the-fingerpainting-filter.shtml">Fingerpainting</a></li>
+    <li><a target="_parent" href="http://gmic.eu/tutorial/the-hairlock-filter.shtml">Hair locks</a></li>
+    <li><a target="_parent" href="http://gmic.eu/tutorial/hedcut-filter.shtml">The Gimp Hedcut Filter</a></li>
+  </ul>
+
+  <!-- Technical notes -->
+  <li><img id="SectionButton_technical-notes" class="foldingButton" onclick="foldOrUnfold('technical-notes');" src="img/toc_void.png" /> <b>Technical Notes</b></li>
+  <ul id="Subsection_technical-notes" style="display: none; font-size:13px">
+    <li><a target="_parent" href="http://gmic.eu/tutorial/gmic-color-mapping.shtml">G'MIC Color Mapping</a></li>
+    <li><a target="_parent" href="http://gmic.eu/tutorial/wavelet-analysis-and-synthesis-in-gmic.shtml">Wavelet Analysis and Synthesis in G'MIC</a></li>
+    <li><a target="_parent" href="http://gmic.eu/tutorial/trigometric-and-inverse-trigometric-commands.shtml">Trigometric And Inverse Trigometric Commands</a></li>
+  </ul>
+
+  <!-- Commands : Inputs/Outputs -->
+  <li><img id="SectionButton_command-inputs-outputs" class="foldingButton" onclick="foldOrUnfold('commands-inputs-outputs');" src="img/toc_void.png" /> <b>Commands: Inputs/Outputs</b></li>
+  <ul id="Subsection_commands-inputs-outputs" style="display: none; font-size:13px">
+    <li><a target="_parent" href="http://gmic.eu/tutorial/_display.shtml"><i>-display</i></a></li>
+    <li><a target="_parent" href="http://gmic.eu/tutorial/_display_tensors.shtml"><i>-display_tensors</i></a></li>
+    <li><a target="_parent" href="http://gmic.eu/tutorial/_input.shtml"><i>-input</i></a></li>
+    <li><a target="_parent" href="http://gmic.eu/tutorial/_shared.shtml"><i>-shared</i></a></li>
+  </ul>
+
+  <!-- Commands : Values Manipulation -->
+  <li><img id="SectionButton_commands-values-manipulation" class="foldingButton" onclick="foldOrUnfold('commands-values-manipulation');" src="img/toc_void.png" /> <b>Commands: Value Manipulation</b></li>
+  <ul id="Subsection_commands-values-manipulation" style="display: none; font-size:13px">
+    <li><a target="_parent" href="http://gmic.eu/tutorial/_eigen2tensor.shtml"><i>-eigen2tensor</i></a></li>
+    <li><a target="_parent" href="http://gmic.eu/tutorial/_index.shtml"><i>-index</i></a></li>
+    <li><a target="_parent" href="http://gmic.eu/tutorial/_map.shtml"><i>-map</i></a></li>
+    <li><a target="_parent" href="http://gmic.eu/tutorial/_norm.shtml"><i>-norm</i></a></li>
+    <li><a target="_parent" href="http://gmic.eu/tutorial/_normalize.shtml"><i>-normalize</i></a></li>
+    <li><a target="_parent" href="http://gmic.eu/tutorial/_orientation.shtml"><i>-orientation</i></a></li>
+    <li><a target="_parent" href="http://gmic.eu/tutorial/_threshold.shtml"><i>-threshold</i></a></li>
+  </ul>
+
+  <!-- Commands : Colors Manipulation -->
+  <li><img id="SectionButton_commands-colors-manipulation" class="foldingButton" onclick="foldOrUnfold('commands-colors-manipulation');" src="img/toc_void.png" /> <b>Commands: Colors Manipulation</b></li>
+  <ul id="Subsection_commands-colors-manipulation" style="display: none; font-size:13px">
+    <li><a target="_parent" href="http://gmic.eu/tutorial/_autoindex.shtml"><i>-autoindex</i></a></li>
+    <li><a target="_parent" href="http://gmic.eu/tutorial/_colormap.shtml"><i>-colormap</i></a></li>
+    <li><a target="_parent" href="http://gmic.eu/tutorial/_compose_channels.shtml"><i>-compose_channels</i></a></li>
+    <li><a target="_parent" href="http://gmic.eu/tutorial/_direction2rgb.shtml"><i>-direction2rgb</i></a></li>
+    <li><a target="_parent" href="http://gmic.eu/tutorial/_gradient2rgb.shtml"><i>-gradient2rgb</i></a></li>
+    <li><a target="_parent" href="http://gmic.eu/tutorial/_mix_rgb.shtml"><i>-mix_rgb</i></a></li>
+    <li><a target="_parent" href="http://gmic.eu/tutorial/_select_color.shtml"><i>-select_color</i></a></li>
+  </ul>
+
+  <!-- Commands : Geometry manipulation -->
+  <li><img id="SectionButton_commands-geometry-manipulation" class="foldingButton" onclick="foldOrUnfold('commands-geometry-manipulation');" src="img/toc_void.png" /> <b>Commands: Geometry Manipulation</b></li>
+  <ul id="Subsection_commands-geometry-manipulation" style="display: none; font-size:13px">
+    <li><a target="_parent" href="http://gmic.eu/tutorial/_warp.shtml"><i>-warp</i></a></li>
+  </ul>
+
+  <!-- Commands : Filtering -->
+  <li><img id="SectionButton_commands-filtering" class="foldingButton" onclick="foldOrUnfold('commands-filtering');" src="img/toc_void.png" /> <b>Commands: Filtering</b></li>
+  <ul id="Subsection_commands-filtering" style="display: none; font-size:13px">
+    <li><a target="_parent" href="http://gmic.eu/tutorial/_bandpass.shtml"><i>-bandpass</i></a></li>
+    <li><a target="_parent" href="http://gmic.eu/tutorial/_blur.shtml"><i>-blur</i></a></li>
+    <li><a target="_parent" href="http://gmic.eu/tutorial/_blur_angular.shtml"><i>-blur_angular</i></a></li>
+    <li><a target="_parent" href="http://gmic.eu/tutorial/_blur_linear.shtml"><i>-blur_linear</i></a></li>
+    <li><a target="_parent" href="http://gmic.eu/tutorial/_blur_radial.shtml"><i>-blur_radial</i></a></li>
+    <li><a target="_parent" href="http://gmic.eu/tutorial/_blur_selective.shtml"><i>-blur_selective</i></a></li>
+    <li><a target="_parent" href="http://gmic.eu/tutorial/_blur_x.shtml"><i>-blur_x</i></a></li>
+    <li><a target="_parent" href="http://gmic.eu/tutorial/_blur_xy.shtml"><i>-blur_xy</i></a></li>
+    <li><a target="_parent" href="http://gmic.eu/tutorial/_blur_xyz.shtml"><i>-blur_xyz</i></a></li>
+    <li><a target="_parent" href="http://gmic.eu/tutorial/_blur_y.shtml"><i>-blur_y</i></a></li>
+    <li><a target="_parent" href="http://gmic.eu/tutorial/_blur_z.shtml"><i>-blur_z</i></a></li>
+    <li><a target="_parent" href="http://gmic.eu/tutorial/_convolve.shtml"><i>-convolve</i></a></li>
+    <li><a target="_parent" href="http://gmic.eu/tutorial/_dct-and-idct.shtml"><i>-dct and -idct</i></a></li>
+    <li><a target="_parent" href="http://gmic.eu/tutorial/_deriche.shtml"><i>-deriche</i></a></li>
+    <li><a target="_parent" href="http://gmic.eu/tutorial/_diffusiontensors.shtml"><i>-diffusiontensors</i></a></li>
+    <li><a target="_parent" href="http://gmic.eu/tutorial/_fft.shtml"><i>-fft</i></a></li>
+    <li><a target="_parent" href="http://gmic.eu/tutorial/_gradient.shtml"><i>-gradient</i></a></li>
+    <li><a target="_parent" href="http://gmic.eu/tutorial/_gradient_norm.shtml"><i>-gradient_norm</i></a></li>
+    <li><a target="_parent" href="http://gmic.eu/tutorial/_gradient_orientation.shtml"><i>-gradient_orientation</i></a></li>
+    <li><a target="_parent" href="http://gmic.eu/tutorial/_haar.shtml"><i>-haar</i></a></li>
+    <li><a target="_parent" href="http://gmic.eu/tutorial/_smooth.shtml"><i>-smooth</i></a></li>
+    <li><a target="_parent" href="http://gmic.eu/tutorial/_structuretensors.shtml"><i>-structuretensors</i></a></li>
+  </ul>
+
+  <!-- Commands : Features Extraction -->
+  <li><img id="SectionButton_commands-features-extraction" class="foldingButton" onclick="foldOrUnfold('commands-features-extraction');" src="img/toc_void.png" /> <b>Commands: Features Extraction</b></li>
+  <ul id="Subsection_commands-features-extraction" style="display: none; font-size:13px">
+    <li><a target="_parent" href="http://gmic.eu/tutorial/_area.shtml"><i>-area</i></a></li>
+    <li><a target="_parent" href="http://gmic.eu/tutorial/_label.shtml"><i>-label</i></a></li>
+    <li><a target="_parent" href="http://gmic.eu/tutorial/_distance.shtml"><i>-distance</i></a></li>
+  </ul>
+
+  <!-- Commands : Image Drawing -->
+  <li><img id="SectionButton_commands-image-drawing" class="foldingButton" onclick="foldOrUnfold('commands-image-drawing');" src="img/toc_void.png" /> <b>Commands: Image Drawing</b></li>
+  <ul id="Subsection_commands-image-drawing" style="display: none; font-size:13px">
+    <li><a target="_parent" href="http://gmic.eu/tutorial/_gaussian.shtml"><i>-gaussian</i></a></li>
+    <li><a target="_parent" href="http://gmic.eu/tutorial/_plasma.shtml"><i>-plasma</i></a></li>
+    <li><a target="_parent" href="http://gmic.eu/tutorial/_turbulence.shtml"><i>-turbulence</i></a></li>
+  </ul>
+
+  <!-- Commands : Matrix computation -->
+  <li><img id="SectionButton_commands-matrix-computation" class="foldingButton" onclick="foldOrUnfold('commands-matrix-computation');" src="img/toc_void.png" /> <b>Commands: Matrix Computation</b></li>
+  <ul id="Subsection_commands-matrix-computation" style="display: none; font-size:13px">
+    <li><a target="_parent" href="http://gmic.eu/tutorial/_eigen.shtml"><i>-eigen</i></a></li>
+  </ul>
+
+  <!-- Commands : Program control -->
+  <li><img id="SectionButton_commands-program-control" class="foldingButton" onclick="foldOrUnfold('commands-program-control');" src="img/toc_void.png" /> <b>Commands: Program Control</b></li>
+  <ul id="Subsection_commands-program-control" style="display: none; font-size:13px">
+    <li><a target="_parent" href="http://gmic.eu/tutorial/_local.shtml"><i>-local</i></a></li>
+    <li><a target="_parent" href="http://gmic.eu/tutorial/_do.shtml"><i>-do</i></a></li>
+    <li><a target="_parent" href="http://gmic.eu/tutorial/_if.shtml"><i>-if</i></a></li>
+    <li><a target="_parent" href="http://gmic.eu/tutorial/_repeat.shtml"><i>-repeat</i></a></li>
+  </ul>
+
+</ul>
+<script language="javascript">
+  foldOrUnfold( gFilename );
+</script>

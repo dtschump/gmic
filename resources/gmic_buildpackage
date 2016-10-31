@@ -1,0 +1,428 @@
+#!/bin/bash
+#
+#  File        : gmic_buildpackage
+#                ( Bash script )
+#
+#  Description : Build .tar.gz and .deb package files
+#                of G'MIC (GREYC's Magic for Image Computing).
+#
+#  Usage       : ./gmic_buildpackage [final]
+#
+#  Copyright   : David Tschumperle
+#                ( http://tschumperle.users.greyc.fr/ )
+#
+#  License     : CeCILL v2.0
+#                ( http://www.cecill.info/licences/Licence_CeCILL_V2-en.html )
+#
+#  This software is governed by the CeCILL  license under French law and
+#  abiding by the rules of distribution of free software.  You can  use,
+#  modify and/ or redistribute the software under the terms of the CeCILL
+#  license as circulated by CEA, CNRS and INRIA at the following URL
+#  "http://www.cecill.info".
+#
+#  As a counterpart to the access to the source code and  rights to copy,
+#  modify and redistribute granted by the license, users are provided only
+#  with a limited warranty  and the software's author,  the holder of the
+#  economic rights,  and the successive licensors  have only  limited
+#  liability.
+#
+#  In this respect, the user's attention is drawn to the risks associated
+#  with loading,  using,  modifying and/or developing or reproducing the
+#  software by the user in light of its specific status of free software,
+#  that may mean  that it is complicated to manipulate,  and  that  also
+#  therefore means  that it is reserved for developers  and  experienced
+#  professionals having in-depth computer knowledge. Users are therefore
+#  encouraged to load and test the software's suitability as regards their
+#  requirements in conditions enabling the security of their systems and/or
+#  data to be ensured and,  more generally, to use and operate it in the
+#  same conditions as regards security.
+#
+#  The fact that you are presently reading this means that you have had
+#  knowledge of the CeCILL license and that you accept its terms.
+#
+
+# Handle package building on Windows.
+#------------------------------------
+if [ "$OSTYPE" == "msys" ]; then
+
+    echo &&
+        echo " - Build G'MIC package for Windows." &&
+        cd &&
+
+        # Input sources.
+        rm -rf gmic-src
+    cp -rf /e/work/src/gmic/src gmic-src
+    cp -rf /e/work/src/gmic-community/libcgmic/*gmic* gmic-src
+    cp -rf /e/work/src/gmic/resources/gmic_film_cluts.gmz gmic-build
+    cp -rf /e/work/src/gmic/resources/gmic_film_cluts.gmz gmic-gimp-build
+
+    # Get version number.
+    cd gmic-src &&
+        RELEASE0=`grep "#define gmic_version" gmic.h | tail -c5` &&
+        RELEASE1=`echo $RELEASE0 | head -c1` &&
+        RELEASE2=`echo $RELEASE0 | head -c2 | tail -c1` &&
+        RELEASE3=`echo $RELEASE0 | head -c3 | tail -c1` &&
+        VERSION=$RELEASE1.$RELEASE2.$RELEASE3 &&
+
+        if [ "$1" == "final" ]; then
+            SUFFIX="";
+            sed "s/PRERELEASE_CFLAGS = /NO_PRERELEASE_CFLAGS = /" Makefile > /tmp/Makefile
+            mv /tmp/Makefile Makefile
+        else SUFFIX=_pre;
+        fi &&
+        sed "s/rm -rf CImg.h gmic_stdlib.h /rm -rf /" Makefile > /tmp/Makefile
+    mv /tmp/Makefile Makefile
+    cd ..
+
+    if [ -f msys2 ]; then
+
+        # For 64 bits version (MSYS2)
+        echo " - Release number : $VERSION$SUFFIX (64 bits)" &&
+            OUTDIR1=gmic-${VERSION}${SUFFIX}-win64 &&
+            OUTDIR2=gmic-gimp-${VERSION}${SUFFIX}-win64 &&
+            OUTZIP1=gmic_${VERSION}${SUFFIX}_win64.zip &&
+            OUTZIP2=gmic_gimp_${VERSION}${SUFFIX}_win64.zip &&
+            OUTINST=gmic_gimp_${VERSION}${SUFFIX}_win64.exe &&
+            rm -rf ${OUTDIR1} ${OUTDIR2} ${OUTZIP1} ${OUTZIP2} ${OUTINST} &&
+            sed s\/XXX\/${VERSION}${SUFFIX}\/g /e/work/src/gmic/resources/gmic_gimp64.iss > tmp.iss
+            cd gmic-src && make clean && rm -f gmic gmic_gimp *.o && \
+            make OPT_CFLAGS="-O3 -m64 -mtune=generic" cli gimp libc
+    else
+        if [ -f is_64bits ]; then
+
+            # For 64 bits version (MSYS1)
+            echo " - Release number : $VERSION$SUFFIX (64 bits)" &&
+                OUTDIR1=gmic-${VERSION}${SUFFIX}-win64 &&
+                OUTDIR2=gmic-gimp-${VERSION}${SUFFIX}-win64 &&
+                OUTZIP1=gmic_${VERSION}${SUFFIX}_win64.zip &&
+                OUTZIP2=gmic_gimp_${VERSION}${SUFFIX}_win64.zip &&
+                OUTINST=gmic_gimp_${VERSION}${SUFFIX}_win64.exe &&
+                rm -rf ${OUTDIR1} ${OUTDIR2} ${OUTZIP1} ${OUTZIP2} ${OUTINST} &&
+                sed s\/XXX\/${VERSION}${SUFFIX}\/g /e/work/src/gmic/resources/gmic_gimp64.iss > tmp.iss
+                cd gmic-src && make clean && rm -f gmic gmic_gimp *.o && \
+                make CC="g++ -I/mingw/include -I/env/gcc492/mingw32/include -I/env/gcc492/mingw32/i686-w64-mingw32/include -I/opencv/include -I/opencv/include/opencv -I/opencv/include/opencv2" \
+                     MANDATORY_LIBS+="-L/env/gcc492/mingw32/lib -L/env/gcc492/mingw32/i686-w64-mingw32/lib -L/mingw/lib -lz" \
+                     OPT_CFLAGS="-O3 -m64 -mtune=generic" \
+                     OPENCV_LIBS+="/opencv/x64/mingw/lib/libopencv_calib3d2410.dll.a /opencv/x64/mingw/lib/libopencv_contrib2410.dll.a /opencv/x64/mingw/lib/libopencv_core2410.dll.a /opencv/x64/mingw/lib/libopencv_features2d2410.dll.a /opencv/x64/mingw/lib/libopencv_flann2410.dll.a /opencv/x64/mingw/lib/libopencv_gpu2410.dll.a /opencv/x64/mingw/lib/libopencv_highgui2410.dll.a /opencv/x64/mingw/lib/libopencv_imgproc2410.dll.a /opencv/x64/mingw/lib/libopencv_legacy2410.dll.a /opencv/x64/mingw/lib/libopencv_ml2410.dll.a /opencv/x64/mingw/lib/libopencv_nonfree2410.dll.a /opencv/x64/mingw/lib/libopencv_objdetect2410.dll.a /opencv/x64/mingw/lib/libopencv_ocl2410.dll.a /opencv/x64/mingw/lib/libopencv_photo2410.dll.a /opencv/x64/mingw/lib/libopencv_stitching2410.dll.a /opencv/x64/mingw/lib/libopencv_superres2410.dll.a /opencv/x64/mingw/lib/libopencv_video2410.dll.a /opencv/x64/mingw/lib/libopencv_videostab2410.dll.a" cli gimp libc
+
+        else
+
+            # For 32 bits version (MSYS1)
+            echo " - Release number : $VERSION$SUFFIX (32 bits)" &&
+                OUTDIR1=gmic-${VERSION}${SUFFIX}-win32 &&
+                OUTDIR2=gmic-gimp-${VERSION}${SUFFIX}-win32 &&
+                OUTZIP1=gmic_${VERSION}${SUFFIX}_win32.zip &&
+                OUTZIP2=gmic_gimp_${VERSION}${SUFFIX}_win32.zip &&
+                OUTINST=gmic_gimp_${VERSION}${SUFFIX}_win32.exe &&
+                rm -rf ${OUTDIR1} ${OUTDIR2} ${OUTZIP1} ${OUTZIP2} ${OUTINST} &&
+                sed s\/XXX\/${VERSION}${SUFFIX}\/g /e/work/src/gmic/resources/gmic_gimp32.iss > tmp.iss
+                cd gmic-src && make clean && rm -f gmic gmic_gimp *.o && \
+                make CC="g++ -I/mingw/include -I/env/gcc492/mingw32/include -I/env/gcc492/mingw32/i686-w64-mingw32/include -I/opencv/include -I/opencv/include/opencv -I/opencv/include/opencv2" \
+                     MANDATORY_LIBS+="-L/env/gcc492/mingw32/lib -L/env/gcc492/mingw32/i686-w64-mingw32/lib -L/mingw/lib -lz" \
+                     OPT_CFLAGS="-O3 -march=i686 -mtune=generic" \
+                     OPENCV_LIBS+="/opencv/lib/opencv_calib3d2410.lib /opencv/lib/opencv_contrib2410.lib /opencv/lib/opencv_core2410.lib /opencv/lib/opencv_features2d2410.lib /opencv/lib/opencv_flann2410.lib /opencv/lib/opencv_gpu2410.lib /opencv/lib/opencv_highgui2410.lib /opencv/lib/opencv_imgproc2410.lib /opencv/lib/opencv_legacy2410.lib /opencv/lib/opencv_ml2410.lib /opencv/lib/opencv_nonfree2410.lib /opencv/lib/opencv_objdetect2410.lib /opencv/lib/opencv_ocl2410.lib /opencv/lib/opencv_photo2410.lib /opencv/lib/opencv_stitching2410.lib /opencv/lib/opencv_superres2410.lib /opencv/lib/opencv_video2410.lib /opencv/lib/opencv_videostab2410.lib" cli gimp libc
+
+        fi
+    fi
+    cp -f gmic_gimp.exe ../gmic-gimp-build/ &&
+        cp -f gmic_gimp.exe gmic.exe libcgmic.dll libcgmic.def ../gmic-build/ &&
+        cd .. &&
+
+        # Construct full G'MIC binary archive.
+        cp -rf gmic-build ${OUTDIR1} &&
+        cp -f /e/work/src/gmic/COPYING ${OUTDIR1} &&
+        sed s\/_gmic_version\/${VERSION}${SUFFIX}\/ /e/work/src/gmic/README > ${OUTDIR1}/README &&
+        zip -r -9 ${OUTZIP1} ${OUTDIR1} &&
+        cp -f ${OUTZIP1} /e/work/src/ &&
+
+        # Construct G'MIC/GIMP binary archive.
+        cp -rf gmic-gimp-build ${OUTDIR2} &&
+        cp -f /e/work/src/gmic/COPYING ${OUTDIR2} &&
+        sed s\/_gmic_version\/${VERSION}${SUFFIX}\/ /e/work/src/gmic/README > ${OUTDIR2}/README &&
+        zip -r -9 ${OUTZIP2} ${OUTDIR2} &&
+        cp -f ${OUTZIP2} /e/work/src/ &&
+
+        # Construct Inno Setup installer.
+        /c/Program\ Files\ \(x86\)/Inno\ Setup\ 5/ISCC.exe tmp.iss
+    touch ${OUTINST} &&
+        sleep 3 &&
+        cp -f ${OUTINST} /e/work/src/ &&
+        rm -f tmp.iss &
+
+    echo " - All done!"
+    return;
+fi
+
+# Build package from a virtual Debian/Ubuntu machine.
+#-----------------------------------------------------
+DIST=`lsb_release -d | tail -c+13 | xargs`
+BITS=`uname -m`
+
+if [ "$DIST" != "Ubuntu 16.04.1 LTS" ] || [ "$BITS" != "x86_64" ] ; then
+    SF_HOME=/media/sf_dtschump/
+    cd ${SF_HOME}/work/src
+    RELEASE0=`grep "#define gmic_version" gmic/src/gmic.h | tail -c5`
+    RELEASE1=`echo $RELEASE0 | head -c1`
+    RELEASE2=`echo $RELEASE0 | head -c2 | tail -c1`
+    RELEASE3=`echo $RELEASE0 | head -c3 | tail -c1`
+    VERSION=$RELEASE1.$RELEASE2.$RELEASE3
+
+    CODENAME=`lsb_release -i | xargs | tail -c+16 | xargs`_`lsb_release -c | xargs | tail -c+10 | xargs`
+    CODENAME="$(echo $CODENAME | tr '[A-Z]' '[a-z]')"
+    BITS=`uname -m`
+    if [ "$BITS" == "x86_64" ]; then BITS=64; ARCH=amd64; PARCH=x86_64; else BITS=32; ARCH=i386; PARCH=i386; fi
+    if [ "$1" == "final" ]; then SUFFIX=""; else SUFFIX=_pre; fi
+    TARFILE=gmic_${VERSION}${SUFFIX}.tar
+    PAK=gmic_${VERSION}${SUFFIX}_${CODENAME}_${ARCH}.deb
+    PLU=gmic_gimp_${VERSION}${SUFFIX}_linux${BITS}.zip
+    STA=gmic_static_${VERSION}${SUFFIX}_linux${BITS}.zip
+    DIR=gmic-${VERSION}${SUFFIX}
+    while [ ! -f deb_${TARFILE}.gz ]; do sleep 10; done
+    sleep 10
+    cp deb_${TARFILE}.gz /tmp/ &&
+        cd /tmp/ &&
+        rm -rf $PAK $PLU $DIR &&
+        touch deb_${TARFILE}.gz &&
+        tar zxvf deb_${TARFILE}.gz &&
+        find gmic-${VERSION}${SUFFIX} -exec touch {} ;
+    cd $DIR/src &&
+        sed "s/\$(MAKE) cli gimp lib/\$(MAKE) cli gimp lib libc zart/g" Makefile > /tmp/Makefile &&
+        mv /tmp/Makefile Makefile && cd ../..
+    cd $DIR &&
+        dpkg-buildpackage -d -j3 -rfakeroot;
+    mv ../gmic_${VERSION}_${ARCH}.deb ../$PAK
+
+    if [ "$CODENAME" == "debian_wheezy" ]; then
+        zip -j -r -9 ../$PLU src/gmic_gimp README &&
+            cd src && make clean && make GMIC_STATIC_CLI_PATH=/usr/lib/${PARCH}-linux-gnu static && mv gmic ../ &&
+            cd .. && rm -rf man src zart debian && cd .. &&
+            zip -j -r -9 $STA $DIR &&
+            cp -f $PLU $PAK $STA $SF_HOME/work/src/
+    else
+        cd .. &&
+            cp -f $PAK $SF_HOME/work/src/
+    fi
+    echo VIRTUALBOX_DONE
+    return;
+fi
+
+# Build package from main machine (ELARA).
+#-----------------------------------------
+cd ${HOME}/work/src
+RELEASE0=`grep "#define gmic_version" gmic/src/gmic.h | tail -c5`
+RELEASE1=`echo $RELEASE0 | head -c1`
+RELEASE2=`echo $RELEASE0 | head -c2 | tail -c1`
+RELEASE3=`echo $RELEASE0 | head -c3 | tail -c1`
+VERSION=$RELEASE1.$RELEASE2.$RELEASE3
+SVERSION=$RELEASE1$RELEASE2$RELEASE3
+if [ "$1" == "final" ]; then SUFFIX=""; else SUFFIX=_pre; fi
+DIR=/tmp/gmic-${VERSION}${SUFFIX}
+rm -f gmic_${VERSION}${SUFFIX}_*.deb gmic_${VERSION}${SUFFIX}.tar.gz deb_gmic_${VERSION}${SUFFIX}.tar.gz \
+   gmic_${VERSION}${SUFFIX}_win32.zip gmic_${VERSION}${SUFFIX}_win64.zip \
+   gmic_gimp_${VERSION}${SUFFIX}_linux32.zip gmic_gimp_${VERSION}${SUFFIX}_linux64.zip \
+   gmic_gimp_${VERSION}${SUFFIX}_win32.zip gmic_gimp_${VERSION}${SUFFIX}_win32.exe \
+   gmic_gimp_${VERSION}${SUFFIX}_win64.zip gmic_gimp_${VERSION}${SUFFIX}_win64.exe \
+   gmic_static_${VERSION}${SUFFIX}_*.zip
+
+echo
+echo " - Release number : $VERSION$SUFFIX"
+
+# Create default command file.
+#-----------------------------
+echo " - Create 'gmic_stdlib.h' file"
+cd gmic/src/
+cp -f gmic_stdlib.gmic ../html/
+cp -f gmic_stdlib.gmic ../html/gmic_stdlib.$SVERSION
+make stdlib CImg.h
+ln -fs ../gmic-community/zart ..
+ln -fs ../../gmic-community/libcgmic/gmic_libc.cpp .
+ln -fs ../../gmic-community/libcgmic/gmic_libc.h .
+ln -fs ../../gmic-community/libcgmic/use_libcgmic.c .
+
+if [ "$1" == "final" ]; then
+    git tag -d v.$SVERSION
+    git tag v.$SVERSION
+    gmic_commit "Final release "${VERSION}
+    git push --tags
+else
+    gmic_commit "Auto-commit for release "${VERSION}${SUFFIX}
+fi
+
+# Perform filters update on the G'MIC server.
+#---------------------------------------------
+echo " - Create list of filters."
+rm -f /tmp/gimp_filters.txt
+\gmic gmic_stdlib.gmic -update_server > /tmp/gimp_filters.txt
+size=`du -b /tmp/gimp_filters.txt | head -c 1`
+if [ "$size" != "0" ]; then
+    cp -f /tmp/gimp_filters.txt ../html/
+fi
+
+# Create man page and bash autocompletion script.
+#-------------------------------------------------
+echo " - Create man page and bash autocompletion script."
+make man
+make bashcompletion
+cd ..
+
+# Create HTML reference and gallery pages.
+#------------------------------------------
+echo " - Create HTML reference page."
+cd html
+rm -f img/gmic_stdlib*.jpg image.jpg
+\gmic -is tiger -r2dy 320 -o image.jpg
+\gmic -v - ../src/gmic_stdlib.gmic raw:../src/gmic_stdlib.gmic,uchar -document_gmic images,img/
+if [ "$1" == "final" ]; then
+    \gmic -v - ../src/gmic_stdlib.gmic raw:../src/gmic_stdlib.gmic,uchar _prerelease= -__help html >& reference.shtml;
+else
+    \gmic -v - ../src/gmic_stdlib.gmic raw:../src/gmic_stdlib.gmic,uchar _prerelease=`date +%m%d%y` -__help html >& reference.shtml;
+fi
+rm -f image.jpg
+\gmic ../src/gmic_stdlib.gmic -update_gallery_html
+cd ..
+
+# Create .pdf handbook.
+#----------------------
+echo " - Create PDF reference handbook."
+cd html
+if [ "$1" == "final" ]; then
+    \gmic -v - ../src/gmic_stdlib.gmic raw:../src/gmic_stdlib.gmic,uchar _version=$SVERSION _prerelease= -__help latex >& reference.tex;
+else
+    \gmic -v - ../src/gmic_stdlib.gmic raw:../src/gmic_stdlib.gmic,uchar _version=$SVERSION _prerelease=`date +%m%d%y` -__help latex >& reference.tex;
+fi
+pdflatex reference.tex
+makeindex reference
+pdflatex reference.tex
+gs -dBATCH -dNOPAUSE -q -sDEVICE=pdfwrite -sOutputFile=gmic_reference.pdf reference.pdf
+rm -f reference.aux reference.idx reference.ind reference.out reference.ilg reference.log reference.pdf
+cd ..
+
+# Upload web page.
+#-----------------
+echo " - Upload G'MIC web page."
+cd html
+lftp ftp://$GMIC_LOGIN:$GMIC_PASSWD@ftp.gmic.eu -e "mirror -RL . /www/gmic/ ; quit"
+rm -f gmic_stdlib.gmic gmic_stdlib.$SVERSION
+cd ..
+#exit
+
+# Construct a clean version of G'MIC directory.
+#----------------------------------------------
+echo " - Construct clean version of the G'MIC directory."
+rm -rf $DIR
+mkdir $DIR
+cp -Lrf COPYING README CMakeLists.txt $DIR
+mkdir $DIR/src
+cd src
+cp -Lrf Makefile CImg.h gmic.cpp gmic.h gmic_stdlib.h gmic_stdlib.gmic gmic_gimp.cpp gmic_in_script.scm use_libgmic.cpp gmic_libc.cpp gmic_libc.h use_libcgmic.c $DIR/src
+touch $DIR/src/gmic_stdlib.h
+cd ..
+mkdir $DIR/man
+cd man
+cp -Lrf gmic.1.gz $DIR/man
+cd ..
+mkdir $DIR/resources
+cd resources
+cp -Lrf gmic_bashcompletion.sh $DIR/resources
+cp -Lrf gmic_film_cluts.gmz $DIR/resources
+cp -Lrf debian $DIR
+cd ..
+cd zart
+qmake
+make clean
+mkdir $DIR/zart
+cp -Lrf images include src ui *.xml *.html README zart.pro zart.qrc $DIR/zart
+cd ..
+
+cd $DIR
+sed s\/_gmic_version\/$VERSION$SUFFIX\/ README > /tmp/README
+mv /tmp/README README
+
+cd $DIR/debian
+sed s\/_gmic_version\/$VERSION\/ changelog > /tmp/changelog
+mv /tmp/changelog changelog
+
+cd $DIR/src
+if [ "$1" == "final" ]; then
+    sed "s/PRERELEASE_CFLAGS = /NO_PRERELEASE_CFLAGS = /" Makefile > /tmp/Makefile
+    mv /tmp/Makefile Makefile
+fi
+sed s\/_gmic_versio3\/$VERSION\/g Makefile > /tmp/Makefile
+mv /tmp/Makefile Makefile
+sed s\/_gmic_versio1\/$RELEASE1\/g Makefile > /tmp/Makefile
+mv /tmp/Makefile Makefile
+sed "s/rm -rf CImg.h gmic_stdlib.h /rm -rf /" Makefile > /tmp/Makefile
+mv /tmp/Makefile Makefile
+make clean
+rm -f gmic_buildpackage
+for i in *.h *.cpp *.c *.gmic *.scm; do
+    sed -e 's/ *$//' $i >/tmp/gmic_buildpackage$$ && mv /tmp/gmic_buildpackage$$ $i
+done
+
+cd $DIR
+rm -rf debian/gmic
+rm -f `find . -name ".?*"`
+rm -f `find . -name "*~"`
+rm -r `find . -name "\#*"`
+rm -r `find . -name "CVS"`
+rm -r `find . -name ".git"`
+cd zart
+sed "s+GMIC_PATH = ../../gmic/src/+GMIC_PATH = ../src/+" zart.pro > /tmp/zart.pro
+mv /tmp/zart.pro zart.pro
+qmake
+
+# Create .tar.gz source archives.
+#--------------------------------
+echo " - Create .tar.gz source archives."
+cd $DIR/..
+TARFILE=gmic_${VERSION}${SUFFIX}.tar
+rm -f ${TARFILE} ${TARFILE}.gz deb_${TARFILE} deb_${TARFILE}.gz
+tar chvf deb_${TARFILE} `basename $DIR`
+gzip deb_${TARFILE}
+cp -f deb_${TARFILE}.gz ${HOME}/work/src/
+
+rm -rf `basename $DIR`/debian
+rm -rf `basename $DIR`/zart
+rm -rf `basename $DIR`/src/gmic_libc.cpp
+rm -rf `basename $DIR`/src/gmic_libc.h
+rm -rf `basename $DIR`/src/use_libcgmic.c
+tar chvf ${TARFILE} `basename $DIR`
+gzip ${TARFILE}
+cp -f ${TARFILE}.gz ${HOME}/work/src/
+if [ "$1" == "final" ]; then
+   lftp ftp://$GMIC_LOGIN:$GMIC_PASSWD@ftp.gmic.eu -e "put -O /www/gmic/files/source/ ${HOME}/work/src/${TARFILE}.gz; quit";
+   lftp ftp://$GMIC_LOGIN:$GMIC_PASSWD@ftp.gmic.eu -e "put -O /www/gmic/files/source/ ${HOME}/work/src/${TARFILE}.gz -o gmic_source.tar.gz; quit";
+fi
+lftp ftp://$GMIC_LOGIN:$GMIC_PASSWD@ftp.gmic.eu -e "put -O /www/gmic/files/prerelease ${HOME}/work/src/${TARFILE}.gz -o gmic_source.tar.gz; quit"
+
+# Create debian packages for debian/ubuntu 64 bits.
+#--------------------------------------------------
+echo " - Create debian packages."
+
+cp ${HOME}/work/src/deb_${TARFILE}.gz /tmp/ &&
+    cd /tmp/ &&
+    PAK=gmic_${VERSION}${SUFFIX}_ubuntu_xenial_amd64.deb &&
+    DIR=gmic-${VERSION}${SUFFIX} &&
+    rm -rf $PAK &&
+    touch deb_${TARFILE}.gz &&
+    tar zxvf deb_${TARFILE}.gz &&
+    find gmic-${VERSION}${SUFFIX} -exec touch {} \; &&
+    cd $DIR/src &&
+    sed "s/\$(MAKE) cli gimp lib/\$(MAKE) cli gimp lib libc zart/g" Makefile > /tmp/Makefile &&
+    mv /tmp/Makefile Makefile && cd ../..
+cd $DIR &&
+    dpkg-buildpackage -d -j3 -rfakeroot;
+mv ../gmic_${VERSION}_amd64.deb ../$PAK &&
+    cp -f ../$PAK $HOME/work/src/ &&
+    echo ELARA_DONE
+
+# Wait for packages to be generated from Virtual machines, and copy them to G'MIC server.
+#----------------------------------------------------------------------------------------
+echo " - Waiting for all packages.".
+
+cd ${HOME}/work/src/
+gmic -_update_server_binaries ${VERSION}${SUFFIX}
+
+#
+# End of file.
+#
