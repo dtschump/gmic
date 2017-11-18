@@ -22,6 +22,7 @@ option(ENABLE_OPENMP "Add support for parallel processing" ON)
 option(ENABLE_PNG "Add support for handling images in PNG format" ON)
 option(ENABLE_TIFF "Add support for handling images in Tiff format" ON)
 option(ENABLE_ZLIB "Add support for data compression via Zlib" ON)
+option(ENABLE_DYNAMIC_LINKING "Dynamically link the binaries to the GMIC shared library" OFF)
 
 # compile flags
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/modules)
@@ -96,7 +97,7 @@ if(FFTW3_FOUND)
   if(APPLE)
     set(COMPILE_FLAGS "${COMPILE_FLAGS} -Dcimg_use_fftw3_singlethread")
   else(APPLE)
-  	set(EXTRA_LIBRARIES "${EXTRA_LIBRARIES} -lfftw3_threads")
+    set(EXTRA_LIBRARIES "${EXTRA_LIBRARIES} -lfftw3_threads")
   endif(APPLE)
 endif(FFTW3_FOUND)
 
@@ -161,6 +162,11 @@ if(OPENEXR_FOUND)
 endif(OPENEXR_FOUND)
 
 
+if(ENABLE_DYNAMIC_LINKING)
+  if(NOT BUILD_LIB)
+    message(FATAL_ERROR "ENABLE_DYNAMIC_LINKING needs BUILD_LIB")
+  endif(NOT BUILD_LIB)
+endif(ENABLE_DYNAMIC_LINKING)
 
 # CImg.h header
 file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/CImg_download.cmake "file(DOWNLOAD https://github.com/dtschump/CImg/blob/master/CImg.h?raw=true ${CMAKE_SOURCE_DIR}/src/CImg.h)")
@@ -273,59 +279,68 @@ endif(BUILD_LIB_STATIC)
 if(BUILD_CLI)
   add_executable(gmic ${CLI_Includes} ${CLI_Sources})
   add_dependencies(gmic gmic_extra_headers)
-  set_target_properties(gmic PROPERTIES COMPILE_FLAGS "${CLI_COMPILE_FLAGS} -Dgmic_main ")
-  target_link_libraries(gmic
-    ${X11_LIBRARIES}
-    ${TIFF_LIBRARIES}
-    ${PNG_LIBRARIES}
-    ${JPEG_LIBRARIES}
-    ${GRAPHICSMAGICK_LIBRARIES}
-    ${OPENEXR_LIBRARIES}
-    ${OPENCV_LIBRARIES}
-    ${ZLIB_LIBRARIES}
-    ${FFTW3_LIBRARIES}
-    ${EXTRA_LIBRARIES}
-    )
 
+  if(ENABLE_DYNAMIC_LINKING)
+    add_dependencies(gmic libgmic)
+    target_link_libraries(gmic
+      "libgmic"
+      )
+    set(CLI_COMPILE_FLAGS "${CLI_COMPILE_FLAGS} -Dgmic_dynamic_linking ")
+  else(ENABLE_DYNAMIC_LINKING)
+    target_link_libraries(gmic
+      ${X11_LIBRARIES}
+      ${TIFF_LIBRARIES}
+      ${PNG_LIBRARIES}
+      ${JPEG_LIBRARIES}
+      ${GRAPHICSMAGICK_LIBRARIES}
+      ${OPENEXR_LIBRARIES}
+      ${OPENCV_LIBRARIES}
+      ${ZLIB_LIBRARIES}
+      ${FFTW3_LIBRARIES}
+      ${EXTRA_LIBRARIES}
+      )
+  endif(ENABLE_DYNAMIC_LINKING)
+
+  set_target_properties(gmic PROPERTIES COMPILE_FLAGS "${CLI_COMPILE_FLAGS} -Dgmic_main ")
   INSTALL(TARGETS gmic RUNTIME DESTINATION bin)
 endif(BUILD_CLI)
 
 
 # GIMP plug-in
 if(BUILD_PLUGIN)
-  pkg_check_modules(GIMP gimp-2.0)
-  if (GIMP_FOUND)
-    pkg_check_modules(GIMPUI gimpui-2.0)
-    if (GIMPUI_FOUND)
-      include_directories(${GIMP_INCLUDE_DIRS})
-      link_directories(${GIMP_LIBRARY_DIRS})
-      include_directories(${GIMPUI_INCLUDE_DIRS})
-      link_directories(${GIMPUI_LIBRARY_DIRS})
+  execute_process(COMMAND gimptool-2.0 --gimpplugindir OUTPUT_VARIABLE GIMP2_PLUGIN_DIR OUTPUT_STRIP_TRAILING_WHITESPACE)
+  execute_process(COMMAND gimptool-2.0 --libs OUTPUT_VARIABLE GIMP2_LIBRARIES OUTPUT_STRIP_TRAILING_WHITESPACE)
+  execute_process(COMMAND gimptool-2.0 --cflags OUTPUT_VARIABLE GIMP2_INCLUDE_DIRS OUTPUT_STRIP_TRAILING_WHITESPACE)
 
-      add_executable(gmic_gimp_gtk ${CLI_Includes} ${CLI_Sources} ./src/gmic_gimp_gtk.cpp)
-      add_dependencies(gmic_gimp_gtk gmic_extra_headers)
+  add_executable(gmic_gimp_gtk ${CLI_Includes} ./src/gmic_gimp_gtk.cpp)
+  add_dependencies(gmic_gimp_gtk gmic_extra_headers)
+  set_target_properties(gmic_gimp_gtk PROPERTIES COMPILE_FLAGS "${GIMP2_INCLUDE_DIRS} -Dgmic_gui")
 
-      set_target_properties(gmic_gimp_gtk PROPERTIES COMPILE_FLAGS " -Dgmic_gui")
+  if(ENABLE_DYNAMIC_LINKING)
+    add_dependencies(gmic_gimp_gtk libgmic)
+    target_link_libraries(gmic_gimp_gtk
+      ${GIMP2_LIBRARIES}
+      "libgmic"
+      )
+  else(ENABLE_DYNAMIC_LINKING)
+    target_sources(gmic_gimp_gtk PUBLIC ${CLI_Sources})
+    target_link_libraries(gmic_gimp_gtk
+      ${X11_LIBRARIES}
+      ${ZLIB_LIBRARIES}
+      ${FFTW3_LIBRARIES}
+      ${GIMP2_LIBRARIES}
+      ${EXTRA_LIBRARIES}
+      )
+  endif(ENABLE_DYNAMIC_LINKING)
 
-      target_link_libraries(gmic_gimp_gtk
-	${X11_LIBRARIES}
-	${ZLIB_LIBRARIES}
-	${FFTW3_LIBRARIES}
-	${GIMP_LIBRARIES}
-	${GIMPUI_LIBRARIES}
-	${EXTRA_LIBRARIES}
-	)
+  if(PLUGIN_INSTALL_PREFIX)
+    INSTALL(TARGETS gmic_gimp_gtk RUNTIME DESTINATION ${PLUGIN_INSTALL_PREFIX})
+    INSTALL(FILES ${CMAKE_SOURCE_DIR}/resources/gmic_film_cluts.gmz DESTINATION ${PLUGIN_INSTALL_PREFIX})
+  else(PLUGIN_INSTALL_PREFIX)
+    INSTALL(TARGETS gmic_gimp_gtk RUNTIME DESTINATION ${GIMP2_PLUGIN_DIR}/plug-ins)
+    INSTALL(FILES ${CMAKE_SOURCE_DIR}/resources/gmic_film_cluts.gmz DESTINATION ${GIMP2_PLUGIN_DIR}/plug-ins)
+  endif(PLUGIN_INSTALL_PREFIX)
 
-      if (PLUGIN_INSTALL_PREFIX)
-        INSTALL(TARGETS gmic_gimp_gtk RUNTIME DESTINATION ${PLUGIN_INSTALL_PREFIX})
-        INSTALL(FILES ${CMAKE_SOURCE_DIR}/resources/gmic_film_cluts.gmz DESTINATION ${PLUGIN_INSTALL_PREFIX})
-      else (PLUGIN_INSTALL_PREFIX)
-        INSTALL(TARGETS gmic_gimp_gtk RUNTIME DESTINATION ${GIMP_PREFIX}/lib/gimp/2.0/plug-ins)
-        INSTALL(FILES ${CMAKE_SOURCE_DIR}/resources/gmic_film_cluts.gmz DESTINATION ${GIMP_PREFIX}/lib/gimp/2.0/plug-ins)
-      endif  (PLUGIN_INSTALL_PREFIX)
-
-    endif (GIMPUI_FOUND)
-  endif (GIMP_FOUND)
 endif(BUILD_PLUGIN)
 
 if(BUILD_MAN)
