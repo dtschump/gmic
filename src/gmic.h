@@ -221,12 +221,12 @@ struct gmic {
 
   // Run G'MIC pipeline on an already-constructed object.
   gmic& run(const char *const commands_line,
-            float *const p_progress=0, bool *const p_is_abort=0);
+            float *const p_progress=0, bool *const p_is_abort=0, bool const p_is_cli=false);
 
   template<typename T>
   gmic& run(const char *const commands_line,
             gmic_list<T> &images, gmic_list<char> &images_names,
-            float *const p_progress=0, bool *const p_is_abort=0);
+            float *const p_progress=0, bool *const p_is_abort=0, bool const p_is_cli=false);
 
   // These functions return (or init) G'MIC-specific paths.
   static const char* path_user(const char *const custom_path=0);
@@ -351,7 +351,7 @@ struct gmic {
   template<typename T>
   gmic& _run(const gmic_list<char>& commands_line,
              gmic_list<T> &images, gmic_list<char> &images_names,
-             float *const p_progress, bool *const p_is_abort);
+             float *const p_progress, bool *const p_is_abort, bool const p_is_cli);
 
   template<typename T>
   gmic& _run(const gmic_list<char>& commands_line, unsigned int& position,
@@ -381,6 +381,7 @@ struct gmic {
   bool is_released, is_debug, is_running, is_start, is_return, is_quit, is_double3d, is_debug_info, check_elif;
   const char *starting_commands_line;
   bool _is_abort, *is_abort, is_abort_thread;
+  bool _is_cli;
 };
 
 // Class 'gmic_exception'.

@@ -40,6 +40,7 @@
  #
 */
 
+
 // Add G'MIC-specific methods to the CImg library.
 //------------------------------------------------
 #ifdef cimg_plugin
@@ -2020,7 +2021,11 @@ static const CImgList<T>& save_gmz(const char *filename, const CImgList<T>& imag
 #else // #ifdef cimg_plugin
 
 #include "gmic.h"
-#include "gmic_stdlib.h"
+
+#ifndef gmic_dynamic_linking
+# include "gmic_stdlib.h"
+#endif // #ifndef gmic_dynamic_linking
+
 using namespace cimg_library;
 #undef min
 #undef max
@@ -2040,6 +2045,8 @@ using namespace cimg_library;
 #ifndef gmic_pixel_type
 #define gmic_pixel_type float
 #endif
+
+#ifndef gmic_dynamic_linking
 
 // Macro to force stringifying selection for error messages.
 #define gmic_selection_err selection2string(selection,images_names,1,gmic_selection)
@@ -3607,7 +3614,7 @@ void gmic::_gmic(const char *const commands_line,
   // Launch the G'MIC interpreter.
   const CImgList<char> items = commands_line?commands_line_to_CImgList(commands_line):CImgList<char>::empty();
   try {
-    _run(items,images,images_names,p_progress,p_is_abort);
+    _run(items,images,images_names,p_progress,p_is_abort,false);
   } catch (gmic_exception&) {
     print(images,0,"Abort G'MIC interpreter.\n");
     throw;
@@ -4530,17 +4537,17 @@ CImg<char> gmic::substitute_item(const char *const source,
 // Main parsing procedures.
 //-------------------------
 gmic& gmic::run(const char *const commands_line,
-                float *const p_progress, bool *const p_is_abort) {
+                float *const p_progress, bool *const p_is_abort, bool const p_is_cli) {
   gmic_list<gmic_pixel_type> images;
   gmic_list<char> images_names;
   return run(commands_line,images,images_names,
-             p_progress,p_is_abort);
+             p_progress,p_is_abort,p_is_cli);
 }
 
 template<typename T>
 gmic& gmic::run(const char *const commands_line,
                 gmic_list<T> &images, gmic_list<char> &images_names,
-                float *const p_progress, bool *const p_is_abort) {
+                float *const p_progress, bool *const p_is_abort, bool const p_is_cli) {
   cimg::mutex(26);
   if (is_running)
     error(images,0,0,
@@ -4551,7 +4558,7 @@ gmic& gmic::run(const char *const commands_line,
   starting_commands_line = commands_line;
   is_debug = false;
   _run(commands_line_to_CImgList(commands_line),
-       images,images_names,p_progress,p_is_abort);
+       images,images_names,p_progress,p_is_abort,p_is_cli);
   is_running = false;
   return *this;
 }
@@ -4559,7 +4566,7 @@ gmic& gmic::run(const char *const commands_line,
 template<typename T>
 gmic& gmic::_run(const gmic_list<char>& commands_line,
                  gmic_list<T> &images, gmic_list<char> &images_names,
-                 float *const p_progress, bool *const p_is_abort) {
+                 float *const p_progress, bool *const p_is_abort, bool const p_is_cli) {
   CImg<unsigned int> variables_sizes(gmic_varslots,1,1,1,0);
   unsigned int position = 0;
   setlocale(LC_NUMERIC,"C");
@@ -4584,6 +4591,7 @@ gmic& gmic::_run(const gmic_list<char>& commands_line,
   if (p_progress) progress = p_progress; else { _progress = -1; progress = &_progress; }
   if (p_is_abort) is_abort = p_is_abort; else { _is_abort = false; is_abort = &_is_abort; }
   is_abort_thread = false;
+  _is_cli = p_is_cli;
   *progress = -1;
   cimglist_for(commands_line,l) {
     const char *it = commands_line[l].data();
@@ -14363,29 +14371,29 @@ gmic& gmic::_run(const CImgList<char>& commands_line, unsigned int& position,
 
     // Display or print result, if not 'released' before.
     if (!is_released && callstack.size()==1 && images) {
-#ifdef gmic_main
+      if(_is_cli) {
 #if cimg_display!=0
-      CImgList<unsigned int> lselection, lselection3d;
-      bool is_first3d = false;
-      _display_windows[0].assign();
-      cimglist_for(images,l) {
-        const bool is_3d = images[l].is_CImg3d(false);
-        if (!l) is_first3d = is_3d;
-        CImg<unsigned int>::vector(l).move_to(is_3d?lselection3d:lselection);
-      }
-      if (is_first3d) {
-        display_objects3d(images,images_names,lselection3d>'y',CImg<unsigned char>::empty(),false);
-        if (lselection) display_images(images,images_names,lselection>'y',0,false);
-      } else {
-        if (lselection) display_images(images,images_names,lselection>'y',0,false);
-        if (lselection3d) display_objects3d(images,images_names,lselection3d>'y',CImg<unsigned char>::empty(),false);
-      }
+        CImgList<unsigned int> lselection, lselection3d;
+        bool is_first3d = false;
+        _display_windows[0].assign();
+        cimglist_for(images,l) {
+          const bool is_3d = images[l].is_CImg3d(false);
+          if (!l) is_first3d = is_3d;
+          CImg<unsigned int>::vector(l).move_to(is_3d?lselection3d:lselection);
+        }
+        if (is_first3d) {
+          display_objects3d(images,images_names,lselection3d>'y',CImg<unsigned char>::empty(),false);
+          if (lselection) display_images(images,images_names,lselection>'y',0,false);
+        } else {
+          if (lselection) display_images(images,images_names,lselection>'y',0,false);
+          if (lselection3d) display_objects3d(images,images_names,lselection3d>'y',CImg<unsigned char>::empty(),false);
+        }
 #else
-      CImg<unsigned int> seq(1,images.width());
-      cimg_forY(seq,y) seq[y] = y;
-      print_images(images,images_names,seq,true);
+        CImg<unsigned int> seq(1,images.width());
+        cimg_forY(seq,y) seq[y] = y;
+        print_images(images,images_names,seq,true);
 #endif // #if cimg_display!=0
-#endif // #ifdef gmic_main
+      }
       is_released = true;
     }
 
@@ -14453,6 +14461,8 @@ gmic& gmic::_run(const CImgList<char>& commands_line, unsigned int& position,
   cimg::mutex(24,0);
   return *this;
 }
+
+#endif // #ifndef gmic_dynamic_linking
 
 // Fallback function for segfault signals.
 #if cimg_OS==1
@@ -14675,7 +14685,7 @@ int main(int argc, char **argv) {
   try {
     CImgList<gmic_pixel_type> images;
     CImgList<char> images_names;
-    gmic_instance.run(commands_line.data(),images,images_names);
+    gmic_instance.run(commands_line.data(),images,images_names,0,0,true);
   } catch (gmic_exception &e) {
 
     // Something went wrong during the pipeline execution.
@@ -14716,7 +14726,7 @@ int main(int argc, char **argv) {
   return 0;
 }
 
-#else
+#else // #ifdef gmic_main
 
 // Explicitely instanciate constructors and destructor when building the library.
 #ifdef gmic_pixel_type
@@ -14727,7 +14737,7 @@ template gmic::gmic(const char *const commands_line,
 
 template gmic& gmic::run(const char *const commands_line,
                          gmic_list<gmic_pixel_type> &images, gmic_list<char> &images_names,
-                         float *const p_progress, bool *const p_is_abort);
+                         float *const p_progress, bool *const p_is_abort, bool const p_is_cli);
 
 template CImgList<gmic_pixel_type>::~CImgList();
 #endif
@@ -14740,7 +14750,7 @@ template gmic::gmic(const char *const commands_line,
 
 template gmic& gmic::run(const char *const commands_line,
                          gmic_list<gmic_pixel_type2> &images, gmic_list<char> &images_names,
-                         float *const p_progress=0, bool *const p_is_abort=0);
+                         float *const p_progress=0, bool *const p_is_abort=0, bool const p_is_cli=false);
 
 template CImgList<gmic_pixel_type2>::~CImgList();
 #endif
