@@ -95,7 +95,7 @@
 #@web : sep = separator(), note = note("<small>Author: <i>David Tschumperl&#233;</i>.      Latest update: <i>03/27/2014</i>.</small>")
 
 #@web clone("Chessboard")
-#@web : thumbnail_parameters = 16,16,0,0,0,0.5,0,0,0,255,255,255,255,255,0
+#@web : thumbnail_parameters = 16,16,0,0,0,0.5,0,0,0,255,255,255,255,255,0,50,50
 
 #@web clone("Dices")
 #@web clone("Grid [cartesian]")
@@ -137,7 +137,7 @@
 #@web : Smoothness = float(2,0,8)
 #@web : Color = color(170,130,20,110)
 #@web : Color dispersion = float(0.15,0,1)
-#@web : sep = separator(), Preview type = choice("Full","Forward horizontal","Forward vertical","Backward horizontal","Backward vertical","Duplicate top","Duplicate left","Duplicate bottom","Duplicate right")
+#@web : sep = separator(), Preview type = choice("Full","Forward horizontal","Forward vertical","Backward horizontal","Backward vertical","Duplicate top","Duplicate left","Duplicate bottom","Duplicate right"), Preview split = point(50,50,0,0,200,200,200,0,10,0)
 #@web : sep = separator(), note = note("<small>Author: <i>David Tschumperl&#233;</i>.      Latest update: <i>07/02/2015</i>.</small>")
 gmicol_bokeh :
   repeat $! l[$>] fx_bokeh $* gui_merge_layers endl done
@@ -331,7 +331,7 @@ gmicol_rotate :
 
 #@web clone("Abstraction")
 #@web clone("Boost-fade")
-#@web : thumbnail_parameters = 10,0
+#@web : thumbnail_parameters = 10,0,50,50
 
 #@web clone("Boost chromaticity")
 #@web clone("Channel processing")
