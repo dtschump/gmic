@@ -59,14 +59,14 @@
             <b><font color="#000066">G'MIC</font></b> is a full-featured open-source framework for <b><a href="https://en.wikipedia.org/wiki/Image_processing">image processing</a></b>,
             distributed under the
             <a href="http://www.cecill.info/index.en.html"><b>CeCILL</b></a> free software licenses (LGPL-like and/or GPL-compatible).
-            It provides several different <b><a href="https://en.wikipedia.org/wiki/User_interface">user interfaces</a></b> to convert / manipulate / filter / visualize
+            It provides several <b><a href="https://en.wikipedia.org/wiki/User_interface">user interfaces</a></b> to convert / manipulate / filter / visualize
             <b>generic image datasets</b>, ranging from 1d scalar signals to 3d+t sequences of multi-spectral volumetric images, hence including 2d color images.<br/><br/>
-            These user interfaces are:<br/><br/>
+            b><font color="#000066">G'MIC</font></b> user interfaces are:<br/><br/>
 
             <table cellpadding="10" cellspacing="0">
               <tr>
                 <td valign="top">
-                  <b>1</b> - A command-line interface <b><a href="tutorial/basics.shtml">gmic</a></b>, to use the <b><font color="#000066">G'MIC</font></b> image processing features from a shell.
+                  <b>1</b> - <b><a href="tutorial/basics.shtml">gmic</a></b> command-line tool, to use the <b><font color="#000066">G'MIC</font></b> image processing features from a shell.
                   In this setting, <b><font color="#000066">G'MIC</font></b> may be seen as a friendly companion to the <a href="http://www.imagemagick.org">ImageMagick</a>
                   or <a href="http://www.graphicsmagick.org">GraphicsMagick</a> software suites.
                   <p align="right"><i><font size="-1"><a href="tutorial/basics.shtml">[learn more...]</a></font></i></p>
