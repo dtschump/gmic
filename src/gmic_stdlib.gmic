@@ -3204,7 +3204,7 @@ ow :
   _outputw
 
 #@cli outputw
-#@cli : Output selected images by overwritting their original location.
+#@cli : Output selected images by overwriting their original location.
 #@cli : (eq. to 'ow').
 outputw :
   v - _gmic_s="$?" v +
@@ -6034,7 +6034,7 @@ decompress_rle :
     # Retrieve original data dimension and min value.
     y whds={0,@0-3} im={0,@4} is_binary_data={0,@5} rows 6,100%
 
-    # Transform RLE data to list of pairs {nb_occurences,value}.
+    # Transform RLE data to list of pairs {nb_occurrences,value}.
     if $is_binary_data  # Decode for binary data.
       +>= 0 abs[0] a x
     else # Decode for arbitrary data
@@ -23199,7 +23199,7 @@ x_quantize_rgb : check "isint(${1=16}) && $1>1"
       done a[-{colors,s}--1] c
       rm[centroids] nm. centroids
 
-      # Reassign ununsed centroids.
+      # Reassign unused centroids.
       +>>[colors] 8 channels. 0 histogram. {centroids,w},0,{centroids,w-1}
       cmax={xM}
       repeat {w} if {!i($>)} point[centroids] $>,0,0,1,{centroids,I($cmax)} point[centroids] $>,0,0,-0.001,${-RGB} fi done
@@ -24500,7 +24500,7 @@ gui_filter_sources : skip ${1=0},${2=1}
   l[] i cimgz:${_path_rc}gui_filter_sources onfail endl # Include other user-defined filters sources.
   ({'{/$_path_user}'}) # Include local '.gmic' (or 'user.gmic') file.
 
-# Function that alway returns a valid preview size.
+# Function that always returns a valid preview size.
 gui_preview_wh :
   u {0$_preview_width?[0$_preview_width,0$_preview_height]:[400,400]}
 

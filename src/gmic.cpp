@@ -2239,7 +2239,7 @@ unsigned int gmic::hashcode(const char *const str, const bool is_variable) {
   return hash&(gmic_comslots - 1);
 }
 
-// Tells if the the implementation of a G'MIC command contains arguments.
+// Tells if the implementation of a G'MIC command contains arguments.
 bool gmic::command_has_arguments(const char *const command) {
   if (!command || !*command) return false;
   for (const char *s = std::strchr(command,'$'); s; s = std::strchr(s,'$')) {
@@ -8065,7 +8065,7 @@ gmic& gmic::_run(const CImgList<char>& commands_line, unsigned int& position,
         //-----------------------------
       gmic_commands_l :
 
-        // Start local environnement.
+        // Start local environment.
         if (!std::strcmp("local",command)) {
           if (is_debug_info && debug_line!=~0U) {
             cimg_snprintf(argx,_argx.width(),"*local#%u",debug_line);
@@ -8615,7 +8615,7 @@ gmic& gmic::_run(const CImgList<char>& commands_line, unsigned int& position,
             nb_randoms = cimg::round(nb_randoms);
             if (ind0) initialization = &images[*ind0];
             print(images,0,"Estimate correspondence map between image%s and patch image [%u], "
-                  "using %gx%gx%g patches, %g iteration%s, %g randomization%s and occurence penalization %g "
+                  "using %gx%gx%g patches, %g iteration%s, %g randomization%s and occurrence penalization %g "
                   "(%sscore returned).",
                   gmic_selection.data(),
                   *ind,
