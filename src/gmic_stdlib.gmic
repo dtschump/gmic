@@ -8243,6 +8243,7 @@ autocrop_seq : skip ${1=auto}
   e[^-1] "Auto-crop image$? using crop geometry of last image by vector '$*'."
   if {!$!} return fi
   v -
+  is_auto={['"$1"']=='auto'}
   if {$!==1} _autocrop$is_auto ${1--1} v + return fi
   coords=${autocrop_coords.\ ${1--1}}
   x0={arg(1,$coords)} y0={arg(2,$coords)} z0={arg(3,$coords)}
