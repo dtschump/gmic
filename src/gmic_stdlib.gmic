@@ -16380,7 +16380,7 @@ img2ascii : skip "${1= !\042#$%&\047()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRS
   v -
   is_multi={$!>1}
 
-  # Generate dictionnaries for image analysis and synthesis.
+  # Generate dictionaries for image analysis and synthesis.
   l[]
     ({'"$1"'}) repeat {w}
       C={`92`}${dec2oct\ {0,@$>}}
