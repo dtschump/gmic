@@ -11996,7 +11996,7 @@ nlmeans_core : check ${is_image_arg\ $1}" && "${is_image_arg\ $2}" && $3>0 && $4
   v - pass$1 0 pass$2 0
   repeat $!-2 l[$>,-1,-2]
     # [0] original, [1] weights, [2] scaling [3] sum(weights * patch), [4] sum(weights), [5] max(weights)
-    100%,100%,100%,{0,s},0 100%,100%,100%,{1,s},0 100%,100%,100%,{1,s},0
+    100%,100%,100%,{0,s},0 100%,100%,100%,{1,s},0 100%,100%,100%,{1,s},1e-6
     if d#0==1
       repeat 2*$4+1 j={$>-$4} repeat 2*$4+1 i={$>-$4}
         if $i!=0||$j!=0
@@ -12018,7 +12018,7 @@ nlmeans_core : check ${is_image_arg\ $1}" && "${is_image_arg\ $2}" && $3>0 && $4
         fi
       done done done
     fi
-    max[5] 1e-6 rm[1,2]
+    rm[1,2]
     *[0] [3] +[1,0] +[1,2] # Add central patch
     / # Normalize
   endl done v +
