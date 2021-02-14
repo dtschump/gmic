@@ -1514,7 +1514,7 @@ reference_header_ascii :
       "        "${_vt100_c}${_vt100_b}"Version "${-strver}$strprerelease$_vt100_n\n\
       "        "$_vt100_g$_vt100_u"(https://gmic.eu)"$_vt100_n\n\
       \n\
-      "        Copyright (c) 2008-"{date(0)}", David Tschumperlé / GREYC / CNRS."\n\
+      "        Copyright (c) 2008-2021, David Tschumperlé / GREYC / CNRS."\n\
       "        "$_vt100_g$_vt100_u"(https://www.greyc.fr)"$_vt100_n
   +e[] $str
 
